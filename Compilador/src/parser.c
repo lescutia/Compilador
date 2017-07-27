@@ -406,25 +406,35 @@ char* fnGetInstPCode( int iOp )
 {
 	if ( iOp == SYM_PLUS )
 		return "adi";
-	else if ( iOp == SYM_MINUS )
+	
+	if ( iOp == SYM_MINUS )
 		return "sbi";
-	else if (iOp == SYM_ASTERISK)
+	
+	if ( iOp == SYM_ASTERISK )
 		return "mpi";
-	else if (iOp == SYM_DIV)
+	
+	if ( iOp == SYM_DIV )
 		return "dvi";
-	else if (iOp == SYM_MOD)
+	
+	if ( iOp == SYM_MOD )
 		return "mod";
-	else if ( iOp == SYM_LT )
+	
+	if ( iOp == SYM_LT )
 		return "les";
-	else if ( iOp == SYM_LEQ )
+	
+	if ( iOp == SYM_LEQ )
 		return "leq";
-	else if ( iOp == SYM_EQUALITY )
+	
+	if ( iOp == SYM_EQUALITY )
 		return "equ";
-	else if ( iOp == SYM_GT )
+	
+	if ( iOp == SYM_GT )
 		return "grt";
-	else if ( iOp == SYM_GEQ )
+	
+	if ( iOp == SYM_GEQ )
 		return "geq";
-	else if ( iOp == SYM_NOTEQ )
+	
+	if ( iOp == SYM_NOTEQ )
 		return "neq";
 
 	return "unknown";
@@ -1042,14 +1052,14 @@ int fnInitialization( int iType )
 			if( g_symbol == SYM_INTEGER )
 			{
 				// CODEGEN
-				fnDebugCodeGen("ldc", g_integer, NO_LABEL );
+				fnDebugCodeGen( "ldc", g_integer, NO_LABEL );
 				//
 				iAssignedType = INT_T;
 			}
 			else if( g_symbol == SYM_CHARACTER )
 			{
 				// CODEGEN
-				fnDebugCodeGen("ldc", g_literal, NO_LABEL );
+				fnDebugCodeGen( "ldc", g_literal, NO_LABEL );
 				//
 				iAssignedType = CHAR_T;
 			}

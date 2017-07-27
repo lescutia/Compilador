@@ -5,14 +5,7 @@ int main( int argc, char** argv )
 {
 	initCompiler( );
 	char* strFilename;
-	/**
-	if( argc > 0 )
-	{
-		for ( int i = 0; i < argc; ++i )
-			printf( "%s\n", argv[ i ] );
-		return 0;
-	}
-	*/
+	
 	//Example... a.exe "Test\test7.txt" > out.txt
 	if( argc > 1 )
 		strFilename = argv[ 1 ];

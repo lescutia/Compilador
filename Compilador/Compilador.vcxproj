@@ -148,6 +148,7 @@
   <ItemGroup>
     <ClCompile Include="CompilerPCH.c">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="main.c" />
     <ClCompile Include="src\parser.c" />
