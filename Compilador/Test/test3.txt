@@ -1,0 +1,11 @@
+// main function 
+int main() {
+  int x = 3 * 4, y = 6 / 2;
+  
+  // this is a condition
+  if( x % i != 1)
+    printf("Scanner test"); // this is a print
+
+  // this is a return
+  return 0;
+}

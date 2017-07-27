@@ -1,0 +1,8 @@
+while( j == 6 )
+{
+   if( i > 8 )
+      a = 4;
+   else a = 7;
+
+  return 0;
+}

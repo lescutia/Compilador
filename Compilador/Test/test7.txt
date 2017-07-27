@@ -1,0 +1,11 @@
+int a = 5;
+int main()
+{
+  //No se permite inicializar variables locales, en la declaración
+  //int k = 9;
+  int k;
+
+  k = f(7, 0) + 3;
+
+  return 0;
+}

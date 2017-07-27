@@ -1,0 +1,17 @@
+int a = 'a';
+
+void fnTest();
+
+int main()
+{
+    int varLocalMain;
+    char charLocalMain;
+
+    return 0;
+}
+
+void fnTest()
+{
+   int varLocalFnTest;
+   char charLocalFnTest;
+}
