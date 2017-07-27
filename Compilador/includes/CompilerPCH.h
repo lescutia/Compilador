@@ -92,9 +92,9 @@ static int g_iMaxIdentifierLength = 64; // maximum number of characters in an id
 static int g_iMaxIntegerLength    = 10; // maximum number of characters in an integer
 #define MaxStringLength				128 // maximum number of characters in a string
 
-char g_identifier[ 64  ];
-char g_integer   [ 10  ];
-char g_string    [ 128 ];
+char g_identifier[ 64 ];
+char g_integer[ 10 ];
+char g_string[ 128 ];
 
 char g_literal[ 1 ]; // stores value of scanned character
 

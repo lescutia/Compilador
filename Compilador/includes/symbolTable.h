@@ -68,8 +68,8 @@ void fnCreateSymbolTableEntry( int whichTable, char* string, int line, int class
 void fnResetSymbolTables( );
 void fnInitializeSymbolTables( );
 void fnPrintTable( int whichTable );
-sEntry* fnSearchSymbolTable(sEntry* entry, char* string, int class, char* actualProc );
-sEntry* fnGetScopedSymbolTableEntry(char* string, int class, char* actualProc );
+sEntry* fnSearchSymbolTable( sEntry* entry, char* string, int class, char* actualProc );
+sEntry* fnGetScopedSymbolTableEntry( char* string, int class, char* actualProc );
 //funciones para buscar procedimientos de la libreria de kirsch
 //int fnReportUndefinedProcedures();
 //int fnIsUndefinedProcedure(int* entry);
@@ -78,67 +78,67 @@ sEntry* fnGetScopedSymbolTableEntry(char* string, int class, char* actualProc );
 *	@Param entry 	es la entrada de la cual se desea obtener la siguiente.
 *	@Return 		regresa una estructura a la siguiente entrada
 */
-sEntry* fnGetNextEntry	(sEntry* entry);
+sEntry* fnGetNextEntry	( sEntry* entry );
 /*
 *	@Param entry 	es la entrada de la cual se desea obtener la cadena
 *	@Return 		regresa una cadena del identificador o una literal
 */
-char* fnGetString	(sEntry* entry);
+char* fnGetString	( sEntry* entry );
 /*
 *	@Param entry es la entrada de la cual se desea obtener el numero de linea
 *	@Return regresa el numero de linea donde fue definido
 */
-int  fnGetLineNumber(sEntry* entry);
+int  fnGetLineNumber( sEntry* entry );
 /*
 *	@Param entry es la entrada de la cual se desea obtener su clase
 *	@Return regresa una clase el cual puede ser una variable, un procedimiento o una cadena
 */
-int  fnGetClass		(sEntry* entry);
+int  fnGetClass		( sEntry* entry );
 /*
 *	@Param entry es la entrada de la cual se desea obtener su tipo
 *	@Return regresa si es un int, int*, char, char*, void
 */
-int  fnGetType		(sEntry* entry);
+int  fnGetType		( sEntry* entry );
 /*
 *	@Param entry es la entrada de la cual se desea obtener su valor
 *	@Return en caso de ser una variable regresa su valor inicial
 */
-int  fnGetValue		(sEntry* entry);
+int  fnGetValue		( sEntry* entry );
 /*
 *	@Param entry es la entrada de la cual se desea obtener su direccion de memoria
 *	@Return regresa en caso de ser variable u string un offset y si es un procedimiento su direccion
 */
-int  fnGetAddress	(sEntry* entry);
+int  fnGetAddress	( sEntry* entry );
 /*
 *	@Param entry es la entrada de la cual se desea obtener su alcance
 *	@Return regresa REG_GP, REG_FP los cuales pertenecen a los registros (global pointer, frame pointer)
 */
-int  fnGetScope 	(sEntry* entry);
+int  fnGetScope 	( sEntry* entry );
 /*
 *	@Param entry es la entrada de la cual se desea obtener una bandera de si esta definido el valor o no
 *	@Return regresa
 */
-int  fnIsDefined	(sEntry* entry);
-char* fnGetParent 	(sEntry* entry);
+int  fnIsDefined	( sEntry* entry );
+char* fnGetParent 	( sEntry* entry );
 
-void fnSetNextEntry	(sEntry* entry, sEntry* next);
-void fnSetString	(sEntry* entry, char* identifier);
-void fnSetLineNumber(sEntry* entry, int line);
-void fnSetClass		(sEntry* entry, int class);
-void fnSetType		(sEntry* entry, int type);
-void fnSetValue		(sEntry* entry, int value);
-void fnSetAddress	(sEntry* entry, int address);
-void fnSetScope		(sEntry* entry, int scope);
-void fnSetDefined	(sEntry* entry, int defined);
-void fnSetParent	(sEntry* entry, char* parent);
+void fnSetNextEntry	( sEntry* entry, sEntry* next );
+void fnSetString	( sEntry* entry, char* identifier );
+void fnSetLineNumber( sEntry* entry, int line );
+void fnSetClass		( sEntry* entry, int class );
+void fnSetType		( sEntry* entry, int type );
+void fnSetValue		( sEntry* entry, int value );
+void fnSetAddress	( sEntry* entry, int address );
+void fnSetScope		( sEntry* entry, int scope );
+void fnSetDefined	( sEntry* entry, int defined );
+void fnSetParent	( sEntry* entry, char* parent );
 
 void fnPrintType( int type );
 
 // PARA VERIFICAR EL NÚMERO DE PARÁMETROS
-sParameter* fnGetNextParameter( sParameter* parameter ) ;
-char* fnGetIdParameter( sParameter* parameter ) ;
-int fnGetTypeParameter( sParameter* parameter ) ;
-void fnCreateParameter( sEntry* entry, int type, char* id ) ;
+sParameter* fnGetNextParameter( sParameter* parameter );
+char* fnGetIdParameter( sParameter* parameter );
+int fnGetTypeParameter( sParameter* parameter );
+void fnCreateParameter( sEntry* entry, int type, char* id );
 //
 
 // ------------------------ GLOBAL CONSTANTS -----------------------

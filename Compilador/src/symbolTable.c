@@ -3,32 +3,32 @@
 
 // ------------------------- INITIALIZATION ------------------------
 
-sEntry* fnGetNextEntry	(sEntry* entry)	{ return	entry->next; }
-char* fnGetString	(sEntry* entry)		{ return	entry->string; }
-int  fnGetLineNumber(sEntry* entry) 	{ return	entry->line; }
-int  fnGetClass		(sEntry* entry)		{ return	entry->class; }
-int  fnGetType		(sEntry* entry)		{ return	entry->type; }
-int  fnGetValue		(sEntry* entry)		{ return	entry->value; }
-int  fnGetAddress	(sEntry* entry)		{ return	entry->address; }
-int  fnGetScope 	(sEntry* entry)		{ return	entry->scope; }
-int  fnIsDefined	(sEntry* entry)		{ return	entry->defined; }
-char* fnGetParent 	(sEntry* entry)		{ return	entry->parent; }
+sEntry* fnGetNextEntry	( sEntry* entry )	{ return	entry->next; }
+char* fnGetString	( sEntry* entry )		{ return	entry->string; }
+int  fnGetLineNumber( sEntry* entry )		{ return	entry->line; }
+int  fnGetClass		( sEntry* entry )		{ return	entry->class; }
+int  fnGetType		( sEntry* entry )		{ return	entry->type; }
+int  fnGetValue		( sEntry* entry )		{ return	entry->value; }
+int  fnGetAddress	( sEntry* entry )		{ return	entry->address; }
+int  fnGetScope 	( sEntry* entry )		{ return	entry->scope; }
+int  fnIsDefined	( sEntry* entry )		{ return	entry->defined; }
+char* fnGetParent 	( sEntry* entry )		{ return	entry->parent; }
 
-void fnSetNextEntry	(sEntry* entry, sEntry* next)    	{ entry->next 	= next; }
-void fnSetString	(sEntry* entry, char* identifier) 	{ entry->string = identifier; }
-void fnSetLineNumber(sEntry* entry, int line)    		{ entry->line 	= line; }
-void fnSetClass		(sEntry* entry, int class)        	{ entry->class 	= class; }
-void fnSetType		(sEntry* entry, int type)          	{ entry->type 	= type; }
-void fnSetValue		(sEntry* entry, int value)        	{ entry->value 	= value; }
-void fnSetAddress	(sEntry* entry, int address)    	{ entry->address= address; }
-void fnSetScope		(sEntry* entry, int scope)        	{ entry->scope 	= scope; }
-void fnSetDefined	(sEntry* entry, int defined)		{ entry->defined= defined; }
-void fnSetParent	(sEntry* entry, char* parent ) 		{ entry->parent = parent; }
+void fnSetNextEntry	( sEntry* entry, sEntry* next )    	{ entry->next = next; }
+void fnSetString	( sEntry* entry, char* identifier ) { entry->string = identifier; }
+void fnSetLineNumber( sEntry* entry, int line )    		{ entry->line = line; }
+void fnSetClass		( sEntry* entry, int class )        { entry->class = class; }
+void fnSetType		( sEntry* entry, int type )         { entry->type = type; }
+void fnSetValue		( sEntry* entry, int value )        { entry->value = value; }
+void fnSetAddress	( sEntry* entry, int address )    	{ entry->address = address; }
+void fnSetScope		( sEntry* entry, int scope )        { entry->scope = scope; }
+void fnSetDefined	( sEntry* entry, int defined )		{ entry->defined = defined; }
+void fnSetParent	( sEntry* entry, char* parent ) 	{ entry->parent = parent; }
 
 // PARA VERIFICAR EL NÚMERO DE PARÁMETROS
-sParameter* fnGetNextParameter( sParameter* parameter ) { return parameter -> next; }
-int fnGetTypeParameter( sParameter* parameter ) { return parameter -> type; }
-char* fnGetIdParameter( sParameter* parameter ) { return parameter -> id; }
+sParameter* fnGetNextParameter( sParameter* parameter ) { return parameter->next; }
+int fnGetTypeParameter( sParameter* parameter )			{ return parameter->type; }
+char* fnGetIdParameter( sParameter* parameter )			{ return parameter->id; }
 
 // TODO: ORDENAR
 void fnCreateParameter( sEntry* entry, int type, char* id )

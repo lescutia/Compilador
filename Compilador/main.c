@@ -1,7 +1,7 @@
 #include "./includes/CompilerPCH.h"
 #include <conio.h>
 
-int main(int argc, char** argv)
+int main( int argc, char** argv )
 {
 	initCompiler( );
 	char* filename;
@@ -9,7 +9,7 @@ int main(int argc, char** argv)
 	if( argc > 0 )
 	{
 		for ( int i = 0; i < argc; ++i )
-    		printf( "%s\n", argv[ i ] );
+			printf( "%s\n", argv[ i ] );
 		return 0;
 	}
 	*/
@@ -17,18 +17,18 @@ int main(int argc, char** argv)
 	if( argc > 1 )
 		filename = argv[ 1 ];
 	else
-	 filename = "Test/testCodeGen.c";
+		filename = "Test/testCodeGen.c";
 
-	g_sourceFD = fopen ( filename, "r" );
+	g_sourceFD = fopen( filename, "r" );
 
-	if ( g_sourceFD != NULL )
+	if( g_sourceFD != NULL )
 	{
-	    fnInitScanner( );    // Incializar el scanner
-        fnReadCharacter( );  // Leer el primer carácter
-        fnGetSymbol( );      // Obtener el primer token
-        fnParser( );         // Iniciar el parser
+		fnInitScanner( );    // Incializar el scanner
+		fnReadCharacter( );  // Leer el primer carácter
+		fnGetSymbol( );      // Obtener el primer token
+		fnParser( );         // Iniciar el parser
 
-        fclose( g_sourceFD ); // Cerrar el archivo
+		fclose( g_sourceFD ); // Cerrar el archivo
 	}
 	else
 	{
@@ -42,6 +42,6 @@ int main(int argc, char** argv)
 	fnPrintTable( LOCAL_TABLE );*/
 
 	fnResetSymbolTables( );
-	_getch();
+	_getch( );
 	return 0;
 }
