@@ -393,13 +393,41 @@ int fnType( )
 		else
 			printf( "'%s' found.", *( g_SYMBOLS + g_symbol ) );
 
-		printf("\n\n Press any key to exit...");
-		_getch();
+		printf( "\n\n Press any key to exit..." );
+		_getch( );
 
 		exit( 1 );
 	}
 
 	return iType;
+}
+
+char* fnGetInstPCode( int iOp )
+{
+	if ( iOp == SYM_PLUS )
+		return "adi";
+	else if ( iOp == SYM_MINUS )
+		return "sbi";
+	else if (iOp == SYM_ASTERISK)
+		return "mpi";
+	else if (iOp == SYM_DIV)
+		return "dvi";
+	else if (iOp == SYM_MOD)
+		return "mod";
+	else if ( iOp == SYM_LT )
+		return "les";
+	else if ( iOp == SYM_LEQ )
+		return "leq";
+	else if ( iOp == SYM_EQUALITY )
+		return "equ";
+	else if ( iOp == SYM_GT )
+		return "grt";
+	else if ( iOp == SYM_GEQ )
+		return "geq";
+	else if ( iOp == SYM_NOTEQ )
+		return "neq";
+
+	return "unknown";
 }
 
 int fnExpression( )
@@ -408,8 +436,7 @@ int fnExpression( )
 	int iRType; // Tipo del lado derecho de la expresión
 	// CODEGEN
 	int iOperatorSymbol;
-	// 
-
+	//
 	/* simplexpr
 	 */
 	iLType = fnSimpleExpression( );
@@ -420,27 +447,12 @@ int fnExpression( )
 	{
 		// CODEGEN
 		iOperatorSymbol = g_symbol;
-		// 
-
+		//
 		fnGetSymbol( );
 
-		// TODO: HACER UNA FUNCIÓN HAGA LAS COMPARACIONES
-		// Y NOS REGRESE EL MNEMÓNICO
 		// CODEGEN
-		if( iOperatorSymbol == SYM_LT )
-			fnDebugCodeGen( "les", "", NO_LABEL );
-		else if( iOperatorSymbol == SYM_LEQ )
-			fnDebugCodeGen( "leq", "", NO_LABEL );
-		else if( iOperatorSymbol == SYM_EQUALITY )
-			fnDebugCodeGen( "equ", "", NO_LABEL );
-		else if( iOperatorSymbol == SYM_GT )
-			fnDebugCodeGen( "grt", "", NO_LABEL );
-		else if( iOperatorSymbol == SYM_GEQ )
-			fnDebugCodeGen( "geq", "", NO_LABEL );
-		else if( iOperatorSymbol == SYM_NOTEQ )
-			fnDebugCodeGen( "neq", "", NO_LABEL );
-		// 
-
+		fnDebugCodeGen( fnGetInstPCode( iOperatorSymbol ), "", NO_LABEL );
+		//
 		/* simplexpr [comp simpexpr] ...
 		 */
 		iRType = fnSimpleExpression( );
@@ -503,15 +515,9 @@ int fnSimpleExpression( )
 		 */
 		iRType = fnTerm( );
 
-		// TODO: HACER UNA FUNCIÓN QUE HAGA LAS COMPARACIONES
-		// Y REGRESE LA OPERACIÓN
 		// CODEGEN
-		if( iOperatorSymbol == SYM_PLUS )
-			fnDebugCodeGen( "adi", "", NO_LABEL );
-		else if( iOperatorSymbol == SYM_MINUS )
-			fnDebugCodeGen( "sbi", "", NO_LABEL );
+		fnDebugCodeGen( fnGetInstPCode( iOperatorSymbol ), "", NO_LABEL );
 		//
-
 		if( iOperatorSymbol == SYM_PLUS )
 		{
 			// if ( iLType == INTSTAR_T )
@@ -544,8 +550,7 @@ int fnTerm( )
 	int iRType;
 	// CODEGEN
 	int iOperatorSymbol;
-	// 
-
+	//
 	/* factor
 	 */
 	iLType = fnFactor( );
@@ -556,24 +561,16 @@ int fnTerm( )
 	{
 		// CODEGEN
 		iOperatorSymbol = g_symbol;
-		// 
+		//
 		fnGetSymbol( );
 
 		/* factor ('*' | '\' | %) factor
 		 */
 		iRType = fnFactor( );
 
-		// TODO: HACER UNA FUNCIÓN QUE HAGA LAS COMPARACIONES
-		// Y REGRESE LA OPERACIÓN
 		// CODEGEN
-		if( iOperatorSymbol == SYM_ASTERISK )
-			fnDebugCodeGen( "mpi", "", NO_LABEL );
-		else if( iOperatorSymbol == SYM_DIV )
-			fnDebugCodeGen( "dvi", "", NO_LABEL );
-		else if( iOperatorSymbol == SYM_MOD )
-			fnDebugCodeGen( "mod", "", NO_LABEL );
-		// 
-
+		fnDebugCodeGen( fnGetInstPCode( iOperatorSymbol ), "", NO_LABEL );
+		//
 		if( iLType != iRType )
 			//fnTypeWarning( iLType, iRType );
 			// TODO: MEJORAR
@@ -744,8 +741,8 @@ int fnFactor( )
 				printf( "\n Error: line %d, ", g_lineNumber );
 				printf( "'%s' undeclared.", g_identifier );
 				
-				printf("\n\n Press any key to exit...");
-				_getch();
+				printf( "\n\n Press any key to exit..." );
+				_getch( );
 
 				/* TODO: CREAR UNA FUNCIÓN fnExitCompiler() EN
 				 * LA CUAL LIBEREMOS TODA LA MEMORIA QUE HEMOS
@@ -824,8 +821,7 @@ int fnFactor( )
 			// TODO: VER SI ES EL LUGAR CORRECTO
 			// CODEGEN
 			fnDebugCodeGen( "lod", g_identifier, NO_LABEL );
-			// 
-
+			//
 			// TODO: REVISAR (MEJORAR) Y HACER UNA FUNCIÓN QUE LO HAGA
 			/************************************************/
 			/* Si el identificador está definido se guarda su
@@ -842,8 +838,8 @@ int fnFactor( )
 				printf( "\n Error: line %d, ", g_lineNumber );
 				printf( "'%s' undeclared.", g_identifier );
 				
-				printf("\n\n Press any key to exit...");
-				_getch();
+				printf( "\n\n Press any key to exit..." );
+				_getch( );
 
 				/* TODO: CREAR UNA FUNCIÓN fnExitCompiler() EN
 				 * LA CUAL LIBEREMOS TODA LA MEMORIA QUE HEMOS
@@ -865,7 +861,6 @@ int fnFactor( )
 		// CODEGEN
 		fnDebugCodeGen( "ldc", g_integer, NO_LABEL );
 		//
-
 		iType = INT_T;
 	}
 	/* character ...
@@ -968,8 +963,7 @@ void fnVariable( )
 	}
 }
 
-// HASTA EL MOMENTO SÓLO SE CONSIDERAN LOS TIPOS
-// INT Y CHAR
+// HASTA EL MOMENTO SÓLO SE CONSIDERAN LOS TIPOS INT Y CHAR
 int fnInitialization( int iType )
 {
 	int iAssignedType;
@@ -988,7 +982,7 @@ int fnInitialization( int iType )
 	{
 		// CODEGEN
 		fnDebugCodeGen( "lda", g_identifier, NO_LABEL );
-		// 
+		//
 		fnDebugParser( "=" );
 		fnGetSymbol( );
 
@@ -1040,8 +1034,7 @@ int fnInitialization( int iType )
 			// TODO: VER SI ESTÁ EN EL LUGAR CORRECTO
 			// CODEGEN
 			// fnDebugCodeGen( "ldc ", "", NO_LABEL );
-			// 
-
+			//
 			// Por el momento no es de nuestro interés
 			// initialValue
 			initialValue = g_literal[ 0 ];
@@ -1050,20 +1043,20 @@ int fnInitialization( int iType )
 			{
 				// CODEGEN
 				fnDebugCodeGen("ldc", g_integer, NO_LABEL );
-				// 
+				//
 				iAssignedType = INT_T;
 			}
 			else if( g_symbol == SYM_CHARACTER )
 			{
 				// CODEGEN
 				fnDebugCodeGen("ldc", g_literal, NO_LABEL );
-				// 
+				//
 				iAssignedType = CHAR_T;
 			}
 
 			// CODEGEN
 			fnDebugCodeGen( "stn ", "", NO_LABEL );
-			//             
+			//
 			fnGetSymbol( );
 
 			if( sign )
@@ -1196,8 +1189,8 @@ void fnStatement( )
 				printf( "\n Error: line %d, ", g_lineNumber );
 				printf( "'%s' undeclared.", g_identifier );
 				
-				printf("\n\n Press any key to exit...");
-				_getch();
+				printf( "\n\n Press any key to exit..." );
+				_getch( );
 
 				/* TODO: CREAR UNA FUNCIÓN fnExitCompiler() EN
 				 * LA CUAL LIBEREMOS TODA LA MEMORIA QUE HEMOS
@@ -1390,8 +1383,8 @@ void fnStatement( )
 				printf( "\n Error: line %d, ", g_lineNumber );
 				printf( "'%s' undeclared.", g_identifier );
 				
-				printf("\n\n Press any key to exit...");
-				_getch();
+				printf( "\n\n Press any key to exit..." );
+				_getch( );
 
 				exit( 1 );
 			}
@@ -1400,7 +1393,7 @@ void fnStatement( )
 
 			// CODEGEN
 			fnDebugCodeGen( "lda", g_identifier, NO_LABEL );
-			// 
+			//
 			fnDebugParser( "=" );
 			fnGetSymbol( );
 
@@ -1408,10 +1401,9 @@ void fnStatement( )
 			*/
 			iRType = fnExpression( );
 
-			// CODEGEN:
+			// CODEGEN
 			fnDebugCodeGen( "stn", "", NO_LABEL );
-			// 
-
+			//
 			if( iLType != iRType )
 				fnTypeWarning( iLType, iRType );
 			else if( !fnIsDefined( entry ) )
@@ -1595,7 +1587,7 @@ void fnProcedure( char* procedure, int type )
 	{
 		// CODEGEN
 		fnDebugCodeGen( "ent", procedure, NO_LABEL );
-		// 
+		//
 		fnDebugParser( "{" );
 
 		if( entry == 0 )
@@ -1699,8 +1691,8 @@ void fnProcedure( char* procedure, int type )
 		{
 			fnSyntaxErrorSymbol( SYM_RBRACE );
 
-			printf("\n Press any key to exit...");
-			_getch();
+			printf( "\n Press any key to exit..." );
+			_getch( );
 
 			exit( 1 );
 		}
@@ -1730,7 +1722,7 @@ int fnCall( char* procedure )
 	{
 		// CODEGEN
 		fnDebugCodeGen( "mst", "", NO_LABEL );
-		// 
+		//
 		fnExpression( );
 
 		// TODO: check if types/number of parameters is correct
@@ -1753,7 +1745,7 @@ int fnCall( char* procedure )
 		{
 			// CODEGEN
 			fnDebugCodeGen( "cup", procedure, NO_LABEL );
-			// 
+			//
 			fnDebugParser( ")" );
 			fnGetSymbol( );
 
@@ -1768,8 +1760,8 @@ int fnCall( char* procedure )
 				printf( "\n Error: line %d, procedure '%s' ", g_lineNumber, g_identifier );
 				printf( "has never been declared or defined." );
 				
-				printf("\n\n Press any key to exit...");
-				_getch();
+				printf( "\n\n Press any key to exit..." );
+				_getch( );
 
 				exit( 1 );
 			}
@@ -1806,7 +1798,7 @@ int fnCall( char* procedure )
 			printf( "has never been declared or defined." );
 			
 			printf( "\n\n Press any key to exit..." );
-			_getch();
+			_getch( );
 
 			exit( 1 );
 		}
@@ -1857,7 +1849,6 @@ void fnWhile( )
 
 			fnDebugCodeGen( "fjp", "L", g_iLabel );
 			//
-
 			/* while '(' expression ')' ...
 			 */
 			if( g_symbol == SYM_RPARENTHESIS )
@@ -1923,8 +1914,7 @@ void fnWhile( )
 	// CODEGEN
 	fnDebugCodeGen( "ujp", "L", g_iL1While );
 	fnDebugCodeGen( "lab", "L", g_iL2While );
-	// 
-
+	//
 	g_iNumberOfWhile = g_iNumberOfWhile + 1;
 }
 
@@ -1946,8 +1936,7 @@ void fnIf( )
 			// CODEGEN
 			fnNewLabel( );
 			g_iL1If = g_iLabel;
-			// 
-
+			//
 			/* if '(' expression ...
 			 */
 			fnExpression( );
@@ -1962,7 +1951,6 @@ void fnIf( )
 				// CODEGEN
 				fnDebugCodeGen( "fjp", "L", g_iL1If );
 				//
-
 				// zero or more statements: { statement }
 				/* if '(' expression ')'
 				 * '{' ...
@@ -2025,7 +2013,6 @@ void fnIf( )
 					fnDebugCodeGen( "ujp", "L", g_iL2If );
 					fnDebugCodeGen( "lab", "L", g_iL1If );
 					//
-
 					// zero or more statements: { statement }
 					/* if '(' expression ')'
 					 *  ...
@@ -2062,14 +2049,14 @@ void fnIf( )
 
 							// CODEGEN
 							// fnDebugCodeGen( "lab", "L", g_iL2If );
-							// 
+							//
 						}
 						else
 						{
 							fnSyntaxErrorSymbol( SYM_RBRACE );
 
-							printf("\n Press any key to exit...");
-							_getch();
+							printf( "\n Press any key to exit..." );
+							_getch( );
 
 							exit( 1 );
 						}
@@ -2130,7 +2117,7 @@ void fnReturn( )
 
 		// CODEGEN
 		fnDebugCodeGen( "ret", "", NO_LABEL );
-		// 
+		//
 		if( iType != g_iReturnType )
 			fnTypeWarning( g_iReturnType, iType );
 	}

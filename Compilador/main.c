@@ -17,7 +17,7 @@ int main( int argc, char** argv )
 	if( argc > 1 )
 		strFilename = argv[ 1 ];
 	else
-		strFilename = "Test/factorial.c";
+		strFilename = "Test/gcd.c";
 
 	g_sourceFD = fopen(strFilename, "r" );
 	
