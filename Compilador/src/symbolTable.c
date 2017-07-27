@@ -37,6 +37,7 @@ void fnCreateParameter( sEntry* entry, int type, char* id )
 	sParameter* ptrParameter;
 
 	newParameter = malloc( sizeof( sParameter ) );
+	// +1 es para incluir el caracter final '\0'
 	newParameter->id = malloc( strlen( id ) + 1 );
 
 	newParameter->next = NULL;
@@ -185,6 +186,7 @@ void fnCreateSymbolTableEntry( int whichTable, char* string, int line, int class
 
 	//newEntry->string = malloc( sizeof(string) );
 	//sizeof(string) no es la longitud de la cadena
+	// +1 es para incluir el caracter final '\0'
 	newEntry->string = malloc( strlen( string ) + 1 );
 
 	//memcpy ( newEntry->string, string, sizeof(string) );
@@ -203,7 +205,8 @@ void fnCreateSymbolTableEntry( int whichTable, char* string, int line, int class
 
 	if( parent )
 	{
-		newEntry->parent = malloc( strlen( parent ) + 1);
+		// +1 es para incluir el caracter final '\0'
+		newEntry->parent = malloc( strlen( parent ) + 1 );
 		strcpy( newEntry->parent, parent );
 	}
 	else
