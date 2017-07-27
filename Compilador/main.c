@@ -1,19 +1,8 @@
 #include "./includes/CompilerPCH.h"
 #include <conio.h>
 
-int fnTest()
-{
-	printf( "Imprime algo...\n" );
-}
-
-int test( )
-{
-	printf("Prueba funcion\n");
-}
-
 int main(int argc, char** argv)
 {
-	test( );
 	initCompiler( );
 	char* filename;
 	/**
@@ -34,8 +23,6 @@ int main(int argc, char** argv)
 
 	if ( g_sourceFD != NULL )
 	{
-		fnTest( );
-
 	    fnInitScanner( );    // Incializar el scanner
         fnReadCharacter( );  // Leer el primer carácter
         fnGetSymbol( );      // Obtener el primer token
