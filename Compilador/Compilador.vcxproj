@@ -151,14 +151,14 @@
     <ClCompile Include="src\parser.c" />
     <ClCompile Include="src\scanner.c" />
     <ClCompile Include="src\symbolTable.c" />
-    <ClCompile Include="src\TXTWriter.c" />
+    <ClCompile Include="src\intermediateCode.c" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="includes\CompilerPCH.h" />
     <ClInclude Include="includes\parser.h" />
     <ClInclude Include="includes\scanner.h" />
     <ClInclude Include="includes\symbolTable.h" />
-    <ClInclude Include="includes\TXTWriter.h" />
+    <ClInclude Include="includes\intermediateCode.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

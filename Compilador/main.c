@@ -5,7 +5,7 @@
 int main( int argc, char** argv )
 {
 	initCompiler( );
-	char* filename;
+	char* strFilename;
 	/**
 	if( argc > 0 )
 	{
@@ -16,15 +16,16 @@ int main( int argc, char** argv )
 	*/
 	//Example... a.exe "Test\test7.txt" > out.txt
 	if( argc > 1 )
-		filename = argv[ 1 ];
+		strFilename = argv[ 1 ];
 	else
-		filename = "Test/testCodeGen.c";
+		strFilename = "Test/testCodeGen.c";
 
-	g_sourceFD = fopen( filename, "r" );
+	g_sourceFD = fopen(strFilename, "r" );
 	
 	if( g_sourceFD != NULL )
 	{
 		fnOpenFileToWrite( "testfile.txt" );
+
 		fnInitScanner( );    // Incializar el scanner
 		fnReadCharacter( );  // Leer el primer carácter
 		fnGetSymbol( );      // Obtener el primer token
@@ -35,8 +36,10 @@ int main( int argc, char** argv )
 	}
 	else
 	{
-		printf( "Could not open input file: " );
-		printf( "\"%s\"\n", filename );
+		printf( "Could not open input file: '%s'", strFilename );
+		printf( "\n\n Press any key to exit..." );
+		_getch();
+
 		exit( 1 );
 	}
 
@@ -45,7 +48,7 @@ int main( int argc, char** argv )
 
 	fnResetSymbolTables( );
 
-	printf( "\n\n Press any key to exit..." );
+	printf( "\n Press any key to exit..." );
 	_getch( );
 	return 0;
 }

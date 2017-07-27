@@ -1,5 +1,5 @@
 /********************************************************************
-	file:		TXTWriter.h
+	file:		intermediateCode.h
 	date:		2017/07/26
 	author: 	Luis Escutia
 	Contact:	escutialuis93@gmail.com
@@ -26,4 +26,4 @@ void fnCloseFile(  );
 	@Param arg
 	@Param iLabel	
 */
-void fnWrite( char* instr, char* arg, int iLabel );
+void fnPCode( char* instr, char* arg, int iLabel );

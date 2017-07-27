@@ -30,7 +30,7 @@
     <ClCompile Include="src\symbolTable.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\TXTWriter.c">
+    <ClCompile Include="src\intermediateCode.c">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -47,7 +47,7 @@
     <ClInclude Include="includes\symbolTable.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="includes\TXTWriter.h">
+    <ClInclude Include="includes\intermediateCode.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

@@ -77,25 +77,30 @@ static int NO_LABEL = -1;
 sEntry* g_entry;
 
 /******* MOVER AL LUGAR APROPIADO *******/
-static int DEBUG_PARSER = 0;
-static int DEBUG_CODEGEN = 1;
+static int DEBUG_PARSER = 1;
+static int DEBUG_CODEGEN = 0;
 
-void fnDebugParser( char* message )
+void fnDebugParser( char* strMessage )
 {
 	if( DEBUG_PARSER )
-		printf( "%s", message );
+		printf( "%s ", strMessage );
 }
 
-void fnDebugCodeGen( char* instr, char* arg, int iLabel )
+void fnDebugCodeGen( char* strInstr, char* strArg, int iLabel )
 {
-	// mandamos a escribir en el archivo txt para codigo intermedio.
-	fnWrite( instr, arg, iLabel );
+	// Mandamos a escribir en el archivo txt para código intermedio.
+	fnPCode( strInstr, strArg, iLabel );
+
 	if( DEBUG_CODEGEN )
 	{
-		printf( "%s %s", instr, arg );
+		printf( " %s",strInstr );
+		printf( " " );
+		printf( "%s", strArg );			
 
 		if( iLabel != NO_LABEL )
 			printf( "%d", iLabel );
+
+		printf( "\n" );
 	}
 }
 /****************************************/
@@ -152,7 +157,7 @@ void fnParser( )
 		{
 			iType = VOID_T;
 
-			fnDebugParser( " void" );
+			fnDebugParser( "void" );
 			fnGetSymbol( );
 			/*void identifier ...
 			 *procedure declaration o definition
@@ -161,7 +166,7 @@ void fnParser( )
 			{
 				//variableOrProcedureName = g_identifier;
 				strcpy( variableOrProcedureName, g_identifier );
-				fnDebugParser( " id" );
+				fnDebugParser( "id" );
 
 				g_lastProc = variableOrProcedureName;
 
@@ -185,7 +190,7 @@ void fnParser( )
 		 */
 		else if( g_symbol == SYM_OCTOTHORPE )
 		{
-			fnDebugParser( " #" );
+			fnDebugParser( "#" );
 
 			/*En fnInclude se comienza a analizar desde el token
 			 *que obtuvimos anteriormente.
@@ -224,7 +229,7 @@ void fnParser( )
 
 				//printf("\n g_identifier: %s\n", variableOrProcedureName);
 
-				fnDebugParser( " id" );
+				fnDebugParser( "id" );
 				fnGetSymbol( );
 
 				/*type identifier '(' ...
@@ -257,7 +262,7 @@ void fnParser( )
 					{
 						bIsDefined = 0; // No se ha definido la variable
 
-						fnDebugParser( " ;" );
+						fnDebugParser( ";" );
 						fnGetSymbol( );
 
 						//no debería inicializarse initialValue en 0
@@ -347,7 +352,7 @@ int fnType( )
 	{
 		iType = INT_T;
 
-		fnDebugParser( " int" );
+		fnDebugParser( "int" );
 		fnGetSymbol( );
 
 		/* int* ...
@@ -356,7 +361,7 @@ int fnType( )
 		{
 			iType = INTSTAR_T;
 
-			fnDebugParser( " *" );
+			fnDebugParser( "*" );
 			fnGetSymbol( );
 		}
 	}
@@ -366,7 +371,7 @@ int fnType( )
 	{
 		iType = CHAR_T;
 
-		fnDebugParser( " char" );
+		fnDebugParser( "char" );
 		fnGetSymbol( );
 
 		/* char*
@@ -375,7 +380,7 @@ int fnType( )
 		{
 			iType = CHARSTAR_T;
 
-			fnDebugParser( " *" );
+			fnDebugParser( "*" );
 			fnGetSymbol( );
 		}
 	}
@@ -427,17 +432,17 @@ int fnExpression( )
 		// Y NOS REGRESE EL MNEMÓNICO
 		// CODEGEN
 		if( iOperatorSymbol == SYM_LT )
-			fnDebugCodeGen( "\n les", "", NO_LABEL );
+			fnDebugCodeGen( "les", "", NO_LABEL );
 		else if( iOperatorSymbol == SYM_LEQ )
-			fnDebugCodeGen( "\n leq", "", NO_LABEL );
+			fnDebugCodeGen( "leq", "", NO_LABEL );
 		else if( iOperatorSymbol == SYM_EQUALITY )
-			fnDebugCodeGen( "\n equ", "", NO_LABEL );
+			fnDebugCodeGen( "equ", "", NO_LABEL );
 		else if( iOperatorSymbol == SYM_GT )
-			fnDebugCodeGen( "\n grt", "", NO_LABEL );
+			fnDebugCodeGen( "grt", "", NO_LABEL );
 		else if( iOperatorSymbol == SYM_GEQ )
-			fnDebugCodeGen( "\n geq", "", NO_LABEL );
+			fnDebugCodeGen( "geq", "", NO_LABEL );
 		else if( iOperatorSymbol == SYM_NOTEQ )
-			fnDebugCodeGen( "\n neq", "", NO_LABEL );
+			fnDebugCodeGen( "neq", "", NO_LABEL );
 		// 
 
 		/* simplexpr [comp simpexpr] ...
@@ -507,9 +512,9 @@ int fnSimpleExpression( )
 		// Y REGRESE LA OPERACIÓN
 		// CODEGEN
 		if( iOperatorSymbol == SYM_PLUS )
-			fnDebugCodeGen( "\n adi", "", NO_LABEL );
+			fnDebugCodeGen( "adi", "", NO_LABEL );
 		else if( iOperatorSymbol == SYM_MINUS )
-			fnDebugCodeGen( "\n sbi", "", NO_LABEL );
+			fnDebugCodeGen( "sbi", "", NO_LABEL );
 		//
 
 		// TODO: CONTINUAR
@@ -569,11 +574,11 @@ int fnTerm( )
 		// Y REGRESE LA OPERACIÓN
 		// CODEGEN
 		if( iOperatorSymbol == SYM_ASTERISK )
-			fnDebugCodeGen( "\n mpi", "", NO_LABEL );
+			fnDebugCodeGen( "mpi", "", NO_LABEL );
 		else if( iOperatorSymbol == SYM_DIV )
-			fnDebugCodeGen( "\n dvi", "", NO_LABEL );
+			fnDebugCodeGen( "dvi", "", NO_LABEL );
 		else if( iOperatorSymbol == SYM_MOD )
-			fnDebugCodeGen( "\n mod", "", NO_LABEL );
+			fnDebugCodeGen( "mod", "", NO_LABEL );
 		// 
 
 		if( iLType != iRType )
@@ -667,7 +672,7 @@ int fnFactor( )
 	 */
 	if( g_symbol == SYM_LPARENTHESIS )
 	{
-		fnDebugParser( " (" );
+		fnDebugParser( "(" );
 		fnGetSymbol( );
 
 		/*Es un cast:
@@ -687,7 +692,7 @@ int fnFactor( )
 			 */
 			if( g_symbol == SYM_RPARENTHESIS )
 			{
-				fnDebugParser( " )" );
+				fnDebugParser( ")" );
 				fnGetSymbol( );
 			}
 			else
@@ -705,7 +710,7 @@ int fnFactor( )
 			 */
 			if( g_symbol == SYM_RPARENTHESIS )
 			{
-				fnDebugParser( " )" );
+				fnDebugParser( ")" );
 				fnGetSymbol( );
 			}
 			else
@@ -722,14 +727,14 @@ int fnFactor( )
 	 */
 	if( g_symbol == SYM_ASTERISK )
 	{
-		fnDebugParser( " *" );
+		fnDebugParser( "*" );
 		fnGetSymbol( );
 
 		/* '*' identifier ...
 		 */
 		if( g_symbol == SYM_IDENTIFIER )
 		{
-			fnDebugParser( " id" );
+			fnDebugParser( "id" );
 
 			// TODO: REVISAR (MEJORAR) Y HACER UNA FUNCIÓN QUE LO HAGA
 			/************************************************/
@@ -761,7 +766,7 @@ int fnFactor( )
 		 */
 		else if( g_symbol == SYM_LPARENTHESIS )
 		{
-			fnDebugParser( " (" );
+			fnDebugParser( "(" );
 			fnGetSymbol( );
 
 			/* '*' '(' expression ...
@@ -772,7 +777,7 @@ int fnFactor( )
 			 */
 			if( g_symbol == SYM_RPARENTHESIS )
 			{
-				fnDebugParser( " )" );
+				fnDebugParser( ")" );
 				fnGetSymbol( );
 			}
 			else
@@ -804,14 +809,14 @@ int fnFactor( )
 		// variableOrProcedureName = g_identifier;
 		strcpy( variableOrProcedureName, g_identifier );
 
-		fnDebugParser( " id" );
+		fnDebugParser( "id" );
 		fnGetSymbol( );
 
 		/* identifier '(' ...
 		 */
 		if( g_symbol == SYM_LPARENTHESIS )
 		{
-			fnDebugParser( " (" );
+			fnDebugParser( "(" );
 			fnGetSymbol( );
 
 			/* identifier '(' call ...
@@ -825,7 +830,7 @@ int fnFactor( )
 		{
 			// TODO: VER SI ES EL LUGAR CORRECTO
 			// CODEGEN
-			fnDebugCodeGen( "\n lod", g_identifier, NO_LABEL );
+			fnDebugCodeGen( "lod", g_identifier, NO_LABEL );
 			// 
 
 			// TODO: REVISAR (MEJORAR) Y HACER UNA FUNCIÓN QUE LO HAGA
@@ -857,12 +862,12 @@ int fnFactor( )
 	 */
 	else if( g_symbol == SYM_INTEGER )
 	{
-		fnDebugParser( " integer" );
+		fnDebugParser( "integer" );
 		fnGetSymbol( );
 
 		// TODO: REVISAR SI ESTÁ EN EL LUGAR CORRECTO
 		// CODEGEN
-		fnDebugCodeGen( "\n ldc", g_integer, NO_LABEL );
+		fnDebugCodeGen( "ldc", g_integer, NO_LABEL );
 		//
 
 		iType = INT_T;
@@ -871,7 +876,7 @@ int fnFactor( )
 	 */
 	else if( g_symbol == SYM_CHARACTER )
 	{
-		fnDebugParser( " character" );
+		fnDebugParser( "character" );
 		fnGetSymbol( );
 
 		iType = CHAR_T;
@@ -880,7 +885,7 @@ int fnFactor( )
 	 */
 	else if( g_symbol == SYM_STRING )
 	{
-		fnDebugParser( " string" );
+		fnDebugParser( "string" );
 		fnGetSymbol( );
 
 		iType = CHARSTAR_T;
@@ -889,7 +894,7 @@ int fnFactor( )
 	 */
 	else if( g_symbol == SYM_LPARENTHESIS )
 	{
-		fnDebugParser( " (" );
+		fnDebugParser( "(" );
 		fnGetSymbol( );
 
 		/* '(' expression ...
@@ -900,7 +905,7 @@ int fnFactor( )
 		 */
 		if( g_symbol == SYM_RPARENTHESIS )
 		{
-			fnDebugParser( " )" );
+			fnDebugParser( ")" );
 			fnGetSymbol( );
 		}
 		else
@@ -935,7 +940,7 @@ void fnVariable( )
 	 */
 	if( g_symbol == SYM_IDENTIFIER )
 	{
-		fnDebugParser( " id" );
+		fnDebugParser( "id" );
 
 		// SÓLO EN LA TABLA LOCAL
 		entry = fnSearchSymbolTable( local_symbol_table, g_identifier, VARIABLE, g_lastProc );
@@ -989,9 +994,9 @@ int fnInitialization( int iType )
 	if( g_symbol == SYM_ASSIGN )
 	{
 		// CODEGEN
-		fnDebugCodeGen( "\n lda", g_identifier, NO_LABEL );
+		fnDebugCodeGen( "lda", g_identifier, NO_LABEL );
 		// 
-		fnDebugParser( " =" );
+		fnDebugParser( "=" );
 		fnGetSymbol( );
 
 		// optional cast: [ cast ]
@@ -1001,7 +1006,7 @@ int fnInitialization( int iType )
 		{
 			hasCast = 1;
 
-			fnDebugParser( " (" );
+			fnDebugParser( "(" );
 			fnGetSymbol( );
 
 			/*identifier '=' '(' type ...
@@ -1013,7 +1018,7 @@ int fnInitialization( int iType )
 			 */
 			if( g_symbol == SYM_RPARENTHESIS )
 			{
-				fnDebugParser( " )" );
+				fnDebugParser( ")" );
 				fnGetSymbol( );
 			}
 			else
@@ -1029,7 +1034,7 @@ int fnInitialization( int iType )
 
 			// TODO: HACER ALGO CON ESTO
 
-			fnDebugParser( " -" );
+			fnDebugParser( "-" );
 			fnGetSymbol( );
 		}
 		//else
@@ -1041,7 +1046,7 @@ int fnInitialization( int iType )
 		{
 			// TODO: VER SI ESTÁ EN EL LUGAR CORRECTO
 			// CODEGEN
-			// fnDebugCodeGen( "\n ldc ", "", NO_LABEL );
+			// fnDebugCodeGen( "ldc ", "", NO_LABEL );
 			// 
 
 			// Por el momento no es de nuestro interés
@@ -1051,20 +1056,20 @@ int fnInitialization( int iType )
 			if( g_symbol == SYM_INTEGER )
 			{
 				// CODEGEN
-				fnDebugCodeGen("\n ldc", g_integer, NO_LABEL );
+				fnDebugCodeGen("ldc", g_integer, NO_LABEL );
 				// 
 				iAssignedType = INT_T;
 			}
 			else if( g_symbol == SYM_CHARACTER )
 			{
 				// CODEGEN
-				fnDebugCodeGen("\n ldc", g_literal, NO_LABEL );
+				fnDebugCodeGen("ldc", g_literal, NO_LABEL );
 				// 
 				iAssignedType = CHAR_T;
 			}
 
 			// CODEGEN
-			fnDebugCodeGen( "\n stn ", "", NO_LABEL );
+			fnDebugCodeGen( "stn ", "", NO_LABEL );
 			//             
 			fnGetSymbol( );
 
@@ -1078,7 +1083,7 @@ int fnInitialization( int iType )
 		 */
 		if( g_symbol == SYM_SEMICOLON )
 		{
-			fnDebugParser( " ;" );
+			fnDebugParser( ";" );
 			fnGetSymbol( );
 		}
 		else
@@ -1176,7 +1181,7 @@ void fnStatement( )
 	 */
 	if( g_symbol == SYM_ASTERISK )
 	{
-		fnDebugParser( " *" );
+		fnDebugParser( "*" );
 		fnGetSymbol( );
 
 		/* '*' identifier
@@ -1224,14 +1229,14 @@ void fnStatement( )
 			}
 
 			// TODO: VER SI ES NECESARIO IMPRIMIR ANTES
-			fnDebugParser( " id" );
+			fnDebugParser( "id" );
 			fnGetSymbol( );
 
 			/* '*' identifier '='
 			 */
 			if( g_symbol == SYM_ASSIGN )
 			{
-				fnDebugParser( " =" );
+				fnDebugParser( "=" );
 				fnGetSymbol( );
 
 				/* '*' identifier '=' expression
@@ -1264,7 +1269,7 @@ void fnStatement( )
 			 */
 			if( g_symbol == SYM_SEMICOLON )
 			{
-				fnDebugParser( " ;" );
+				fnDebugParser( ";" );
 				fnGetSymbol( );
 			}
 			else
@@ -1274,7 +1279,7 @@ void fnStatement( )
 		 */
 		else if( g_symbol == SYM_LPARENTHESIS )
 		{
-			fnDebugParser( " (" );
+			fnDebugParser( "(" );
 			fnGetSymbol( );
 
 			/* '*' '(' expression ...
@@ -1299,14 +1304,14 @@ void fnStatement( )
 			*/
 			if( g_symbol == SYM_RPARENTHESIS )
 			{
-				fnDebugParser( " )" );
+				fnDebugParser( ")" );
 				fnGetSymbol( );
 
 				/* '*' '(' expression ')' '='
 				 */
 				if( g_symbol == SYM_ASSIGN )
 				{
-					fnDebugParser( " =" );
+					fnDebugParser( "=" );
 					fnGetSymbol( );
 
 					/* '*' '(' expression ')' '=' expression
@@ -1336,7 +1341,7 @@ void fnStatement( )
 				 */
 				if( g_symbol == SYM_SEMICOLON )
 				{
-					fnDebugParser( " ;" );
+					fnDebugParser( ";" );
 					fnGetSymbol( );
 				}
 				else
@@ -1356,14 +1361,14 @@ void fnStatement( )
 		// variableOrProcedureName = g_identifier;
 		strcpy( variableOrProcedureName, g_identifier );
 
-		fnDebugParser( " id" );
+		fnDebugParser( "id" );
 		fnGetSymbol( );
 
 		/* identifier '('
 		 */
 		if( g_symbol == SYM_LPARENTHESIS )
 		{
-			fnDebugParser( " (" );
+			fnDebugParser( "(" );
 			fnGetSymbol( );
 
 			/* identifier '('[type indentifier ',' ...] ')'
@@ -1375,7 +1380,7 @@ void fnStatement( )
 			 */
 			if( g_symbol == SYM_SEMICOLON )
 			{
-				fnDebugParser( " ;" );
+				fnDebugParser( ";" );
 				fnGetSymbol( );
 			}
 			else
@@ -1398,9 +1403,9 @@ void fnStatement( )
 			iLType = fnGetType( entry );
 
 			// CODEGEN
-			fnDebugCodeGen( "\n lda", g_identifier, NO_LABEL );
+			fnDebugCodeGen( "lda", g_identifier, NO_LABEL );
 			// 
-			fnDebugParser( " =" );
+			fnDebugParser( "=" );
 			fnGetSymbol( );
 
 			/* identifier '=' expression
@@ -1408,7 +1413,7 @@ void fnStatement( )
 			iRType = fnExpression( );
 
 			// CODEGEN:
-			fnDebugCodeGen( "\n stn", "", NO_LABEL );
+			fnDebugCodeGen( "stn", "", NO_LABEL );
 			// 
 
 			if( iLType != iRType )
@@ -1422,7 +1427,7 @@ void fnStatement( )
 			 */
 			if( g_symbol == SYM_SEMICOLON )
 			{
-				fnDebugParser( " ;" );
+				fnDebugParser( ";" );
 				fnGetSymbol( );
 			}
 			else
@@ -1435,21 +1440,21 @@ void fnStatement( )
 	 */
 	else if( g_symbol == SYM_WHILE )
 	{
-		fnDebugParser( " while" );
+		fnDebugParser( "while" );
 		fnWhile( );
 	}
 	/* if
 	 */
 	else if( g_symbol == SYM_IF )
 	{
-		fnDebugParser( " if" );
+		fnDebugParser( "if" );
 		fnIf( );
 	}
 	/* return
 	 */
 	else if( g_symbol == SYM_RETURN )
 	{
-		fnDebugParser( " return" );
+		fnDebugParser( "return" );
 
 		/* return expresion
 		 */
@@ -1459,7 +1464,7 @@ void fnStatement( )
 		 */
 		if( g_symbol == SYM_SEMICOLON )
 		{
-			fnDebugParser( " ;" );
+			fnDebugParser( ";" );
 			fnGetSymbol( );
 		}
 		else
@@ -1494,7 +1499,7 @@ void fnProcedure( char* procedure, int type )
 	 */
 	if( g_symbol == SYM_LPARENTHESIS )
 	{
-		fnDebugParser( " (" );
+		fnDebugParser( "(" );
 		fnGetSymbol( );
 
 		/*
@@ -1518,7 +1523,7 @@ void fnProcedure( char* procedure, int type )
 			 */
 			while( g_symbol == SYM_COMMA )
 			{
-				fnDebugParser( " ," );
+				fnDebugParser( "," );
 
 				fnGetSymbol( );
 				fnVariable( );
@@ -1532,7 +1537,7 @@ void fnProcedure( char* procedure, int type )
 			 */
 			if( g_symbol == SYM_RPARENTHESIS )
 			{
-				fnDebugParser( " )" );
+				fnDebugParser( ")" );
 				fnGetSymbol( );
 			}
 			else
@@ -1546,7 +1551,7 @@ void fnProcedure( char* procedure, int type )
 		 */
 		else
 		{
-			fnDebugParser( " )" );
+			fnDebugParser( ")" );
 			fnGetSymbol( );
 		}
 	}
@@ -1565,7 +1570,7 @@ void fnProcedure( char* procedure, int type )
 	  */
 	if( g_symbol == SYM_SEMICOLON )
 	{
-		fnDebugParser( " ;" );
+		fnDebugParser( ";" );
 
 		//Si entry es NULL (0), entonces es una declaración de
 		//procedimiento.
@@ -1595,9 +1600,9 @@ void fnProcedure( char* procedure, int type )
 	else if( g_symbol == SYM_LBRACE )
 	{
 		// CODEGEN
-		fnDebugCodeGen( "\n ent", procedure, NO_LABEL );
+		fnDebugCodeGen( "ent", procedure, NO_LABEL );
 		// 
-		fnDebugParser( " {" );
+		fnDebugParser( "{" );
 
 		if( entry == 0 )
 		{
@@ -1639,7 +1644,7 @@ void fnProcedure( char* procedure, int type )
 
 			if( g_symbol == SYM_SEMICOLON )
 			{
-				fnDebugParser( " ;" );
+				fnDebugParser( ";" );
 				fnGetSymbol( );
 			}
 			/* Para que acepte la declaración e inicialiazción de una
@@ -1680,7 +1685,7 @@ void fnProcedure( char* procedure, int type )
 		 */
 		if( g_symbol == SYM_RBRACE )
 		{
-			fnDebugParser( " }" );
+			fnDebugParser( "}" );
 
 			/********************/
 			if( !g_bHasReturn )
@@ -1733,7 +1738,7 @@ int fnCall( char* procedure )
 	if( fnIsExpression( ) )
 	{
 		// CODEGEN
-		fnDebugCodeGen( "\n mst", "", NO_LABEL );
+		fnDebugCodeGen( "mst", "", NO_LABEL );
 		// 
 		fnExpression( );
 
@@ -1743,7 +1748,7 @@ int fnCall( char* procedure )
 		 */
 		while( g_symbol == SYM_COMMA )
 		{
-			fnDebugParser( " ," );
+			fnDebugParser( "," );
 			fnGetSymbol( );
 
 			/* identifier '(' expression ',' expression ...
@@ -1756,9 +1761,9 @@ int fnCall( char* procedure )
 		if( g_symbol == SYM_RPARENTHESIS )
 		{
 			// CODEGEN
-			fnDebugCodeGen( "\n cup", procedure, NO_LABEL );
+			fnDebugCodeGen( "cup", procedure, NO_LABEL );
 			// 
-			fnDebugParser( " )" );
+			fnDebugParser( ")" );
 			fnGetSymbol( );
 
 			// El procedimiento nunca ha sido llamado,
@@ -1790,9 +1795,9 @@ int fnCall( char* procedure )
 	else if( g_symbol == SYM_RPARENTHESIS )
 	{
 		// CODEGEN
-		fnDebugCodeGen( "\n cup", g_identifier, NO_LABEL );
+		fnDebugCodeGen( "cup", g_identifier, NO_LABEL );
 		//
-		fnDebugParser( " )" );
+		fnDebugParser( ")" );
 		fnGetSymbol( );
 
 		// El procedimiento nunca ha sido llamado,
@@ -1832,12 +1837,12 @@ void fnWhile( )
 	if( g_symbol == SYM_WHILE )
 	{
 		// CODEGEN        
-		// fnDebugCodeGen( "\n CODE GENERATION: WHILE", "", NO_LABEL );
+		// fnDebugCodeGen( "CODE GENERATION: WHILE", "", NO_LABEL );
 
 		fnNewLabel( );
 		g_iL1While = g_iLabel;
 
-		fnDebugCodeGen( "\n lab", "L", g_iLabel );
+		fnDebugCodeGen( "lab", "L", g_iLabel );
 		//
 		fnGetSymbol( );
 
@@ -1845,11 +1850,11 @@ void fnWhile( )
 		 */
 		if( g_symbol == SYM_LPARENTHESIS )
 		{
-			fnDebugParser( " (" );
+			fnDebugParser( "(" );
 			fnGetSymbol( );
 
 			// CODEGEN: El código se genera en fnExpression( );
-			// fnDebugCodeGen( "\n < code to evaluate E to", "L", g_iLabel );
+			// fnDebugCodeGen( "< code to evaluate E to", "L", g_iLabel );
 			// fnDebugCodeGen( " >", "", NO_LABEL);
 			//
 
@@ -1861,14 +1866,14 @@ void fnWhile( )
 			fnNewLabel( ); // ¿Se genera aquí?
 			g_iL2While = g_iLabel;
 
-			fnDebugCodeGen( "\n fjp", "L", g_iLabel );
+			fnDebugCodeGen( "fjp", "L", g_iLabel );
 			//
 
 			/* while '(' expression ')' ...
 			 */
 			if( g_symbol == SYM_RPARENTHESIS )
 			{
-				fnDebugParser( " )" );
+				fnDebugParser( ")" );
 				fnGetSymbol( );
 
 				// zero or more statements: { statement }
@@ -1877,12 +1882,12 @@ void fnWhile( )
 				 */
 				if( g_symbol == SYM_LBRACE )
 				{
-					fnDebugParser( " {" );
+					fnDebugParser( "{" );
 					fnGetSymbol( );
 
 					// CODEGEN
 					// El código para S se genera en el siguiente while
-					// fnDebugCodeGen( "\n < code for S >", "", NO_LABEL );
+					// fnDebugCodeGen( "< code for S >", "", NO_LABEL );
 					//
 
 					/* while '(' expression ')'
@@ -1901,7 +1906,7 @@ void fnWhile( )
 					 */
 					if( g_symbol == SYM_RBRACE )
 					{
-						fnDebugParser( " }" );
+						fnDebugParser( "}" );
 						fnGetSymbol( );
 					}
 					else
@@ -1935,8 +1940,8 @@ void fnWhile( )
 
 	// CODEGEN
 	// TODO: VER SI ES EL LUGAR CORRECTO
-	fnDebugCodeGen( "\n ujp", "L", g_iL1While );
-	fnDebugCodeGen( "\n lab", "L", g_iL2While );
+	fnDebugCodeGen( "ujp", "L", g_iL1While );
+	fnDebugCodeGen( "lab", "L", g_iL2While );
 	// 
 
 	g_iNumberOfWhile = g_iNumberOfWhile + 1;
@@ -1950,7 +1955,7 @@ void fnIf( )
 	if( g_symbol == SYM_IF )
 	{
 		// CODEGEN
-		// fnDebugCodeGen( "\n CODE GENERATION: IF", "", NO_LABEL );
+		// fnDebugCodeGen( "CODE GENERATION: IF", "", NO_LABEL );
 		// 
 		fnGetSymbol( );
 
@@ -1958,14 +1963,14 @@ void fnIf( )
 		 */
 		if( g_symbol == SYM_LPARENTHESIS )
 		{
-			fnDebugParser( " (" );
+			fnDebugParser( "(" );
 			fnGetSymbol( );
 
 			// CODEGEN: El código para E se genera en fnExpression( )
 			fnNewLabel( );
 			g_iL1If = g_iLabel;
 
-			// fnDebugCodeGen( "\n < code to evaluate E to", "L", g_iLabel );
+			// fnDebugCodeGen( "< code to evaluate E to", "L", g_iLabel );
 			// fnDebugCodeGen( " >", "", NO_LABEL );
 			// 
 
@@ -1977,16 +1982,16 @@ void fnIf( )
 			 */
 			if( g_symbol == SYM_RPARENTHESIS )
 			{
-				fnDebugParser( " )" );
+				fnDebugParser( ")" );
 				fnGetSymbol( );
 
 				// CODEGEN
-				fnDebugCodeGen( "\n fjp", "L", g_iL1If );
+				fnDebugCodeGen( "fjp", "L", g_iL1If );
 				//
 
 				// TODO: ELIMINAR DESPUÉS DE HABER GENERADO S1
 				// CODEGEN: El código para S1 se genera en el siguiente while
-				// fnDebugCodeGen( "\n < code for S1 >", "", NO_LABEL );
+				// fnDebugCodeGen( "< code for S1 >", "", NO_LABEL );
 				//
 
 				// zero or more statements: { statement }
@@ -1995,7 +2000,7 @@ void fnIf( )
 				 */
 				if( g_symbol == SYM_LBRACE )
 				{
-					fnDebugParser( " {" );
+					fnDebugParser( "{" );
 					fnGetSymbol( );
 
 					/* if '(' expression ')'
@@ -2014,7 +2019,7 @@ void fnIf( )
 					 */
 					if( g_symbol == SYM_RBRACE )
 					{
-						fnDebugParser( " }" );
+						fnDebugParser( "}" );
 						fnGetSymbol( );
 					}
 					else
@@ -2043,20 +2048,20 @@ void fnIf( )
 				 */
 				if( g_symbol == SYM_ELSE )
 				{
-					fnDebugParser( " else" );
+					fnDebugParser( "else" );
 					fnGetSymbol( );
 
 					// CODEGEN: 
 					fnNewLabel( ); // ¿Se genera aquí?
 					g_iL2If = g_iLabel;
 
-					fnDebugCodeGen( "\n ujp", "L", g_iL2If );
-					fnDebugCodeGen( "\n lab", "L", g_iL1If );
+					fnDebugCodeGen( "ujp", "L", g_iL2If );
+					fnDebugCodeGen( "lab", "L", g_iL1If );
 					//
 
 					// TODO: ELIMINAR DESPUÉS DE HABER GENERAR EL CÓODIGO PARA S2
 					// CODEGEN: El código para S2 se genera en el siguiente while
-					// fnDebugCodeGen( "\n < code for S2 >", "", NO_LABEL );
+					// fnDebugCodeGen( "< code for S2 >", "", NO_LABEL );
 					// 
 
 					// zero or more statements: { statement }
@@ -2067,7 +2072,7 @@ void fnIf( )
 					 */
 					if( g_symbol == SYM_LBRACE )
 					{
-						fnDebugParser( " {" );
+						fnDebugParser( "{" );
 						fnGetSymbol( );
 
 						/* if '(' expression ')'
@@ -2090,11 +2095,11 @@ void fnIf( )
 						 */
 						if( g_symbol == SYM_RBRACE )
 						{
-							fnDebugParser( " }" );
+							fnDebugParser( "}" );
 							fnGetSymbol( );
 
 							// CODEGEN
-							// fnDebugCodeGen( "\n lab", "L", g_iL2If );
+							// fnDebugCodeGen( "lab", "L", g_iL2If );
 							// 
 						}
 						else
@@ -2114,18 +2119,18 @@ void fnIf( )
 						fnStatement( );
 
 						// CODEGEN
-						// fnDebugCodeGen( "\n lab", "L", g_iL2If );
+						// fnDebugCodeGen( "lab", "L", g_iL2If );
 						//
 					}
 
 					// CODEGEN
-					fnDebugCodeGen( "\n lab", "L", g_iL2If );
+					fnDebugCodeGen( "lab", "L", g_iL2If );
 					//
 				}
 				else // No tiene else                
 				{
 					// CODEGEN
-					fnDebugCodeGen( "\n lab", "L", g_iL1If );
+					fnDebugCodeGen( "lab", "L", g_iL1If );
 					//
 				}
 			}
@@ -2151,7 +2156,7 @@ void fnReturn( )
 	if( g_symbol == SYM_RETURN )
 	{
 		// CODEGEN
-		// fnDebugCodeGen( "\n CODE GENERATION: RETURN", "", NO_LABEL );
+		// fnDebugCodeGen( "CODE GENERATION: RETURN", "", NO_LABEL );
 		// 
 		fnGetSymbol( );
 	}
@@ -2166,7 +2171,7 @@ void fnReturn( )
 		iType = fnExpression( );
 
 		// CODEGEN
-		fnDebugCodeGen( "\n ret", "", NO_LABEL );
+		fnDebugCodeGen( "ret", "", NO_LABEL );
 		// 
 
 		if( iType != g_iReturnType )
@@ -2197,14 +2202,14 @@ void fnInclude( )
 		 */
 		if( g_symbol == SYM_INCLUDE )
 		{
-			fnDebugParser( " include" );
+			fnDebugParser( "include" );
 			fnGetSymbol( );
 
 			/* '#' include string ...
 			 */
 			if( g_symbol == SYM_STRING )
 			{
-				fnDebugParser( " string" );
+				fnDebugParser( "string" );
 				fnGetSymbol( );
 			}
 			else
@@ -2276,13 +2281,13 @@ int fnIsPlusOrMinus( )
 {
 	if( g_symbol == SYM_PLUS )
 	{
-		fnDebugParser( " PLUS" );
+		fnDebugParser( "PLUS" );
 		return 1;
 	}
 
 	if( g_symbol == SYM_MINUS )
 	{
-		fnDebugParser( " MINUS" );
+		fnDebugParser( "MINUS" );
 		return 1;
 	}
 
@@ -2319,19 +2324,19 @@ int fnIsAsteriskOrDivOrMod( )
 {
 	if( g_symbol == SYM_ASTERISK )
 	{
-		fnDebugParser( " TIMES" );
+		fnDebugParser( "TIMES" );
 		return 1;
 	}
 
 	if( g_symbol == SYM_DIV )
 	{
-		fnDebugParser( " DIV" );
+		fnDebugParser( "DIV" );
 		return 1;
 	}
 
 	if( g_symbol == SYM_MOD )
 	{
-		fnDebugParser( " MOD" );
+		fnDebugParser( "MOD" );
 		return 1;
 	}
 
@@ -2342,37 +2347,37 @@ int fnIsComparison( )
 {
 	if( g_symbol == SYM_EQUALITY )
 	{
-		fnDebugParser( " ==" );
+		fnDebugParser( "==" );
 		return 1;
 	}
 
 	if( g_symbol == SYM_NOTEQ )
 	{
-		fnDebugParser( " !=" );
+		fnDebugParser( "!=" );
 		return 1;
 	}
 
 	if( g_symbol == SYM_LT )
 	{
-		fnDebugParser( " <" );
+		fnDebugParser( "<" );
 		return 1;
 	}
 
 	if( g_symbol == SYM_GT )
 	{
-		fnDebugParser( " >" );
+		fnDebugParser( ">" );
 		return 1;
 	}
 
 	if( g_symbol == SYM_LEQ )
 	{
-		fnDebugParser( " <=" );
+		fnDebugParser( "<=" );
 		return 1;
 	}
 
 	if( g_symbol == SYM_GEQ )
 	{
-		fnDebugParser( " >=" );
+		fnDebugParser( ">=" );
 		return 1;
 	}
 
@@ -2383,13 +2388,13 @@ int fnIsLiteral( )
 {
 	if( g_symbol == SYM_INTEGER )
 	{
-		fnDebugParser( " integer" );
+		fnDebugParser( "integer" );
 		return 1;
 	}
 
 	if( g_symbol == SYM_CHARACTER )
 	{
-		fnDebugParser( " character" );
+		fnDebugParser( "character" );
 		return 1;
 	}
 
