@@ -3,8 +3,9 @@
 	date:		2017/07/26
 	author: 	Luis Escutia, Miguel Corona
 	Contact:	escutialuis93@gmail.com
+				fmiguelcorona@gmail.com
 
-	Purpose:	
+	Purpose:		
 ********************************************************************/
 
 #include "../includes/CompilerPCH.h"
@@ -85,17 +86,15 @@ void fnDebugParser( char* message )
 		printf( "%s", message );
 }
 
-void fnDebugCodeGen( char* message, int iLabel )
+void fnDebugCodeGen( char* instr, char* arg, int iLabel )
 {
 	if( DEBUG_CODEGEN )
 	{
-		// TODO: MEJORAR
-		if( iLabel == NO_LABEL )
-			printf( "%s", message );
-		else
-			printf( "%s L%d", message, iLabel );
-	}
+		printf( "%s %s", instr, arg );
 
+		if( iLabel != NO_LABEL )
+			printf( "%d", iLabel );
+	}
 }
 /****************************************/
 
@@ -423,21 +422,20 @@ int fnExpression( )
 		fnGetSymbol( );
 
 		// TODO: HACER UNA FUNCIÓN HAGA LAS COMPARACIONES
-		// Y NOS REGRESE MNEMÓNICO
+		// Y NOS REGRESE EL MNEMÓNICO
 		// CODEGEN
 		if( iOperatorSymbol == SYM_LT )
-			fnDebugCodeGen( "\n les", NO_LABEL );
+			fnDebugCodeGen( "\n les", "", NO_LABEL );
 		else if( iOperatorSymbol == SYM_LEQ )
-			fnDebugCodeGen( "\n leq", NO_LABEL );
+			fnDebugCodeGen( "\n leq", "", NO_LABEL );
 		else if( iOperatorSymbol == SYM_EQUALITY )
-			fnDebugCodeGen( "\n equ", NO_LABEL );
-		// TODO: BUSCAR UN MNEMÓNICO PARA MAYOR QUE
+			fnDebugCodeGen( "\n equ", "", NO_LABEL );
 		else if( iOperatorSymbol == SYM_GT )
-			fnDebugCodeGen( "\n gt", NO_LABEL );
+			fnDebugCodeGen( "\n grt", "", NO_LABEL );
 		else if( iOperatorSymbol == SYM_GEQ )
-			fnDebugCodeGen( "\n geq", NO_LABEL );
+			fnDebugCodeGen( "\n geq", "", NO_LABEL );
 		else if( iOperatorSymbol == SYM_NOTEQ )
-			fnDebugCodeGen( "\n neq", NO_LABEL );
+			fnDebugCodeGen( "\n neq", "", NO_LABEL );
 		// 
 
 		/* simplexpr [comp simpexpr] ...
@@ -507,9 +505,9 @@ int fnSimpleExpression( )
 		// Y REGRESE LA OPERACIÓN
 		// CODEGEN
 		if( iOperatorSymbol == SYM_PLUS )
-			fnDebugCodeGen( "\n adi", NO_LABEL );
+			fnDebugCodeGen( "\n adi", "", NO_LABEL );
 		else if( iOperatorSymbol == SYM_MINUS )
-			fnDebugCodeGen( "\n sbi", NO_LABEL );
+			fnDebugCodeGen( "\n sbi", "", NO_LABEL );
 		//
 
 		// TODO: CONTINUAR
@@ -569,11 +567,11 @@ int fnTerm( )
 		// Y REGRESE LA OPERACIÓN
 		// CODEGEN
 		if( iOperatorSymbol == SYM_ASTERISK )
-			fnDebugCodeGen( "\n mpi", NO_LABEL );
+			fnDebugCodeGen( "\n mpi", "", NO_LABEL );
 		else if( iOperatorSymbol == SYM_DIV )
-			fnDebugCodeGen( "\n dvi", NO_LABEL );
+			fnDebugCodeGen( "\n dvi", "", NO_LABEL );
 		else if( iOperatorSymbol == SYM_MOD )
-			fnDebugCodeGen( "\n mod", NO_LABEL );
+			fnDebugCodeGen( "\n mod", "", NO_LABEL );
 		// 
 
 		if( iLType != iRType )
@@ -825,8 +823,7 @@ int fnFactor( )
 		{
 			// TODO: VER SI ES EL LUGAR CORRECTO
 			// CODEGEN
-			fnDebugCodeGen( "\n lod ", NO_LABEL );
-			fnDebugCodeGen( g_identifier, NO_LABEL );
+			fnDebugCodeGen( "\n lod", g_identifier, NO_LABEL );
 			// 
 
 			// TODO: REVISAR (MEJORAR) Y HACER UNA FUNCIÓN QUE LO HAGA
@@ -863,8 +860,7 @@ int fnFactor( )
 
 		// TODO: REVISAR SI ESTÁ EN EL LUGAR CORRECTO
 		// CODEGEN
-		fnDebugCodeGen( "\n ldc", NO_LABEL );
-		printf( " %s", g_integer );
+		fnDebugCodeGen( "\n ldc", g_integer, NO_LABEL );
 		//
 
 		iType = INT_T;
@@ -991,8 +987,7 @@ int fnInitialization( int iType )
 	if( g_symbol == SYM_ASSIGN )
 	{
 		// CODEGEN
-		fnDebugCodeGen( "\n lda ", NO_LABEL );
-		fnDebugCodeGen( g_identifier, NO_LABEL );
+		fnDebugCodeGen( "\n lda", g_identifier, NO_LABEL );
 		// 
 		fnDebugParser( " =" );
 		fnGetSymbol( );
@@ -1044,7 +1039,7 @@ int fnInitialization( int iType )
 		{
 			// TODO: VER SI ESTÁ EN EL LUGAR CORRECTO
 			// CODEGEN
-			fnDebugCodeGen( "\n ldc ", NO_LABEL );
+			// fnDebugCodeGen( "\n ldc ", "", NO_LABEL );
 			// 
 
 			// Por el momento no es de nuestro interés
@@ -1054,20 +1049,20 @@ int fnInitialization( int iType )
 			if( g_symbol == SYM_INTEGER )
 			{
 				// CODEGEN
-				fnDebugCodeGen( g_integer, NO_LABEL );
+				fnDebugCodeGen("\n ldc", g_integer, NO_LABEL );
 				// 
 				iAssignedType = INT_T;
 			}
 			else if( g_symbol == SYM_CHARACTER )
 			{
 				// CODEGEN
-				fnDebugCodeGen( g_literal, NO_LABEL );
+				fnDebugCodeGen("\n ldc", g_literal, NO_LABEL );
 				// 
 				iAssignedType = CHAR_T;
 			}
 
 			// CODEGEN
-			fnDebugCodeGen( "\n stn ", NO_LABEL );
+			fnDebugCodeGen( "\n stn ", "", NO_LABEL );
 			//             
 			fnGetSymbol( );
 
@@ -1401,8 +1396,7 @@ void fnStatement( )
 			iLType = fnGetType( entry );
 
 			// CODEGEN
-			fnDebugCodeGen( "\n lda ", NO_LABEL );
-			fnDebugCodeGen( g_identifier, NO_LABEL );
+			fnDebugCodeGen( "\n lda", g_identifier, NO_LABEL );
 			// 
 			fnDebugParser( " =" );
 			fnGetSymbol( );
@@ -1411,8 +1405,8 @@ void fnStatement( )
 			*/
 			iRType = fnExpression( );
 
-			// CODEGEN: BORRAR
-			fnDebugCodeGen( "\n stn", NO_LABEL );
+			// CODEGEN:
+			fnDebugCodeGen( "\n stn", "", NO_LABEL );
 			// 
 
 			if( iLType != iRType )
@@ -1599,8 +1593,7 @@ void fnProcedure( char* procedure, int type )
 	else if( g_symbol == SYM_LBRACE )
 	{
 		// CODEGEN
-		fnDebugCodeGen( "\n ent ", NO_LABEL );
-		fnDebugCodeGen( procedure, NO_LABEL );
+		fnDebugCodeGen( "\n ent", procedure, NO_LABEL );
 		// 
 		fnDebugParser( " {" );
 
@@ -1738,7 +1731,7 @@ int fnCall( char* procedure )
 	if( fnIsExpression( ) )
 	{
 		// CODEGEN
-		fnDebugCodeGen( "\n mst", NO_LABEL );
+		fnDebugCodeGen( "\n mst", "", NO_LABEL );
 		// 
 		fnExpression( );
 
@@ -1761,9 +1754,7 @@ int fnCall( char* procedure )
 		if( g_symbol == SYM_RPARENTHESIS )
 		{
 			// CODEGEN
-			fnDebugCodeGen( "\n cup", NO_LABEL );
-			// printf( " %s", g_identifier );
-			printf( " %s", procedure );
+			fnDebugCodeGen( "\n cup", procedure, NO_LABEL );
 			// 
 			fnDebugParser( " )" );
 			fnGetSymbol( );
@@ -1797,8 +1788,7 @@ int fnCall( char* procedure )
 	else if( g_symbol == SYM_RPARENTHESIS )
 	{
 		// CODEGEN
-		fnDebugCodeGen( "\n cup", NO_LABEL );
-		printf( " %s", g_identifier );
+		fnDebugCodeGen( "\n cup", g_identifier, NO_LABEL );
 		//
 		fnDebugParser( " )" );
 		fnGetSymbol( );
@@ -1840,12 +1830,12 @@ void fnWhile( )
 	if( g_symbol == SYM_WHILE )
 	{
 		// CODEGEN        
-		fnDebugCodeGen( "\n CODE GENERATION: WHILE", NO_LABEL );
+		// fnDebugCodeGen( "\n CODE GENERATION: WHILE", "", NO_LABEL );
 
 		fnNewLabel( );
 		g_iL1While = g_iLabel;
 
-		fnDebugCodeGen( "\n lab", g_iLabel );
+		fnDebugCodeGen( "\n lab", "L", g_iLabel );
 		//
 		fnGetSymbol( );
 
@@ -1857,7 +1847,8 @@ void fnWhile( )
 			fnGetSymbol( );
 
 			// CODEGEN: El código se genera en fnExpression( );
-			printf( "\n < code to evaluate E to L%d >", g_iLabel );
+			// fnDebugCodeGen( "\n < code to evaluate E to", "L", g_iLabel );
+			// fnDebugCodeGen( " >", "", NO_LABEL);
 			//
 
 			/* while '(' expression ...
@@ -1868,7 +1859,7 @@ void fnWhile( )
 			fnNewLabel( ); // ¿Se genera aquí?
 			g_iL2While = g_iLabel;
 
-			fnDebugCodeGen( "\n fjp", g_iLabel );
+			fnDebugCodeGen( "\n fjp", "L", g_iLabel );
 			//
 
 			/* while '(' expression ')' ...
@@ -1889,7 +1880,7 @@ void fnWhile( )
 
 					// CODEGEN
 					// El código para S se genera en el siguiente while
-					printf( "\n < code for S >" );
+					// fnDebugCodeGen( "\n < code for S >", "", NO_LABEL );
 					//
 
 					/* while '(' expression ')'
@@ -1942,8 +1933,8 @@ void fnWhile( )
 
 	// CODEGEN
 	// TODO: VER SI ES EL LUGAR CORRECTO
-	fnDebugCodeGen( "\n ujp", g_iL1While );
-	fnDebugCodeGen( "\n lab", g_iL2While );
+	fnDebugCodeGen( "\n ujp", "L", g_iL1While );
+	fnDebugCodeGen( "\n lab", "L", g_iL2While );
 	// 
 
 	g_iNumberOfWhile = g_iNumberOfWhile + 1;
@@ -1957,7 +1948,7 @@ void fnIf( )
 	if( g_symbol == SYM_IF )
 	{
 		// CODEGEN
-		fnDebugCodeGen( "\n CODE GENERATION: IF", NO_LABEL );
+		// fnDebugCodeGen( "\n CODE GENERATION: IF", "", NO_LABEL );
 		// 
 		fnGetSymbol( );
 
@@ -1972,7 +1963,8 @@ void fnIf( )
 			fnNewLabel( );
 			g_iL1If = g_iLabel;
 
-			printf( "\n < code to evaluate E to L%d >", g_iLabel );
+			// fnDebugCodeGen( "\n < code to evaluate E to", "L", g_iLabel );
+			// fnDebugCodeGen( " >", "", NO_LABEL );
 			// 
 
 			/* if '(' expression ...
@@ -1987,12 +1979,12 @@ void fnIf( )
 				fnGetSymbol( );
 
 				// CODEGEN
-				fnDebugCodeGen( "\n fjp", g_iL1If );
+				fnDebugCodeGen( "\n fjp", "L", g_iL1If );
 				//
 
 				// TODO: ELIMINAR DESPUÉS DE HABER GENERADO S1
 				// CODEGEN: El código para S1 se genera en el siguiente while
-				printf( "\n < code for S1 >" );
+				// fnDebugCodeGen( "\n < code for S1 >", "", NO_LABEL );
 				//
 
 				// zero or more statements: { statement }
@@ -2056,13 +2048,13 @@ void fnIf( )
 					fnNewLabel( ); // ¿Se genera aquí?
 					g_iL2If = g_iLabel;
 
-					fnDebugCodeGen( "\n ujp", g_iL2If );
-					fnDebugCodeGen( "\n lab", g_iL1If );
+					fnDebugCodeGen( "\n ujp", "L", g_iL2If );
+					fnDebugCodeGen( "\n lab", "L", g_iL1If );
 					//
 
 					// TODO: ELIMINAR DESPUÉS DE HABER GENERAR EL CÓODIGO PARA S2
 					// CODEGEN: El código para S2 se genera en el siguiente while
-					printf( "\n < code for S2 >" );
+					// fnDebugCodeGen( "\n < code for S2 >", "", NO_LABEL );
 					// 
 
 					// zero or more statements: { statement }
@@ -2100,7 +2092,7 @@ void fnIf( )
 							fnGetSymbol( );
 
 							// CODEGEN
-							// fnDebugCodeGen( "\n lab", g_iL2If );
+							// fnDebugCodeGen( "\n lab", "L", g_iL2If );
 							// 
 						}
 						else
@@ -2120,18 +2112,18 @@ void fnIf( )
 						fnStatement( );
 
 						// CODEGEN
-						// fnDebugCodeGen( "\n lab", g_iL2If );
+						// fnDebugCodeGen( "\n lab", "L", g_iL2If );
 						//
 					}
 
 					// CODEGEN
-					fnDebugCodeGen( "\n lab", g_iL2If );
+					fnDebugCodeGen( "\n lab", "L", g_iL2If );
 					//
 				}
 				else // No tiene else                
 				{
 					// CODEGEN
-					fnDebugCodeGen( "\n lab", g_iL1If );
+					fnDebugCodeGen( "\n lab", "L", g_iL1If );
 					//
 				}
 			}
@@ -2157,7 +2149,7 @@ void fnReturn( )
 	if( g_symbol == SYM_RETURN )
 	{
 		// CODEGEN
-		fnDebugCodeGen( "\n CODE GENERATION: RETURN", NO_LABEL );
+		// fnDebugCodeGen( "\n CODE GENERATION: RETURN", "", NO_LABEL );
 		// 
 		fnGetSymbol( );
 	}
@@ -2172,7 +2164,7 @@ void fnReturn( )
 		iType = fnExpression( );
 
 		// CODEGEN
-		fnDebugCodeGen( "\n ret", NO_LABEL );
+		fnDebugCodeGen( "\n ret", "", NO_LABEL );
 		// 
 
 		if( iType != g_iReturnType )

@@ -37,12 +37,13 @@ int main( int argc, char** argv )
 		printf( "\"%s\"\n", filename );
 		exit( 1 );
 	}
-	printf( "\n" );
 
 	/*fnPrintTable( GLOBAL_TABLE );
 	fnPrintTable( LOCAL_TABLE );*/
 
 	fnResetSymbolTables( );
+
+	printf( "\n\n Press any key to exit..." );
 	_getch( );
 	return 0;
 }

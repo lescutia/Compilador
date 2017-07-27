@@ -3,6 +3,7 @@
 	date:		2017/07/26
 	author: 	Luis Escutia, Miguel Corona
 	Contact:	escutialuis93@gmail.com
+				fmiguelcorona@gmail.com
 
 	Purpose:	
 ********************************************************************/
