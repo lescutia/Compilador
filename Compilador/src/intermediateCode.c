@@ -1,4 +1,4 @@
-#include "../includes/CompilerPCH.h"
+#include "../CompilerPCH.h"
 #include "../includes/intermediateCode.h"
 
 FILE *g_pFile;

@@ -83,12 +83,12 @@
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
-      <PrecompiledHeader>
-      </PrecompiledHeader>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>WIN32;_DEBUG;_CRT_SECURE_NO_WARNINGS;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
+      <PrecompiledHeaderFile>CompilerPCH.h</PrecompiledHeaderFile>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -146,15 +146,15 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="CompilerPCH.c" />
     <ClCompile Include="main.c" />
-    <ClCompile Include="src\CompilerPCH.c" />
     <ClCompile Include="src\parser.c" />
     <ClCompile Include="src\scanner.c" />
     <ClCompile Include="src\symbolTable.c" />
     <ClCompile Include="src\intermediateCode.c" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="includes\CompilerPCH.h" />
+    <ClInclude Include="CompilerPCH.h" />
     <ClInclude Include="includes\parser.h" />
     <ClInclude Include="includes\scanner.h" />
     <ClInclude Include="includes\symbolTable.h" />
