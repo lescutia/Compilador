@@ -6,8 +6,14 @@ int fnTest()
 	printf( "Imprime algo...\n" );
 }
 
+int test( )
+{
+	printf("Prueba funcion\n");
+}
+
 int main(int argc, char** argv)
 {
+	test( );
 	initCompiler( );
 	char* filename;
 	/**
