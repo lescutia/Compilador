@@ -15,6 +15,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+//#include <vld.h>
 
 // TODO: cambiar todo por defines de este archivo
 /************************************************
@@ -103,6 +104,8 @@ FILE* g_sourceFD;
 #define MaxIdentifierLength 64 // maximum number of characters in an identifier
 #define MaxIntegerLength    10 // maximum number of characters in an integer
 #define MaxStringLength		128 // maximum number of characters in a string
+
+#define SAFE_RELEASE( x ) if( x ){ free( x ); }
 
 char g_identifier	[ MaxIdentifierLength ];
 char g_integer		[ MaxIntegerLength ];
