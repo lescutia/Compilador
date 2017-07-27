@@ -122,6 +122,7 @@ int g_numberOfScannedSymbols;
 *				LIBRARY INCLUDES				*
 *************************************************/
 void initCompiler( );
+#include "TXTWriter.h"
 #include "symbolTable.h"
 #include "scanner.h"
 #include "parser.h"

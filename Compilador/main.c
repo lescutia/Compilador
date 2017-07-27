@@ -21,14 +21,16 @@ int main( int argc, char** argv )
 		filename = "Test/testCodeGen.c";
 
 	g_sourceFD = fopen( filename, "r" );
-
+	
 	if( g_sourceFD != NULL )
 	{
+		fnOpenFileToWrite( "testfile.txt" );
 		fnInitScanner( );    // Incializar el scanner
 		fnReadCharacter( );  // Leer el primer carácter
 		fnGetSymbol( );      // Obtener el primer token
 		fnParser( );         // Iniciar el parser
-
+		
+		fnCloseFile( );
 		fclose( g_sourceFD ); // Cerrar el archivo
 	}
 	else

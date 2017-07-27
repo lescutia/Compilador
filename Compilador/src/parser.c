@@ -88,6 +88,8 @@ void fnDebugParser( char* message )
 
 void fnDebugCodeGen( char* instr, char* arg, int iLabel )
 {
+	// mandamos a escribir en el archivo txt para codigo intermedio.
+	fnWrite( instr, arg, iLabel );
 	if( DEBUG_CODEGEN )
 	{
 		printf( "%s %s", instr, arg );
