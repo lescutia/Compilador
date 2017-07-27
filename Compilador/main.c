@@ -1,8 +1,14 @@
 #include "./includes/CompilerPCH.h"
 #include <conio.h>
 
+int test( )
+{
+	printf("Prueba funcion\n");
+}
+
 int main(int argc, char** argv)
 {
+	test( );
 	initCompiler( );
 	char* filename;
 	/**
