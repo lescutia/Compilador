@@ -1,5 +1,10 @@
 #include "../includes/CompilerPCH.h"
 
+void fnUninitializeScanner( )
+{
+	SAFE_RELEASE( g_SYMBOLS );
+}
+
 void fnInitScanner( )
 {
 	g_SYMBOLS = (char**) malloc ( 31 * sizeof( char* ) );

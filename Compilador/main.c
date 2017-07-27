@@ -1,5 +1,4 @@
 #include "./includes/CompilerPCH.h"
-
 #include <conio.h>
 
 int main( int argc, char** argv )
@@ -42,7 +41,8 @@ int main( int argc, char** argv )
 
 	/*fnPrintTable( GLOBAL_TABLE );
 	fnPrintTable( LOCAL_TABLE );*/
-
+	
+	fnUninitializeScanner( );
 	fnResetSymbolTables( );
 
 	printf( "\n\n Press any key to exit..." );

@@ -37,23 +37,23 @@ void fnCreateParameter( sEntry* entry, int type, char* id )
 	sParameter* ptrParameter;
 
 	newParameter = malloc( sizeof( sParameter ) );
-	newParameter -> id = malloc( strlen( id ) );
+	newParameter->id = malloc( strlen( id ) + 1 );
 
-	newParameter -> next = NULL;
-	newParameter -> type = type;
-	strcpy ( newParameter -> id, id );
+	newParameter->next = NULL;
+	newParameter->type = type;
+	strcpy ( newParameter->id, id );
 
 	// Si la lista está vacía
-	if ( entry -> parameter == NULL )
-		entry -> parameter = newParameter;
+	if( entry->parameter == NULL )
+		entry->parameter = newParameter;
 	else
 	{
-		ptrParameter = entry -> parameter;
+		ptrParameter = entry->parameter;
 
-		while( ptrParameter -> next != NULL )
-			ptrParameter = ptrParameter -> next;
+		while( ptrParameter->next != NULL )
+			ptrParameter = ptrParameter->next;
 
-		ptrParameter -> next = newParameter;
+		ptrParameter->next = newParameter;
 	}
 }
 //
@@ -74,33 +74,33 @@ void fnInitializeSymbolTables( )
 void fnPrintType( int type )
 {
 	if( type == INT_T )
-		printf("INT");
+		printf( "INT" );
 	else if( type == INTSTAR_T )
-		printf("INTSTAR");
+		printf( "INTSTAR" );
 	else if( type == VOID_T )
-		printf("VOID");
+		printf( "VOID" );
 	else if( type == CHAR_T )
-		printf("CHAR");
+		printf( "CHAR" );
 	else if( type == CHARSTAR_T )
-		printf("CHARSTAR");
+		printf( "CHARSTAR" );
 	else
-		printf("UNKNOWN");
+		printf( "UNKNOWN" );
 
 	// printf("\n");
 }
 
-void fnPrintClass(int class)
+void fnPrintClass( int class )
 {
 	if( class == VARIABLE )
-		printf("VARIABLE");
+		printf( "VARIABLE" );
 	else if( class == PROCEDURE )
-		printf("PROCEDURE");
+		printf( "PROCEDURE" );
 	else if( class == STRING )
-		printf("STRING");
+		printf( "STRING" );
 	else
-		printf("UNKNOWN");
+		printf( "UNKNOWN" );
 
-	printf("\n");
+	printf( "\n" );
 }
 //
 
@@ -109,43 +109,43 @@ void fnPrintTable( int whichTable )
 	sEntry* it;
 	if( whichTable == GLOBAL_TABLE )
 	{
-		printf("/****************************************\n");
-		printf("*		GLOBAL TABLE 		*\n");
-		printf("/****************************************\n");
+		printf( "/****************************************\n" );
+		printf( "*		GLOBAL TABLE 		*\n" );
+		printf( "/****************************************\n" );
 		it = global_symbol_table;
 	}
 	else
 	{
-		printf("/****************************************\n");
-		printf("*		LOCAL TABLE		*\n");
-		printf("/****************************************\n");
+		printf( "/****************************************\n" );
+		printf( "*		LOCAL TABLE		*\n" );
+		printf( "/****************************************\n" );
 		it = local_symbol_table;
 	}
 
 	while( it != 0 )
 	{
 		//printf("string:	%s\n",   it->string);
-		printf("symbol:	 %s\n",   it->string);
-		printf("line:	 %d\n",   it->line);
+		printf( "symbol:	 %s\n", it->string );
+		printf( "line:	 %d\n", it->line );
 		if( it->parent )
-			printf("parent:	 %s\n",   it->parent);
+			printf( "parent:	 %s\n", it->parent );
 
 		printf( "class:	 " );
 		fnPrintClass( it->class );
 
 		printf( "type:	 " );
 		fnPrintType( it->type );
-		printf("\n");
+		printf( "\n" );
 
 		//printf("value:	 %d\n",   it->value);
 		//printf("address: %d\n",   it->address);
 		//printf("scope:	 %d\n",   it->scope);
-		printf("defined: %d\n\n", it->defined);
+		printf( "defined: %d\n\n", it->defined );
 
 		//ELIMINAR
-		printf("\n");
+		printf( "\n" );
 		//
-		
+
 		it = it->next;
 	}
 }
@@ -155,17 +155,21 @@ void fnResetSymbolTables( )
 	while( global_symbol_table != 0 )
 	{
 		sEntry* next = fnGetNextEntry( global_symbol_table );
-		free( global_symbol_table );
+		SAFE_RELEASE( global_symbol_table->parent );
+		SAFE_RELEASE( global_symbol_table->string );
+		SAFE_RELEASE( global_symbol_table );
 		global_symbol_table = next;
 	}
 
 	while( local_symbol_table != 0 )
 	{
 		sEntry* next = fnGetNextEntry( local_symbol_table );
-		free( local_symbol_table );
+		SAFE_RELEASE( local_symbol_table->parent );
+		SAFE_RELEASE( local_symbol_table->string );
+		SAFE_RELEASE( local_symbol_table );
 		local_symbol_table = next;
 	}
-	
+
 	global_symbol_table  = 0;
 	local_symbol_table   = 0;
 
@@ -174,20 +178,20 @@ void fnResetSymbolTables( )
 	numberOfStrings         = 0;
 }
 
-void fnCreateSymbolTableEntry(int whichTable, char* string, int line, int class, int type, int value, int address, int defined, char* parent )
+void fnCreateSymbolTableEntry( int whichTable, char* string, int line, int class, int type, int value, int address, int defined, char* parent )
 {
 	sEntry* newEntry;
-	newEntry = malloc( sizeof(sEntry) );
-	
+	newEntry = malloc( sizeof( sEntry ) );
+
 	//newEntry->string = malloc( sizeof(string) );
 	//sizeof(string) no es la longitud de la cadena
-	newEntry->string = malloc( strlen(string) );
-	
+	newEntry->string = malloc( strlen( string ) + 1 );
+
 	//memcpy ( newEntry->string, string, sizeof(string) );
 	strcpy ( newEntry->string, string );
 
 	// TODO: ORDENAR
-	newEntry -> parameter = NULL;
+	newEntry->parameter = NULL;
 
 	//fnSetString		( newEntry, string );
 	fnSetLineNumber	( newEntry, line );
@@ -196,10 +200,10 @@ void fnCreateSymbolTableEntry(int whichTable, char* string, int line, int class,
 	fnSetValue		( newEntry, value );
 	fnSetAddress	( newEntry, address );
 	fnSetDefined	( newEntry, defined );
-	
+
 	if( parent )
 	{
-		newEntry->parent = malloc( strlen( parent ) );
+		newEntry->parent = malloc( strlen( parent ) + 1);
 		strcpy( newEntry->parent, parent );
 	}
 	else
@@ -226,11 +230,11 @@ void fnCreateSymbolTableEntry(int whichTable, char* string, int line, int class,
 	}
 	else
 	{
-		printf("Error: no existen funciones de libreria.\n");
+		printf( "Error: no existen funciones de libreria.\n" );
 	}
 }
 
-sEntry* fnSearchSymbolTable(sEntry* entry, char* string, int class, char* actualProc )
+sEntry* fnSearchSymbolTable( sEntry* entry, char* string, int class, char* actualProc )
 {
 	while( entry != 0 )
 	{
@@ -256,16 +260,16 @@ sEntry* fnSearchSymbolTable(sEntry* entry, char* string, int class, char* actual
 	return 0; // NULL
 }
 
-sEntry* fnGetScopedSymbolTableEntry(char* string, int class, char* actualProc )
+sEntry* fnGetScopedSymbolTableEntry( char* string, int class, char* actualProc )
 {
 	sEntry* entry = 0;
-	
+
 	if( class == VARIABLE )
 		entry = fnSearchSymbolTable( local_symbol_table, string, VARIABLE, actualProc );
 
-  	// Si es una variable global o una función
-  	if ( entry == 0 )
-  		entry = fnSearchSymbolTable( global_symbol_table, string, class, 0 );
+	// Si es una variable global o una función
+	if( entry == 0 )
+		entry = fnSearchSymbolTable( global_symbol_table, string, class, 0 );
 
-  return entry;
+	return entry;
 }

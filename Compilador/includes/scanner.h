@@ -14,6 +14,7 @@
 *************************************************/
 
 void fnInitScanner( );
+void fnUninitializeScanner( );
 
 void fnReadCharacter( );
 int fnGetSymbol( );
