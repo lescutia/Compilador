@@ -69,7 +69,7 @@ int g_iL2If = 0;
 int g_iL1While = 0;
 int g_iL2While = 0;
 
-// Para saber en el fnDebugCodeGen si se va a imprimir una etiqueta
+// Para saber en fnDebugCodeGen se va a imprimir una etiqueta
 static int NO_LABEL = -1;
 
 // TODO: MEJORAR
@@ -77,8 +77,8 @@ static int NO_LABEL = -1;
 sEntry* g_entry;
 
 /******* MOVER AL LUGAR APROPIADO *******/
-static int DEBUG_PARSER = 1;
-static int DEBUG_CODEGEN = 0;
+static int DEBUG_PARSER  = 0;
+static int DEBUG_CODEGEN = 1;
 
 void fnDebugParser( char* strMessage )
 {
@@ -108,7 +108,6 @@ void fnDebugCodeGen( char* strInstr, char* strArg, int iLabel )
 // Función para generar las etiquetas para los saltos
 int fnNewLabel( ) { g_iLabel++; }
 
-// Revisada para análisis semántico
 void fnParser( )
 {
 	int iType;
@@ -340,10 +339,8 @@ void fnParser( )
 	}
 }
 
-// Revisada para análisis semántico
 int fnType( )
 {
-	// TODO: VER SI NO HAY PROBLEMAS POR NO INICIALIZARLA
 	int iType;
 
 	/* int ...
@@ -389,23 +386,22 @@ int fnType( )
 	else
 	{
 		printf( "\n Error: line %d, ", g_lineNumber );
-		printf( "\"%s\" or \"%s\" expected but ", *( g_SYMBOLS + SYM_INT ), *( g_SYMBOLS + SYM_CHAR ) );
+		printf( "'%s' or '%s' expected but ", *( g_SYMBOLS + SYM_INT ), *( g_SYMBOLS + SYM_CHAR ) );
 
 		if( g_symbol == SYM_EOF )
 			printf( "EOF" );
 		else
-			printf( "\"%s\"", *( g_SYMBOLS + g_symbol ) );
+			printf( "'%s' found.", *( g_SYMBOLS + g_symbol ) );
 
-		printf( " found.\n" );
+		printf("\n\n Press any key to exit...");
+		_getch();
 
-		// TODO: VER SI ES NECESARIO, NO RECUERDO POR QUÉ LO PUSIMOS
-		// return -1;
+		exit( 1 );
 	}
 
 	return iType;
 }
 
-// Revisada para análisis semántico
 int fnExpression( )
 {
 	int iLType; // Tipo del lado izquierdo de la expresión
@@ -456,11 +452,10 @@ int fnExpression( )
 	return iLType;
 }
 
-// Revisada para análisis semántico
-// FALTA COMPLETAR ALGUNOS DETALLES
+// TODO: COMPLETAR ALGUNOS DETALLES
 int fnSimpleExpression( )
 {
-	// No tomamos en cuenta el signo ni el operador
+	// No tomamos en cuenta el signo
 	int iLType;
 	int iRType;
 	int bSign;
@@ -517,7 +512,6 @@ int fnSimpleExpression( )
 			fnDebugCodeGen( "sbi", "", NO_LABEL );
 		//
 
-		// TODO: CONTINUAR
 		if( iOperatorSymbol == SYM_PLUS )
 		{
 			// if ( iLType == INTSTAR_T )
@@ -544,7 +538,6 @@ int fnSimpleExpression( )
 	return iLType;
 }
 
-// Revisada para análisis semántico
 int fnTerm( )
 {
 	int iLType;
@@ -650,7 +643,6 @@ int fnIsDeclared( char* id )
 	return 1;
 }
 
-// Revisada para análisis semántico
 int fnFactor( )
 {
 	int bHasCast;
@@ -750,7 +742,10 @@ int fnFactor( )
 			else
 			{
 				printf( "\n Error: line %d, ", g_lineNumber );
-				printf( "%s undeclared.\n", g_identifier );
+				printf( "'%s' undeclared.", g_identifier );
+				
+				printf("\n\n Press any key to exit...");
+				_getch();
 
 				/* TODO: CREAR UNA FUNCIÓN fnExitCompiler() EN
 				 * LA CUAL LIBEREMOS TODA LA MEMORIA QUE HEMOS
@@ -822,8 +817,6 @@ int fnFactor( )
 			/* identifier '(' call ...
 			 * identifier '(' [expression ',' ...] ')' ...
 			 */
-			 // TODO: variableOrProcedureName es un puntero a g_identifier
-			 // cambiar a un arreglo.
 			iType = fnCall( variableOrProcedureName );
 		}
 		else
@@ -847,7 +840,10 @@ int fnFactor( )
 			else
 			{
 				printf( "\n Error: line %d, ", g_lineNumber );
-				printf( "%s undeclared.\n", g_identifier );
+				printf( "'%s' undeclared.", g_identifier );
+				
+				printf("\n\n Press any key to exit...");
+				_getch();
 
 				/* TODO: CREAR UNA FUNCIÓN fnExitCompiler() EN
 				 * LA CUAL LIBEREMOS TODA LA MEMORIA QUE HEMOS
@@ -922,7 +918,6 @@ int fnFactor( )
 	return iType;
 }
 
-// Revisada para análisis semántico
 void fnVariable( )
 {
 	int iType;
@@ -933,7 +928,6 @@ void fnVariable( )
 	 *donde,
 	 *       type ::= int | int*| char | char*
 	 */
-	 // TODO: CONTINUAR
 	iType = fnType( );
 
 	/*type identifier ...
@@ -974,7 +968,6 @@ void fnVariable( )
 	}
 }
 
-// Revisada para análisis semántico
 // HASTA EL MOMENTO SÓLO SE CONSIDERAN LOS TIPOS
 // INT Y CHAR
 int fnInitialization( int iType )
@@ -1161,7 +1154,6 @@ int fnIsPointer( int  iType )
 	return 0;
 }
 
-// Revisada para análisis semántico
 void fnStatement( )
 {
 	int iLType;
@@ -1202,7 +1194,10 @@ void fnStatement( )
 			else // Mensaje de error y salir del programa
 			{
 				printf( "\n Error: line %d, ", g_lineNumber );
-				printf( "%s undeclared.\n", g_identifier );
+				printf( "'%s' undeclared.", g_identifier );
+				
+				printf("\n\n Press any key to exit...");
+				_getch();
 
 				/* TODO: CREAR UNA FUNCIÓN fnExitCompiler() EN
 				 * LA CUAL LIBEREMOS TODA LA MEMORIA QUE HEMOS
@@ -1253,7 +1248,7 @@ void fnStatement( )
 				}
 				else if( iLType == CHARSTAR_T )
 				{
-					// TODO: CONSIDERAR EL CASO PAR EN EL
+					// TODO: CONSIDERAR EL CASO PARA EL
 					// CUAL SE ASIGNAN STRINGS.
 					// VER SI NO HAY ERRORES AL HACER ESTO.
 					if( iRType != CHAR_T )
@@ -1357,8 +1352,6 @@ void fnStatement( )
 	 */
 	else if( g_symbol == SYM_IDENTIFIER )
 	{
-		// TODO: VER SI ES NECESARIA
-		// variableOrProcedureName = g_identifier;
 		strcpy( variableOrProcedureName, g_identifier );
 
 		fnDebugParser( "id" );
@@ -1395,7 +1388,10 @@ void fnStatement( )
 			if( entry == 0 )
 			{
 				printf( "\n Error: line %d, ", g_lineNumber );
-				printf( "%s undeclared.\n", g_identifier );
+				printf( "'%s' undeclared.", g_identifier );
+				
+				printf("\n\n Press any key to exit...");
+				_getch();
 
 				exit( 1 );
 			}
@@ -1474,8 +1470,7 @@ void fnStatement( )
 
 /*Antes de llamar a fnProcedure( ) se debe de haber obtenido un token.
  */
- // Revisada para análisis semántico
- // FALTA COMPLETAR ALGUNOS DETALLES
+// COMPLETAR ALGUNOS DETALLES
 void fnProcedure( char* procedure, int type )
 {
 	int bIsUndefined;
@@ -1515,7 +1510,6 @@ void fnProcedure( char* procedure, int type )
 
 			/* type identifier '(' type identifier ...
 			 */
-			 // TODO: CONTINUAR
 			fnVariable( );
 			iNumberOfParameters = 1;
 
@@ -1531,7 +1525,7 @@ void fnProcedure( char* procedure, int type )
 				iNumberOfParameters = iNumberOfParameters + 1;
 			}
 
-			// Hay algunas cosas aquí para los parámetros
+			// Faltan algunas cosas aquí para los parámetros
 
 			/* type identifier '(' type identifier ',' ... ')' ...
 			 */
@@ -1580,7 +1574,7 @@ void fnProcedure( char* procedure, int type )
 			//fnCreateSymbolTableEntry( GLOBAL_TABLE, procedure, g_lineNumber, PROCEDURE, type, 0, 0 );
 			fnCreateSymbolTableEntry( GLOBAL_TABLE, procedure, g_lineNumber, PROCEDURE, type, 0, -1, 0, 0 );
 		}
-		// TODO: REVISAR QUE LA FUNCIÓN QUE SEA CORRECTA
+		// TODO: REVISAR QUE LA FUNCIÓN SEA CORRECTA
 		else
 		{
 			printf( "\n Warning: line %d, previous declaration of '%s'.", g_lineNumber, procedure );
@@ -1704,14 +1698,12 @@ void fnProcedure( char* procedure, int type )
 		else
 		{
 			fnSyntaxErrorSymbol( SYM_RBRACE );
+
+			printf("\n Press any key to exit...");
+			_getch();
+
 			exit( 1 );
 		}
-
-		// fixlink_absolute(returnBranches, binaryLength);
-		// ¿PARA QUÉ ES?
-		// returnBranches = 0;
-
-		// help_procedure_epilogue(numberOfParameters);
 	}
 	else
 		fnSyntaxErrorUnexpected( );
@@ -1720,7 +1712,6 @@ void fnProcedure( char* procedure, int type )
 	// local_symbol_table = (int*) 0;    
 }
 
-// Revisada para análisis semántico
 // FALTA COMPLETAR ALGUNOS DETALLES
 int fnCall( char* procedure )
 {
@@ -1772,10 +1763,13 @@ int fnCall( char* procedure )
 			{
 				// TODO: REVISAR
 				// Suponemos que todo procedimiento que sea
-				// llamado tiene que haber sido declarado 
+				// llamado tiene que haber sido declarado o
 				// definido.
 				printf( "\n Error: line %d, procedure '%s' ", g_lineNumber, g_identifier );
-				printf( "has never been declared or defined.\n" );
+				printf( "has never been declared or defined." );
+				
+				printf("\n\n Press any key to exit...");
+				_getch();
 
 				exit( 1 );
 			}
@@ -1806,10 +1800,13 @@ int fnCall( char* procedure )
 		{
 			// TODO: REVISAR
 			// Suponemos que todo procedimiento que sea
-			// llamado tiene que haber sido declarado 
+			// llamado tiene que haber sido declarado o
 			// definido.
 			printf( "\n Error: line %d, procedure '%s' ", g_lineNumber, g_identifier );
-			printf( "has never been declared or defined.\n" );
+			printf( "has never been declared or defined." );
+			
+			printf( "\n\n Press any key to exit..." );
+			_getch();
 
 			exit( 1 );
 		}
@@ -1829,16 +1826,13 @@ int fnCall( char* procedure )
 	return iType;
 }
 
-// Revisada para análisis semántico
 void fnWhile( )
 {
 	/* while ...
 	 */
 	if( g_symbol == SYM_WHILE )
 	{
-		// CODEGEN        
-		// fnDebugCodeGen( "CODE GENERATION: WHILE", "", NO_LABEL );
-
+		// CODEGEN
 		fnNewLabel( );
 		g_iL1While = g_iLabel;
 
@@ -1852,11 +1846,6 @@ void fnWhile( )
 		{
 			fnDebugParser( "(" );
 			fnGetSymbol( );
-
-			// CODEGEN: El código se genera en fnExpression( );
-			// fnDebugCodeGen( "< code to evaluate E to", "L", g_iLabel );
-			// fnDebugCodeGen( " >", "", NO_LABEL);
-			//
 
 			/* while '(' expression ...
 			 */
@@ -1885,11 +1874,6 @@ void fnWhile( )
 					fnDebugParser( "{" );
 					fnGetSymbol( );
 
-					// CODEGEN
-					// El código para S se genera en el siguiente while
-					// fnDebugCodeGen( "< code for S >", "", NO_LABEL );
-					//
-
 					/* while '(' expression ')'
 					 * '{'
 					 *      statement
@@ -1912,6 +1896,10 @@ void fnWhile( )
 					else
 					{
 						fnSyntaxErrorSymbol( SYM_RBRACE );
+
+						printf( "\n Press any key to exit..." );
+						_getch( );
+
 						exit( 1 );
 					}
 				}
@@ -1920,14 +1908,7 @@ void fnWhile( )
 				 *    statement ...
 				 */
 				else
-				{
-					// CODEGEN
-					// El código para S se genera en fnStatement( )
-					printf( "\n < code for S >" );
-					//
-
 					fnStatement( );
-				}
 			}
 			else
 				fnSyntaxErrorSymbol( SYM_RPARENTHESIS );
@@ -1938,8 +1919,8 @@ void fnWhile( )
 	else
 		fnSyntaxErrorSymbol( SYM_WHILE );
 
-	// CODEGEN
 	// TODO: VER SI ES EL LUGAR CORRECTO
+	// CODEGEN
 	fnDebugCodeGen( "ujp", "L", g_iL1While );
 	fnDebugCodeGen( "lab", "L", g_iL2While );
 	// 
@@ -1947,16 +1928,12 @@ void fnWhile( )
 	g_iNumberOfWhile = g_iNumberOfWhile + 1;
 }
 
-// Revisada para análisis semántico
 void fnIf( )
 {
 	/* if ...
 	 */
 	if( g_symbol == SYM_IF )
 	{
-		// CODEGEN
-		// fnDebugCodeGen( "CODE GENERATION: IF", "", NO_LABEL );
-		// 
 		fnGetSymbol( );
 
 		/* if '(' ...
@@ -1966,12 +1943,9 @@ void fnIf( )
 			fnDebugParser( "(" );
 			fnGetSymbol( );
 
-			// CODEGEN: El código para E se genera en fnExpression( )
+			// CODEGEN
 			fnNewLabel( );
 			g_iL1If = g_iLabel;
-
-			// fnDebugCodeGen( "< code to evaluate E to", "L", g_iLabel );
-			// fnDebugCodeGen( " >", "", NO_LABEL );
 			// 
 
 			/* if '(' expression ...
@@ -1987,11 +1961,6 @@ void fnIf( )
 
 				// CODEGEN
 				fnDebugCodeGen( "fjp", "L", g_iL1If );
-				//
-
-				// TODO: ELIMINAR DESPUÉS DE HABER GENERADO S1
-				// CODEGEN: El código para S1 se genera en el siguiente while
-				// fnDebugCodeGen( "< code for S1 >", "", NO_LABEL );
 				//
 
 				// zero or more statements: { statement }
@@ -2025,6 +1994,10 @@ void fnIf( )
 					else
 					{
 						fnSyntaxErrorSymbol( SYM_RBRACE );
+
+						printf( "\n Press any key to exit..." );
+						_getch( );
+
 						exit( 1 );
 					}
 				}
@@ -2033,13 +2006,7 @@ void fnIf( )
 				 *      statement ...
 				 */
 				else
-				{
-					// TODO: ELIMINAR DESPUÉS DE HABER GENERADO S1
-					// CODEGEN: El código para S1 se genera en el siguiente while
-					// printf( "\n < code for S1 >" );
-					//
 					fnStatement( );
-				}
 
 				//optional: else
 				/* if '(' expression ')'
@@ -2058,11 +2025,6 @@ void fnIf( )
 					fnDebugCodeGen( "ujp", "L", g_iL2If );
 					fnDebugCodeGen( "lab", "L", g_iL1If );
 					//
-
-					// TODO: ELIMINAR DESPUÉS DE HABER GENERAR EL CÓODIGO PARA S2
-					// CODEGEN: El código para S2 se genera en el siguiente while
-					// fnDebugCodeGen( "< code for S2 >", "", NO_LABEL );
-					// 
 
 					// zero or more statements: { statement }
 					/* if '(' expression ')'
@@ -2105,6 +2067,10 @@ void fnIf( )
 						else
 						{
 							fnSyntaxErrorSymbol( SYM_RBRACE );
+
+							printf("\n Press any key to exit...");
+							_getch();
+
 							exit( 1 );
 						}
 						// only one statement without {}
@@ -2127,12 +2093,10 @@ void fnIf( )
 					fnDebugCodeGen( "lab", "L", g_iL2If );
 					//
 				}
-				else // No tiene else                
-				{
+				else// No tiene else  
 					// CODEGEN
 					fnDebugCodeGen( "lab", "L", g_iL1If );
 					//
-				}
 			}
 			else
 				fnSyntaxErrorSymbol( SYM_RPARENTHESIS );
@@ -2146,7 +2110,6 @@ void fnIf( )
 	g_iNumberOfIf = g_iNumberOfIf + 1;
 }
 
-// Revisada para análisis semántico
 void fnReturn( )
 {
 	int iType;
@@ -2154,12 +2117,7 @@ void fnReturn( )
 	/* return ...
 	 */
 	if( g_symbol == SYM_RETURN )
-	{
-		// CODEGEN
-		// fnDebugCodeGen( "CODE GENERATION: RETURN", "", NO_LABEL );
-		// 
 		fnGetSymbol( );
-	}
 	else
 		fnSyntaxErrorSymbol( SYM_RETURN );
 
@@ -2173,7 +2131,6 @@ void fnReturn( )
 		// CODEGEN
 		fnDebugCodeGen( "ret", "", NO_LABEL );
 		// 
-
 		if( iType != g_iReturnType )
 			fnTypeWarning( g_iReturnType, iType );
 	}
@@ -2189,7 +2146,6 @@ void fnReturn( )
 	g_iNumberOfReturn = g_iNumberOfReturn + 1;
 }
 
-// Revisada para análisis semántico
 void fnInclude( )
 {
 	/* '#' ...
@@ -2450,8 +2406,6 @@ void fnSyntaxErrorUnexpected( )
 		printf( "'%s'", *( g_SYMBOLS + g_symbol ) );
 
 	printf( " found.\n" );
-
-	//printf("'%s' found.", *(g_SYMBOLS + g_symbol));
 }
 
 void fnTypeWarning( int expected, int found )

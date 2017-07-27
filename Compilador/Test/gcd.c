@@ -1,3 +1,4 @@
+// GCD
 int fnAbs( int x );
 int fnMax( int a, int b );
 int fnMin( int a, int b );
@@ -6,6 +7,11 @@ int fnGCD( int a, int b );
 int main( )
 {
     return fnGCD( 4 );
+}
+
+int fn( )
+{
+    return 0;
 }
 
 int fnAbs( int x )

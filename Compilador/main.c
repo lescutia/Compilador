@@ -17,7 +17,7 @@ int main( int argc, char** argv )
 	if( argc > 1 )
 		strFilename = argv[ 1 ];
 	else
-		strFilename = "Test/testCodeGen.c";
+		strFilename = "Test/factorial.c";
 
 	g_sourceFD = fopen(strFilename, "r" );
 	
@@ -50,5 +50,6 @@ int main( int argc, char** argv )
 
 	printf( "\n Press any key to exit..." );
 	_getch( );
+
 	return 0;
 }
