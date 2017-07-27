@@ -1,15 +1,19 @@
+#include "../includes/CompilerPCH.h"
 #include "../includes/intermediateCode.h"
-#include <stdio.h>
-#include <stdlib.h>
 
 FILE *g_pFile;
 static int NO_LABEL = -1;
 
 void fnOpenFileToWrite( char* strNameOfFile )
 {
-	// Aquí debemos especificar dónde queremos generar el código
-	// intermedio o al enviar el parámetro?
-	g_pFile = fopen( strNameOfFile, "w" );
+	char tmpBuffer[ MaxStringLength ] = { 0 };
+	
+	mkdir( "codegen" );
+
+	strcpy( tmpBuffer, "codegen/" );
+	strcat( tmpBuffer, strNameOfFile );
+
+	g_pFile = fopen( tmpBuffer, "w" );
 
 	if( g_pFile == NULL )
 	{
