@@ -1,3 +1,12 @@
+/********************************************************************
+	file:		CompilerPCH.h
+	date:		2017/07/26
+	author: 	Luis Escutia, Miguel Corona
+	Contact:	escutialuis93@gmail.com
+
+	Purpose:	
+********************************************************************/
+
 #pragma once
 /************************************************
 *					STD INCLUDES				*
@@ -6,6 +15,7 @@
 #include <stdlib.h>
 #include <string.h>
 
+// TODO: cambiar todo por defines de este archivo
 /************************************************
 *				SYMBOL DEFINES					*
 *************************************************/
@@ -51,6 +61,7 @@ static int SYM_INCLUDE      = 30; // include
 /************************************************
 *					CHAR DEFINES				*
 *************************************************/
+
 static int CHAR_EOF          = -1; // end of file
 static int CHAR_TAB          = 9;  // ASCII code 9  = tabulator
 static int CHAR_LF           = 10; // ASCII code 10 = line feed
@@ -88,13 +99,13 @@ int g_symbol; // most recently recognized symbol
 
 FILE* g_sourceFD;
 
-static int g_iMaxIdentifierLength = 64; // maximum number of characters in an identifier
-static int g_iMaxIntegerLength    = 10; // maximum number of characters in an integer
-#define MaxStringLength				128 // maximum number of characters in a string
+#define MaxIdentifierLength 64 // maximum number of characters in an identifier
+#define MaxIntegerLength    10 // maximum number of characters in an integer
+#define MaxStringLength		128 // maximum number of characters in a string
 
-char g_identifier[ 64 ];
-char g_integer[ 10 ];
-char g_string[ 128 ];
+char g_identifier	[ MaxIdentifierLength ];
+char g_integer		[ MaxIntegerLength ];
+char g_string		[ MaxStringLength ];
 
 char g_literal[ 1 ]; // stores value of scanned character
 

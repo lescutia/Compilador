@@ -81,7 +81,7 @@ int fnGetSymbol( )
 			{
 				i = 0;
 				// resetear g_identifier
-				memset( g_identifier, 0, g_iMaxIdentifierLength );
+				memset( g_identifier, 0, MaxIdentifierLength );
 
 				while( fnIsCharacterLetterOrDigitOrUnderscore( ) )
 				{
@@ -97,7 +97,7 @@ int fnGetSymbol( )
 			{
 				i = 0;
 				// resetear g_integer
-				memset( g_integer, 0, g_iMaxIntegerLength );
+				memset( g_integer, 0, MaxIntegerLength );
 
 				while( fnIsCharacterDigit( ) )
 				{

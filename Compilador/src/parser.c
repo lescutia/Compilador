@@ -1,3 +1,12 @@
+/********************************************************************
+	file:		parser.c
+	date:		2017/07/26
+	author: 	Luis Escutia, Miguel Corona
+	Contact:	escutialuis93@gmail.com
+
+	Purpose:	
+********************************************************************/
+
 #include "../includes/CompilerPCH.h"
 #include "../includes/parser.h"
 //classes, types y symbol tables se movieron a compilerPCH.h

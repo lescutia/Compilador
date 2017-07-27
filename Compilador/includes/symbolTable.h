@@ -1,3 +1,12 @@
+/********************************************************************
+	file:		symbolTable.h
+	date:		2017/07/26
+	author: 	Luis Escutia, Miguel Corona
+	Contact:	escutialuis93@gmail.com
+
+	Purpose:	
+********************************************************************/
+
 #pragma once
 typedef struct sParameter
 {
