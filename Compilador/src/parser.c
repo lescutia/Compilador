@@ -511,6 +511,10 @@ int fnSimpleExpression( )
 			// CONSIDERAR SUMA DE CARACTERES
 			iLType = INT_T;
 		}
+		else
+			// CODEGEN
+			fnDebugCodeGen( "ngi", "", NO_LABEL );
+			//
 	}
 
 	/* ['-'] term ('+' | '-') ...
@@ -1064,13 +1068,17 @@ int fnInitialization( int iType )
 				iAssignedType = CHAR_T;
 			}
 
-			// CODEGEN
-			fnDebugCodeGen( "stn ", "", NO_LABEL );
-			//
-			fnGetSymbol( );
-
-			if( sign )
+			if ( sign )
+			{
 				initialValue = -initialValue;
+				// CODEGEN
+				fnDebugCodeGen("ngi", "", NO_LABEL);
+				//
+			}
+			// CODEGEN
+			fnDebugCodeGen("stn ", "", NO_LABEL);
+			//
+			fnGetSymbol();
 		}
 		else
 			fnSyntaxErrorUnexpected( );

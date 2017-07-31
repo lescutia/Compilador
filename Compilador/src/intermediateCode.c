@@ -18,8 +18,8 @@ void fnOpenFileToWrite( char* strNameOfFile )
 	if( g_pFile == NULL )
 	{
 		printf( "Error: Could not open the file '%s'", strNameOfFile );
-		printf("\n\nPress any key to exit...");
-		_getch();
+		printf( "\n\nPress any key to exit..." );
+		_getch( );
 
 		exit( 1 );
 	}

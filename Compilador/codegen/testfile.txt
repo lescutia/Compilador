@@ -1,92 +1,23 @@
+lda g
+ldc 2
+ngi 
+stn  
 ent main
+lda result
+ldc 3
+ngi 
 mst 
-ldc 4
-ldc 10
-cup fnGCD
-ret 
-ent fn
-ldc 0
-ret 
-ent fnAbs
-lod x
-les 
-ldc 0
-fjp L1
-lod x
-ret 
-lab L1
-lod x
-ret 
-ent fnMax
-lod a
+ldc 3
+ldc 5
+cup fnAdd
+adi 
+stn 
+lod result
 grt 
-lod b
-fjp L2
-lod a
+ldc 3
 ret 
-lab L2
-lod b
-ret 
-ent fnMin
+ent fnAdd
 lod a
-les 
 lod b
-fjp L3
-lod a
-ret 
-lab L3
-lod b
-ret 
-ent fnGCD
-lda iMax
-mst 
-mst 
-lod a
-cup fnAbs
-mst 
-lod b
-cup fnAbs
-cup fnMax
-stn 
-lda iMin
-mst 
-mst 
-lod a
-cup fnAbs
-mst 
-lod b
-cup fnAbs
-cup fnMin
-stn 
-lod iMin
-equ 
-ldc 0
-fjp L4
-lod iMax
-ret 
-lab L4
-lda iRemainder
-lod iMax
-lod iMin
-mod 
-stn 
-lab L5
-lod iRemainder
-neq 
-ldc 0
-fjp L6
-lda iMax
-lod iMin
-stn 
-lda iMin
-lod iRemainder
-stn 
-lda iRemainder
-lod iMax
-lod iMin
-mod 
-stn 
-ujp L5
-lab L6
-lod iMin
+adi 
 ret 

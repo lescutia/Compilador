@@ -1,10 +1,12 @@
+int g = -2;
+
 int fnAdd( int a, int b );
 
 int main( )
 {
 	int result;
 
-	result = fnAdd( 3, 5 );
+	result = -3 + fnAdd( 3, 5 );
 
 	return result > 3;
 }
