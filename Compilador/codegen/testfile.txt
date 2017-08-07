@@ -1,23 +1,23 @@
-lda g
-ldc 2
-ngi 
-stn  
 ent main
-lda result
-ldc 3
-ngi 
-mst 
-ldc 3
-ldc 5
-cup fnAdd
-adi 
+lda a
+ldc 1
 stn 
-lod result
-grt 
-ldc 3
-ret 
-ent fnAdd
 lod a
-lod b
+ldc 3
 adi 
+ldc 2
+ldc 3
+adi 
+grt 
+fjp L1
+lda a
+ldc 1
+stn 
+ujp L2
+lab L1
+lda a
+ldc 0
+stn 
+lab L2
+ldc 0
 ret 

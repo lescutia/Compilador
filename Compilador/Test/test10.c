@@ -1,17 +1,12 @@
-int g = -2;
-
-int fnAdd( int a, int b );
-
 int main( )
 {
-	int result;
+	int a;
+	a = 1;
 
-	result = -3 + fnAdd( 3, 5 );
+	if ( a + 3 > 2 + 3 )
+		a = 1;
+	else
+		a = 0;
 
-	return result > 3;
-}
-
-int fnAdd( int a, int b )
-{
-	return a + b;
+	return 0;
 }

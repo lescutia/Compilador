@@ -459,13 +459,13 @@ int fnExpression( )
 		iOperatorSymbol = g_symbol;
 		//
 		fnGetSymbol( );
-
-		// CODEGEN
-		fnDebugCodeGen( fnGetInstPCode( iOperatorSymbol ), "", NO_LABEL );
-		//
+		
 		/* simplexpr [comp simpexpr] ...
 		 */
 		iRType = fnSimpleExpression( );
+		// CODEGEN
+		fnDebugCodeGen(fnGetInstPCode(iOperatorSymbol), "", NO_LABEL);
+		//
 
 		if( iLType != iRType )
 			fnTypeWarning( iLType, iRType );
