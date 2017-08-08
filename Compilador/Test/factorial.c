@@ -1,14 +1,14 @@
-int fn( n );
+int fnFactorial( int n );
 
 int main( )
 {
     int n;
     n = 10;
 
-    return fn( n );
+    return fnFactorial( n );
 }
 
-int fn( int n )
+int fnFactorial( int n )
 {
     int i;
     int iResult;

@@ -5,19 +5,12 @@ int main( int argc, char** argv )
 {
 	fnInitCompiler( );
 	char* strFilename;
-	/**
-	if( argc > 0 )
-	{
-		for ( int i = 0; i < argc; ++i )
-			printf( "%s\n", argv[ i ] );
-		return 0;
-	}
-	*/
+	
 	//Example... a.exe "Test\test7.txt" > out.txt
 	if( argc > 1 )
 		strFilename = argv[ 1 ];
 	else
-		strFilename = "Test/factorial.c";
+		strFilename = "Test/test10.c";
 
 	g_sourceFD = fopen(strFilename, "r" );
 	

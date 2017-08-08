@@ -6,7 +6,7 @@ int fnGCD( int a, int b );
 
 int main( )
 {
-    return fnGCD( 4 );
+    return fnGCD( 4, 10 );
 }
 
 int fn( )
