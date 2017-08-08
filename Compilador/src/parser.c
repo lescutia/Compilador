@@ -464,7 +464,7 @@ int fnExpression( )
 		 */
 		iRType = fnSimpleExpression( );
 		// CODEGEN
-		fnDebugCodeGen(fnGetInstPCode(iOperatorSymbol), "", NO_LABEL);
+		fnDebugCodeGen( fnGetInstPCode( iOperatorSymbol ), "", NO_LABEL );
 		//
 
 		if( iLType != iRType )
