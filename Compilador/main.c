@@ -1,9 +1,9 @@
-#include "./includes/CompilerPCH.h"
+#include "./CompilerPCH.h"
 #include <conio.h>
 
 int main( int argc, char** argv )
 {
-	initCompiler( );
+	fnInitCompiler( );
 	char* strFilename;
 	/**
 	if( argc > 0 )

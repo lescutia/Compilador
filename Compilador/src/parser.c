@@ -8,7 +8,7 @@
 	Purpose:		
 ********************************************************************/
 
-#include "../includes/CompilerPCH.h"
+#include "../CompilerPCH.h"
 #include "../includes/parser.h"
 //classes, types y symbol tables se movieron a compilerPCH.h
 // classes

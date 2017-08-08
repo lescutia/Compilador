@@ -124,8 +124,11 @@ int g_numberOfScannedSymbols;
 /************************************************
 *				LIBRARY INCLUDES				*
 *************************************************/
-void initCompiler( );
-#include "intermediateCode.h"
-#include "symbolTable.h"
-#include "scanner.h"
-#include "parser.h"
+void fnInitCompiler( );
+int fnLeftShift( int iNumberToShift, int iShifting );
+int fnRightShift( int iNumberToShift, int iShifting );
+
+#include "./includes/intermediateCode.h"
+#include "./includes/symbolTable.h"
+#include "./includes/scanner.h"
+#include "./includes/parser.h"
