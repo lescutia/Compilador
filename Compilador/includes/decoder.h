@@ -9,5 +9,11 @@
 
 #pragma once
 
+void fnInitDecoder( );
 
-void initDecoder( );
+// el interprete debe estar hecho para esta parte
+int decodeRFormat( );
+
+int decodeIFormat( );
+
+int decodeJFormat( );

@@ -161,6 +161,7 @@
     <ClInclude Include="CompilerPCH.h" />
     <ClInclude Include="includes\decoder.h" />
     <ClInclude Include="includes\encoder.h" />
+    <ClInclude Include="includes\interpreter.h" />
     <ClInclude Include="includes\MIPS_Globals.h" />
     <ClInclude Include="includes\parser.h" />
     <ClInclude Include="includes\scanner.h" />
