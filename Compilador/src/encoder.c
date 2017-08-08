@@ -1,19 +1,20 @@
 #include "../includes/encoder.h"
+#include "../CompilerPCH.h"
 
-#include "../includes/encoder.h"
 
 // --------------------------------------------------------------
 // 32 bit
 //
-// +------+-----+-----+-----+-----+--------+
-// |opcode|  a  |  b  |	 c	|00000|function|
-// +------+-----+-----+-----+-----+--------+
-//    6      5     5     5    5		   6
-// a,b y c son registros
+// +------+-----+-----+-----+-----+-----+
+// |opcode|  rs |  rt |	 rd |00000|funct|
+// +------+-----+-----+-----+-----+-----+
+//    6      5     5     5    5		 6
+// rs,rt y rd son representacion numericas para "source registers" y "destination registers"
+// funct instrucciones que comparten un opcode
 
-int encodeRFormat( int opcode, int rs, int rt, int rd, int function )
+int encodeRFormat( int opcode, int rs, int rt, int rd, int funct )
 {
-	return fnLeftShift( fnLeftShift( fnLeftShift( fnLeftShift( opcode, 5 ) + rs, 5 ) + rt, 5 ) + rd, 11 ) + function;
+	return fnLeftShift( fnLeftShift( fnLeftShift( fnLeftShift( opcode, 5 ) + rs, 5 ) + rt, 5 ) + rd, 11 ) + funct;
 	//return ( ( ( ( ( ( ( opcode << 5 ) + rs ) << 5 ) + rt ) << 5 ) + rd ) << 11 ) + function;
 }
 
@@ -21,10 +22,11 @@ int encodeRFormat( int opcode, int rs, int rt, int rd, int function )
 // 32 bit
 //
 // +------+-----+-----+----------------+
-// |opcode| a   |  b  |   	  c		   | <- se llama "immediate"
+// |opcode| rs  |  rt |   	  IMM	   | <- se llama "immediate"
 // +------+-----+-----+----------------+
 //    6      5     5          16
-// a y b son registros, mientras que c es una constante o variable
+// rs y rt registros fuente(source) y objetivo(target)
+// IMM valor inmediato (immediate) usado como valor y en otros casos como complemento a dos.
 
 int encodeIFormat( int opcode, int rs, int rt, int immediate )
 {
@@ -41,7 +43,7 @@ int encodeIFormat( int opcode, int rs, int rt, int immediate )
 // 32 bit
 //
 // +------+-----------------------+
-// |opcode|  		  c  		  | <- absolute addressing
+// |opcode|	  pseudo-address	  | <- absolute addressing
 // +------+-----------------------+
 //    6     		26  
 // 

@@ -40,9 +40,11 @@ int* FUNCTIONS; // strings representing MIPS functions
 /*							GLOBAL VARIABLES                            */
 /************************************************************************/
 
-/** Variable para almacenar el tipo de operador utilizado */
+/** Variable para almacenar el tipo de operador utilizado. */
 int g_iOpCode;
+/** Registro donde se guarda el resultado de una operación. */
 int g_iRS;
+/**  */
 int g_iRT;
 int g_iRD;
 int g_iImmediate;
