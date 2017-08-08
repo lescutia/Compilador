@@ -148,9 +148,10 @@
   <ItemGroup>
     <ClCompile Include="CompilerPCH.c">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="main.c" />
+    <ClCompile Include="src\decoder.c" />
+    <ClCompile Include="src\encoder.c" />
     <ClCompile Include="src\parser.c" />
     <ClCompile Include="src\scanner.c" />
     <ClCompile Include="src\symbolTable.c" />
@@ -158,6 +159,10 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="CompilerPCH.h" />
+    <ClInclude Include="includes\decoder.h" />
+    <ClInclude Include="includes\encoder.h" />
+    <ClInclude Include="includes\interpreter.h" />
+    <ClInclude Include="includes\MIPS_Globals.h" />
     <ClInclude Include="includes\parser.h" />
     <ClInclude Include="includes\scanner.h" />
     <ClInclude Include="includes\symbolTable.h" />

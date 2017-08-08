@@ -1,9 +1,9 @@
-#include "CompilerPCH.h"
+#include "./CompilerPCH.h"
 #include <conio.h>
 
 int main( int argc, char** argv )
 {
-	initCompiler( );
+	fnInitCompiler( );
 	char* strFilename;
 	
 	//Example... a.exe "Test\test7.txt" > out.txt

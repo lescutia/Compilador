@@ -30,6 +30,12 @@
     <ClCompile Include="src\intermediateCode.c">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="src\encoder.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\decoder.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
     <ClCompile Include="CompilerPCH.c">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -47,7 +53,19 @@
     <ClInclude Include="includes\intermediateCode.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="includes\MIPS_Globals.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="includes\encoder.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="includes\decoder.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
     <ClInclude Include="CompilerPCH.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="includes\interpreter.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
