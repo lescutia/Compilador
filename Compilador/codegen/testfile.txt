@@ -1,0 +1,23 @@
+ent main
+lda a
+ldc 1
+stn 
+lod a
+ldc 3
+adi 
+ldc 2
+ldc 3
+adi 
+grt 
+fjp L1
+lda a
+ldc 1
+stn 
+ujp L2
+lab L1
+lda a
+ldc 0
+stn 
+lab L2
+ldc 0
+ret 
