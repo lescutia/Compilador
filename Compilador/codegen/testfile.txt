@@ -1,23 +1,15 @@
 ent main
-lda a
-ldc 1
-stn 
-lod a
+lda result
+mst 
+ldc 5
 ldc 3
-adi 
-ldc 2
-ldc 3
-adi 
-grt 
-fjp L1
-lda a
-ldc 1
+cup fnAdd
 stn 
-ujp L2
-lab L1
-lda a
 ldc 0
-stn 
-lab L2
-ldc 0
+ret 
+stp 
+ent fnAdd
+lod var1
+lod var2
+adi 
 ret 

@@ -141,7 +141,7 @@ void fnSetAddress	( sEntry* entry, int address );
 void fnSetScope		( sEntry* entry, int scope );
 void fnSetDefined	( sEntry* entry, int defined );
 void fnSetParent	( sEntry* entry, char* parent );
-
+void fnAddParameter	( sEntry* entry, char* varname, int type );
 void fnPrintType( int type );
 
 // PARA VERIFICAR EL NÚMERO DE PARÁMETROS

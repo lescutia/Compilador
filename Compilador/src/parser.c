@@ -947,12 +947,22 @@ void fnVariable( )
 
 		// SÓLO EN LA TABLA LOCAL
 		entry = fnSearchSymbolTable( local_symbol_table, g_identifier, VARIABLE, g_lastProc );
-
+		
 		if( entry == 0 )
 		{
-			//createSymbolTableEntry( LOCAL_TABLE, g_identifier, lineNumber, VARIABLE, iType, 0, offset, 0 );
 			fnCreateSymbolTableEntry( LOCAL_TABLE, g_identifier, g_lineNumber, VARIABLE, iType, 0, -1, 0, g_lastProc );
+
+			if ( g_bSearchParameters )
+			{				
+				entry = fnSearchSymbolTable( global_symbol_table, g_lastProc, PROCEDURE, 0 );
+				fnAddParameter( entry, g_identifier, iType );
+
+				// Se busca el parámetro g_identifier en la tabla local y se establece como definido.
+				entry = fnSearchSymbolTable( local_symbol_table, g_identifier, VARIABLE, g_lastProc );
+				fnSetDefined( entry, 1 );
+			}
 		}
+		// TODO: redefinition variable
 		/* Se comentó porque detecta los parámetros de un prototipo
 		 * de función y los mismos parámteros en la definición de la
 		 * función, y los detecta como redefinidos.
@@ -1045,10 +1055,6 @@ int fnInitialization( int iType )
 		 */
 		if( fnIsLiteral( ) )
 		{
-			// TODO: VER SI ESTÁ EN EL LUGAR CORRECTO
-			// CODEGEN
-			// fnDebugCodeGen( "ldc ", "", NO_LABEL );
-			//
 			// Por el momento no es de nuestro interés
 			// initialValue
 			initialValue = g_literal[ 0 ];
@@ -1499,6 +1505,12 @@ void fnProcedure( char* procedure, int type )
 	 */
 	entry = fnSearchSymbolTable( global_symbol_table, procedure, PROCEDURE, 0 );
 
+	if ( entry == 0 ) //NULL
+	{
+		//Se crea una entrada en la tabla para el procedimiento.
+		fnCreateSymbolTableEntry( GLOBAL_TABLE, procedure, g_lineNumber, PROCEDURE, type, 0, -1, 0, 0 );
+	}
+
 	// try parsing formal parameters
 	/* type identifier '('...
 	 */
@@ -1578,19 +1590,11 @@ void fnProcedure( char* procedure, int type )
 
 		//Si entry es NULL (0), entonces es una declaración de
 		//procedimiento.
-		if( entry == 0 ) //NULL
-		{
-			//Se crea una entrada en la tabla para el procedimiento.
-			//fnCreateSymbolTableEntry( GLOBAL_TABLE, procedure, g_lineNumber, PROCEDURE, type, 0, 0 );
-			fnCreateSymbolTableEntry( GLOBAL_TABLE, procedure, g_lineNumber, PROCEDURE, type, 0, -1, 0, 0 );
-		}
-		// TODO: REVISAR QUE LA FUNCIÓN SEA CORRECTA
-		else
+		if ( entry != 0 ) //NULL
 		{
 			printf( "\n Warning: line %d, previous declaration of '%s'.", g_lineNumber, procedure );
 
-			if( fnGetType( entry ) != type )
-				// fnTypeWarning( fnGetType( entry ), type );
+			if ( fnGetType( entry ) != type )
 				printf( "\n Warning: line %d, conflicting types for '%s'.", g_lineNumber, procedure );
 
 			printf( "\n" );
@@ -1612,7 +1616,11 @@ void fnProcedure( char* procedure, int type )
 		{
 			// procedure never called nor declared nor defined
 			// createSymbolTableEntry( GLOBAL_TABLE, procedure, lineNumber, PROCEDURE, type, 0, binaryLength );
-			fnCreateSymbolTableEntry( GLOBAL_TABLE, procedure, g_lineNumber, PROCEDURE, type, 0, -1, 1, 0 );
+			
+			// TODO: poner procedure en definido
+			entry = fnSearchSymbolTable( global_symbol_table, procedure, PROCEDURE, 0) ;
+			fnSetDefined( entry, 1 );
+			//fnCreateSymbolTableEntry( GLOBAL_TABLE, procedure, g_lineNumber, PROCEDURE, type, 0, -1, 1, 0 );
 		}
 		// TODO: COMPLETAR
 		else
@@ -2135,6 +2143,9 @@ void fnReturn( )
 
 		// CODEGEN
 		fnDebugCodeGen( "ret", "", NO_LABEL );
+
+		if ( strcmp( g_lastProc, "main" ) == 0 )
+			fnDebugCodeGen( "stp", "", NO_LABEL );
 		//
 		if( iType != g_iReturnType )
 			fnTypeWarning( g_iReturnType, iType );

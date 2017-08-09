@@ -25,6 +25,28 @@ void fnSetScope		( sEntry* entry, int scope )        { entry->scope = scope; }
 void fnSetDefined	( sEntry* entry, int defined )		{ entry->defined = defined; }
 void fnSetParent	( sEntry* entry, char* parent ) 	{ entry->parent = parent; }
 
+void fnAddParameter	( sEntry* entry, char* varname, int type )
+{
+	sParameter* newParam = ( sParameter* )malloc( sizeof( sParameter ) );
+
+	newParam->id = malloc( strlen( varname ) + 1 );
+	strcpy( newParam->id, varname );
+	newParam->type = type;
+	newParam->next = NULL;
+
+	sParameter* prevParam = entry->parameter;
+
+	if ( prevParam )
+	{
+		while ( prevParam->next )
+			prevParam = prevParam->next;
+
+		prevParam->next = newParam;
+	}
+	else
+		entry->parameter = newParam;
+}
+
 // PARA VERIFICAR EL NÚMERO DE PARÁMETROS
 sParameter* fnGetNextParameter( sParameter* parameter ) { return parameter->next; }
 int fnGetTypeParameter( sParameter* parameter )			{ return parameter->type; }
@@ -87,7 +109,7 @@ void fnPrintType( int type )
 	else
 		printf( "UNKNOWN" );
 
-	// printf("\n");
+	printf("\n");
 }
 
 void fnPrintClass( int class )
@@ -108,44 +130,59 @@ void fnPrintClass( int class )
 void fnPrintTable( int whichTable )
 {
 	sEntry* it;
+
 	if( whichTable == GLOBAL_TABLE )
 	{
-		printf( "/****************************************\n" );
+		printf( "\n/****************************************\n" );
 		printf( "*		GLOBAL TABLE 		*\n" );
-		printf( "/****************************************\n" );
+		printf( "/****************************************" );
+
 		it = global_symbol_table;
 	}
 	else
 	{
-		printf( "/****************************************\n" );
+		printf( "\n/****************************************\n" );
 		printf( "*		LOCAL TABLE		*\n" );
-		printf( "/****************************************\n" );
+		printf( "/****************************************" );
+
 		it = local_symbol_table;
 	}
 
 	while( it != 0 )
 	{
-		//printf("string:	%s\n",   it->string);
-		printf( "symbol:	 %s\n", it->string );
-		printf( "line:	 %d\n", it->line );
-		if( it->parent )
-			printf( "parent:	 %s\n", it->parent );
+		printf( "\n symbol:  %s\n", it->string );
+		printf( " line:    %d\n", it->line );
 
-		printf( "class:	 " );
+		if( it->parent )
+			printf( " parent:  %s\n", it->parent );
+		
+		if (it->parameter)
+		{
+			sParameter* tmpParam = it -> parameter;
+			printf( " param:   " );
+
+			do
+			{
+				printf( "%s", tmpParam -> id );
+				tmpParam = tmpParam -> next;
+
+				if ( tmpParam )
+					printf( ", " );
+			} while ( tmpParam );
+
+			printf( "\n" );
+		}
+
+		printf( " class:   " );
 		fnPrintClass( it->class );
 
-		printf( "type:	 " );
+		printf( " type:    " );
 		fnPrintType( it->type );
-		printf( "\n" );
 
-		//printf("value:	 %d\n",   it->value);
-		//printf("address: %d\n",   it->address);
-		//printf("scope:	 %d\n",   it->scope);
-		printf( "defined: %d\n\n", it->defined );
-
-		//ELIMINAR
-		printf( "\n" );
-		//
+		//printf(" value:	 %d\n",   it->value);
+		//printf(" address: %d\n",   it->address);
+		//printf(" scope:	 %d\n",   it->scope);
+		printf( " defined: %d\n", it->defined );
 
 		it = it->next;
 	}

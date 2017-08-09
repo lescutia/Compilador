@@ -1,12 +1,15 @@
+int fnAdd( int var1, int var2 );
+
 int main( )
 {
-	int a;
-	a = 1;
+	int result;
 
-	if ( a + 3 > 2 + 3 )
-		a = 1;
-	else
-		a = 0;
+	result = fnAdd( 5, 3 );
 
 	return 0;
+}
+
+int fnAdd( int var1, int var2 )
+{
+	return var1 + var2;
 }
