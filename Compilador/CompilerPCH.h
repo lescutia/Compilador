@@ -124,9 +124,18 @@ int g_numberOfScannedSymbols;
 /************************************************
 *				LIBRARY INCLUDES				*
 *************************************************/
+
+/** Inicializa todo lo necesario del compilador. */
 void fnInitCompiler( );
+/** Libera toda la memoria utilizada. */
+void fnUninitializeCompiler( );
+
 int fnLeftShift( int iNumberToShift, int iShifting );
 int fnRightShift( int iNumberToShift, int iShifting );
+
+#include "./includes/registers.h"
+#include "./includes/decoder.h"
+#include "./includes/encoder.h"
 
 #include "./includes/intermediateCode.h"
 #include "./includes/symbolTable.h"

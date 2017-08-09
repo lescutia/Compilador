@@ -153,6 +153,7 @@
     <ClCompile Include="src\decoder.c" />
     <ClCompile Include="src\encoder.c" />
     <ClCompile Include="src\parser.c" />
+    <ClCompile Include="src\registers.c" />
     <ClCompile Include="src\scanner.c" />
     <ClCompile Include="src\symbolTable.c" />
     <ClCompile Include="src\intermediateCode.c" />
@@ -162,8 +163,8 @@
     <ClInclude Include="includes\decoder.h" />
     <ClInclude Include="includes\encoder.h" />
     <ClInclude Include="includes\interpreter.h" />
-    <ClInclude Include="includes\MIPS_Globals.h" />
     <ClInclude Include="includes\parser.h" />
+    <ClInclude Include="includes\registers.h" />
     <ClInclude Include="includes\scanner.h" />
     <ClInclude Include="includes\symbolTable.h" />
     <ClInclude Include="includes\intermediateCode.h" />
