@@ -1702,6 +1702,9 @@ void fnProcedure( char* procedure, int type )
 			/********************/
 			if( !g_bHasReturn )
 			{
+				// CODEGEN
+				fnDebugCodeGen ( "ret", "", NO_LABEL );
+				//
 				if( type != VOID_T )
 				{
 					printf( "\n Warning: in function '%s', a value of type '", procedure );
