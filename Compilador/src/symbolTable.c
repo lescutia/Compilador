@@ -29,7 +29,7 @@ void fnAddParameter	( sEntry* entry, char* varname, int type )
 {
 	sParameter* newParam = ( sParameter* )malloc( sizeof( sParameter ) );
 
-	newParam->id = malloc( strlen( varname ) + 1 );
+	newParam->id = (char*)malloc( strlen( varname ) + 1 );
 	strcpy( newParam->id, varname );
 	newParam->type = type;
 	newParam->next = NULL;
@@ -58,9 +58,9 @@ void fnCreateParameter( sEntry* entry, int type, char* id )
 	sParameter* newParameter;
 	sParameter* ptrParameter;
 
-	newParameter = malloc( sizeof( sParameter ) );
+	newParameter = (sParameter*)malloc( sizeof( sParameter ) );
 	// +1 es para incluir el caracter final '\0'
-	newParameter->id = malloc( strlen( id ) + 1 );
+	newParameter->id = (char*)malloc( strlen( id ) + 1 );
 
 	newParameter->next = NULL;
 	newParameter->type = type;
@@ -193,9 +193,18 @@ void fnResetSymbolTables( )
 	while( global_symbol_table != 0 )
 	{
 		sEntry* next = fnGetNextEntry( global_symbol_table );
-		SAFE_RELEASE( global_symbol_table->parent );
+		sParameter* it = global_symbol_table->parameter;
+		while( global_symbol_table->parameter )
+		{
+			it = it->next;
+			SAFE_RELEASE( global_symbol_table->parameter->id );
+			SAFE_RELEASE( global_symbol_table->parameter );
+			global_symbol_table->parameter = it;
+		}
+		//SAFE_RELEASE( global_symbol_table->parent );
 		SAFE_RELEASE( global_symbol_table->string );
 		SAFE_RELEASE( global_symbol_table );
+		
 		global_symbol_table = next;
 	}
 
@@ -219,12 +228,12 @@ void fnResetSymbolTables( )
 void fnCreateSymbolTableEntry( int whichTable, char* string, int line, int class, int type, int value, int address, int defined, char* parent )
 {
 	sEntry* newEntry;
-	newEntry = malloc( sizeof( sEntry ) );
+	newEntry = (sEntry*)malloc( sizeof( sEntry ) );
 
 	//newEntry->string = malloc( sizeof(string) );
 	//sizeof(string) no es la longitud de la cadena
 	// +1 es para incluir el caracter final '\0'
-	newEntry->string = malloc( strlen( string ) + 1 );
+	newEntry->string = (char*)malloc( strlen( string ) + 1 );
 
 	//memcpy ( newEntry->string, string, sizeof(string) );
 	strcpy ( newEntry->string, string );
@@ -243,7 +252,7 @@ void fnCreateSymbolTableEntry( int whichTable, char* string, int line, int class
 	if( parent )
 	{
 		// +1 es para incluir el caracter final '\0'
-		newEntry->parent = malloc( strlen( parent ) + 1 );
+		newEntry->parent = (char*)malloc( strlen( parent ) + 1 );
 		strcpy( newEntry->parent, parent );
 	}
 	else
