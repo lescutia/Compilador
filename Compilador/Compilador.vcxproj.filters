@@ -65,9 +65,6 @@
     <ClInclude Include="includes\intermediateCode.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="includes\MIPS_Globals.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="includes\encoder.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -90,6 +87,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="includes\PCodeRead.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="includes\registers.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

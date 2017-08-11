@@ -17,8 +17,6 @@ int main( int argc, char** argv )
 	if( g_sourceFD != NULL )
 	{
 		fnOpenFileToWrite( "testfile.txt" );
-
-		fnInitScanner( );    // Incializar el scanner
 		fnReadCharacter( );  // Leer el primer carácter
 		fnGetSymbol( );      // Obtener el primer token
 		fnParser( );         // Iniciar el parser
@@ -42,7 +40,7 @@ int main( int argc, char** argv )
 	fnGenAsmCode( );
 	fnClosePCode( );
 	
-	fnUninitializeScanner( );
+	fnUninitializeCompiler( );
 	fnResetSymbolTables( );
 
 	printf( "\n Press any key to exit..." );

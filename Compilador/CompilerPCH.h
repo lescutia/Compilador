@@ -10,10 +10,19 @@
 
 #pragma once
 /************************************************
+*				BUILTIN FUNCTIONS				*
+*************************************************/
+void exit( int code );
+void free( int* ptr );
+int read( int fd, int* buffer, int bytesToRead );
+int write( int fd, int* buffer, int bytesToWrite );
+int open( int* filename, int flags, int mode );
+int* malloc( int size );
+
+/************************************************
 *					STD INCLUDES				*
 *************************************************/
 #include <stdio.h>
-#include <stdlib.h>
 #include <string.h>
 //#include <vld.h>
 
@@ -122,11 +131,25 @@ int g_numberOfComments;
 int g_numberOfScannedSymbols;
 
 /************************************************
-*				LIBRARY INCLUDES				*
+*				LIBRARY FUNCTIONS				*
 *************************************************/
+
+/** Inicializa todo lo necesario del compilador. */
 void fnInitCompiler( );
+/** Libera toda la memoria utilizada. */
+void fnUninitializeCompiler( );
+
 int fnLeftShift( int iNumberToShift, int iShifting );
 int fnRightShift( int iNumberToShift, int iShifting );
+// TODO: agregar procedimientos de print, scan, etc.
+
+
+/************************************************
+*				LIBRARY INCLUDES				*
+*************************************************/
+#include "./includes/registers.h"
+#include "./includes/decoder.h"
+#include "./includes/encoder.h"
 
 #include "./includes/PCodeRead.h"
 #include "./includes/PCodeToAsm.h"

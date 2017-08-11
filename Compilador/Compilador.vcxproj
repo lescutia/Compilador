@@ -154,6 +154,7 @@
     <ClCompile Include="src\encoder.c" />
     <ClCompile Include="src\list.c" />
     <ClCompile Include="src\parser.c" />
+    <ClCompile Include="src\registers.c" />
     <ClCompile Include="src\PCodeToAsm.c" />
     <ClCompile Include="src\PCodeRead.c" />
     <ClCompile Include="src\scanner.c" />
@@ -169,6 +170,7 @@
     <ClInclude Include="includes\list.h" />
     <ClInclude Include="includes\MIPS_Globals.h" />
     <ClInclude Include="includes\parser.h" />
+    <ClInclude Include="includes\registers.h" />
     <ClInclude Include="includes\PCodeToAsm.h" />
     <ClInclude Include="includes\PCodeRead.h" />
     <ClInclude Include="includes\scanner.h" />
