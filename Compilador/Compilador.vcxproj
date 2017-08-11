@@ -152,6 +152,7 @@
     <ClCompile Include="main.c" />
     <ClCompile Include="src\decoder.c" />
     <ClCompile Include="src\encoder.c" />
+    <ClCompile Include="src\interpreter.c" />
     <ClCompile Include="src\parser.c" />
     <ClCompile Include="src\registers.c" />
     <ClCompile Include="src\scanner.c" />

@@ -148,6 +148,7 @@ int fnRightShift( int iNumberToShift, int iShifting );
 *				LIBRARY INCLUDES				*
 *************************************************/
 #include "./includes/registers.h"
+#include "./includes/interpreter.h"
 #include "./includes/decoder.h"
 #include "./includes/encoder.h"
 

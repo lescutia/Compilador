@@ -10,7 +10,7 @@ void fnInitCompiler( )
 
 	fnInitScanner( );
 	fnInitRegisters( );
-	//fnInitInterpreter( );
+	fnInitInterpreter( );
 	fnInitDecoder( );
 }
 

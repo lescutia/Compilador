@@ -23,7 +23,7 @@ void fnInitDecoder( )
 	*( g_OPCODES + OP_SW ) = ( int )"sw";
 	
 	// la funct más grande (utilizado) es 0x2A por lo que la memoria que se necesita es 42 + 1.
-	g_FUNCTIONS = (int*) malloc( 43 * sizeof( int ) );
+	g_FUNCTIONS = (int*) malloc( 44 * sizeof( int ) );
 	*( g_FUNCTIONS + FCT_NOP ) = ( int )"nop";
 	*( g_FUNCTIONS + FCT_JR ) = ( int )"jr";
 	*( g_FUNCTIONS + FCT_SYSCALL ) = ( int )"syscall";
@@ -52,32 +52,32 @@ int fnDecodeAddress		( int address ) { return fnRightShift( fnLeftShift( address
 
 void fnDecodeRFormat( )
 {
-	//g_iRS = fnDecodeRS( ir );
-	//g_iRT = fnDecodeRT( ir );
-	//g_iRD = fnDecodeRD( ir );
-	//g_iFunction = fnDecodeFunct( ir );
-	//g_iImmediate = 0;
-	//g_iAddress = 0;
+	g_iRS = fnDecodeRS( g_IR );
+	g_iRT = fnDecodeRT( g_IR );
+	g_iRD = fnDecodeRD( g_IR );
+	g_iFunction = fnDecodeFunct( g_IR );
+	g_iImmediate = 0;
+	g_iAddress = 0;
 }
 
 void fnDecodeIFormat( )
 {
-	//g_iRS = fnDecodeRS( ir );
-	//g_iRT = fnDecodeRT( ir );
-	//g_iRD = 0;
-	//g_iFunction = 0;
-	//g_iImmediate = fnDecodeImmediate( ir );
-	//g_iAddress = 0;
+	g_iRS = fnDecodeRS( g_IR );
+	g_iRT = fnDecodeRT( g_IR );
+	g_iRD = 0;
+	g_iFunction = 0;
+	g_iImmediate = fnDecodeImmediate( g_IR );
+	g_iAddress = 0;
 }
 
 void fnDecodeJFormat( )
 {
-	//g_iRS = 0;
-	//g_iRT = 0;
-	//g_iRD = 0;
-	//g_iFunction = 0;
-	//g_iImmediate = 0;
-	//g_iAddress = fnDecodeAddress( ir );
+	g_iRS = 0;
+	g_iRT = 0;
+	g_iRD = 0;
+	g_iFunction = 0;
+	g_iImmediate = 0;
+	g_iAddress = fnDecodeAddress( g_IR );
 }
 
 
