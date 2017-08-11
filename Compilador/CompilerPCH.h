@@ -128,6 +128,8 @@ void fnInitCompiler( );
 int fnLeftShift( int iNumberToShift, int iShifting );
 int fnRightShift( int iNumberToShift, int iShifting );
 
+#include "./includes/PCodeRead.h"
+#include "./includes/PCodeToAsm.h"
 #include "./includes/intermediateCode.h"
 #include "./includes/symbolTable.h"
 #include "./includes/scanner.h"

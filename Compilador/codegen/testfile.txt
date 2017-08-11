@@ -1,15 +1,15 @@
 ent main
 lda result
-mst 
+mst
 ldc 5
 ldc 3
 cup fnAdd
-stn 
+stn
 ldc 0
-ret 
-stp 
+ret
+stp
 ent fnAdd
 lod var1
 lod var2
-adi 
-ret 
+adi
+ret

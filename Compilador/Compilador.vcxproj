@@ -152,8 +152,12 @@
     <ClCompile Include="main.c" />
     <ClCompile Include="src\decoder.c" />
     <ClCompile Include="src\encoder.c" />
+    <ClCompile Include="src\list.c" />
     <ClCompile Include="src\parser.c" />
+    <ClCompile Include="src\PCodeToAsm.c" />
+    <ClCompile Include="src\PCodeRead.c" />
     <ClCompile Include="src\scanner.c" />
+    <ClCompile Include="src\stack.c" />
     <ClCompile Include="src\symbolTable.c" />
     <ClCompile Include="src\intermediateCode.c" />
   </ItemGroup>
@@ -162,9 +166,13 @@
     <ClInclude Include="includes\decoder.h" />
     <ClInclude Include="includes\encoder.h" />
     <ClInclude Include="includes\interpreter.h" />
+    <ClInclude Include="includes\list.h" />
     <ClInclude Include="includes\MIPS_Globals.h" />
     <ClInclude Include="includes\parser.h" />
+    <ClInclude Include="includes\PCodeToAsm.h" />
+    <ClInclude Include="includes\PCodeRead.h" />
     <ClInclude Include="includes\scanner.h" />
+    <ClInclude Include="includes\stack.h" />
     <ClInclude Include="includes\symbolTable.h" />
     <ClInclude Include="includes\intermediateCode.h" />
   </ItemGroup>

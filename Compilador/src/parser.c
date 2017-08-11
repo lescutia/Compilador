@@ -73,12 +73,12 @@ int g_iL2While = 0;
 static int NO_LABEL = -1;
 
 // TODO: MEJORAR
-// Para no eviarle entry a fnVariable, desde fnProcedure
+// Para no enviarle entry a fnVariable, desde fnProcedure
 sEntry* g_entry;
 
 /******* MOVER AL LUGAR APROPIADO *******/
 static int DEBUG_PARSER  = 0;
-static int DEBUG_CODEGEN = 1;
+static int DEBUG_CODEGEN = 0;
 
 void fnDebugParser( char* strMessage )
 {
@@ -106,7 +106,7 @@ void fnDebugCodeGen( char* strInstr, char* strArg, int iLabel )
 /****************************************/
 
 // Función para generar las etiquetas para los saltos
-int fnNewLabel( ) { g_iLabel++; }
+void fnNewLabel( ) { g_iLabel++; }
 
 void fnParser( )
 {
