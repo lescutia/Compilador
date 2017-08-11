@@ -35,8 +35,12 @@ void fnCloseFile( )
 void fnPCode( char* strInstr, char* strArg, int iLabel )
 {
 	fprintf( g_pFile, "%s", strInstr );
-	fprintf( g_pFile, "%c", ' ' );
-	fprintf( g_pFile, "%s", strArg );
+
+	if ( strcmp( strArg, "") )
+	{
+		fprintf( g_pFile, "%c", ' ' );
+		fprintf( g_pFile, "%s", strArg );
+	}
 
 	if( iLabel != NO_LABEL )
 		fprintf( g_pFile, "%d", iLabel );

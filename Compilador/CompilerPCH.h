@@ -114,7 +114,7 @@ FILE* g_sourceFD;
 #define MaxIntegerLength    10 // maximum number of characters in an integer
 #define MaxStringLength		128 // maximum number of characters in a string
 
-#define SAFE_RELEASE( x ) if( x ){ free( x ); }
+#define SAFE_RELEASE( x ) if( x ){ free( (int*)x ); }
 
 char g_identifier	[ MaxIdentifierLength ];
 char g_integer		[ MaxIntegerLength ];
@@ -152,6 +152,8 @@ int fnRightShift( int iNumberToShift, int iShifting );
 #include "./includes/decoder.h"
 #include "./includes/encoder.h"
 
+#include "./includes/PCodeRead.h"
+#include "./includes/PCodeToAsm.h"
 #include "./includes/intermediateCode.h"
 #include "./includes/symbolTable.h"
 #include "./includes/scanner.h"

@@ -35,6 +35,10 @@ int main( int argc, char** argv )
 
 	/*fnPrintTable( GLOBAL_TABLE );
 	fnPrintTable( LOCAL_TABLE );*/
+
+	fnOpenPCodeToRead( "codegen/testfile.txt" );
+	fnGenAsmCode( );
+	fnClosePCode( );
 	
 	fnUninitializeCompiler( );
 	fnResetSymbolTables( );

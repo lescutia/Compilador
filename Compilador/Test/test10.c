@@ -2,7 +2,7 @@ int fnAdd( int var1, int var2 );
 
 int main( )
 {
-	int result;
+	int result;	
 
 	result = fnAdd( 5, 3 );
 

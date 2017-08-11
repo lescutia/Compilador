@@ -39,7 +39,16 @@
     <ClCompile Include="CompilerPCH.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\registers.c">
+    <ClCompile Include="src\list.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\stack.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\PCodeToAsm.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\PCodeRead.c">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\interpreter.c">
@@ -69,6 +78,18 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="includes\interpreter.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="includes\list.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="includes\stack.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="includes\PCodeToAsm.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="includes\PCodeRead.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="includes\registers.h">
