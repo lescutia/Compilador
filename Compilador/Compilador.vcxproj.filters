@@ -54,6 +54,9 @@
     <ClCompile Include="src\list.c">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="src\interpreter.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="includes\parser.h">

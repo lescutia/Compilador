@@ -15,14 +15,11 @@
 /** Inicializa variables globales que va a utilizar. */
 void fnInitInterpreter( );
 
-/** Carga la siguiente instrucción. */
-void fnFetch( );
-
-/** Ejecuta la instrucción cargada. */
-void fnExecute( );
+/** Ejectuta interprete. */
+void fnRunInterpreter( );
 
 /** Si existe alguna interrupción se encargara de manejarla y temrinar el programa. */
-void fnInterrupt( );
+//void fnInterrupt( );
 
 
 /************************************************************************/
