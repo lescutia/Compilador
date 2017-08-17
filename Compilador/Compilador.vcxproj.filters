@@ -39,16 +39,19 @@
     <ClCompile Include="CompilerPCH.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\list.c">
+    <ClCompile Include="src\PCodeToAsm.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\PCodeRead.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\registers.c">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\stack.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\PCodeToAsm.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\PCodeRead.c">
+    <ClCompile Include="src\list.c">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -77,12 +80,6 @@
     <ClInclude Include="includes\interpreter.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="includes\list.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="includes\stack.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="includes\PCodeToAsm.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -90,6 +87,15 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="includes\registers.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="includes\MIPS_Globals.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="includes\stack.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="includes\list.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

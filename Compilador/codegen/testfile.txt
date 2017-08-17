@@ -1,15 +1,25 @@
 ent main
-lda result
+lda sum
 mst
 ldc 5
-ldc 3
-cup fnAdd
+cup fnSum
 stn
 ldc 0
 ret
 stp
-ent fnAdd
-lod var1
-lod var2
+ent fnSum
+lod n
+ldc 1
+equ
+fjp L1
+ldc 1
+ret
+lab L1
+lod n
+mst
+lod n
+ldc 1
+sbi
+cup fnSum
 adi
 ret

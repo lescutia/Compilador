@@ -4,25 +4,67 @@
 #include "../includes/list.h"
 #include "../includes/PCodeToAsm.h"
 
-void fnInitListOfTemporaries( stList* L );
+#define REGISTER_TEMPORARY 0
+#define REGISTER_ARGUMENT 1
 
-int g_bReturn = 0;
-int g_bMarkStack = 0;
+void fnInitListOfTemporaries( stList * L );
+void fnInitListOfArguments( stList * L );
+void fnInsertRegister( char * strReg );
+int fnRegisterType( char * strReg );
+int fnGetNumberOfParameters( sEntry *  procedure );
+int fnIsVoid( sEntry * procedure );
+int fnIsParameter( sEntry * variable );
+
+void fnGetTemporary( char * out_strReg );
+void fnGetArgument( char * out_strReg );
+
+int fnIsArgument( sEntry * entryProcedure, char * strArg );
+
+int g_iNumParam;
+int g_iTemporariesUsed = 0;
+
+stList * g_listOfTemporaries, * g_listOfArguments;
 
 void fnGenAsmCode( )
 {
-    char strReg0[ 4 ], strReg1[ 4 ], strReg2[ 4 ], strBranchAddr[ 4 ];
-    stStack* stackOfPMachine;
-    stList* listOfTemporaries;
-	// SYMBOLTABLE
-	sEntry* entry;
-	//
+	int i, bMarkStack = 0, iNumberOfParameters = 0;
+    char strReg0[ 4 ], strReg1[ 4 ], strReg2[ 4 ], strOpcode[ 5 ], strAuxReg[ 9 ];
+    stStack * stackOfPMachine;
+	sEntry * entry, * entryCurrProcedure;
 
     stackOfPMachine = fnInitStack( );
-    listOfTemporaries = fnInitList( );
+    g_listOfTemporaries = fnInitList( );
+	g_listOfArguments = fnInitList( );
 
-    fnInitListOfTemporaries( listOfTemporaries );
+    fnInitListOfTemporaries( g_listOfTemporaries );
+	fnInitListOfArguments( g_listOfArguments );
 
+	// Sección de datos
+	fnGenDirective( ".data" );
+	entry = local_symbol_table;
+
+	/* Generar código para todas las variables, que no sean parámetros
+	 */
+	while( entry )
+	{
+		if( !fnIsParameter( entry ) )
+			fnGenVariable( fnGetString( entry ), fnGetType( entry ) );
+
+		entry =  fnGetNextEntry( entry );
+	}
+	//
+
+	// Sección de texto
+	fnGenDirective( ".text" );
+	fnGenDirective( ".globl main" );
+
+	/* Consideramos que cada línea de código P es de la sigueinte forma
+	 *                         instr arg
+	 * donde,
+	 *        instr  es la instrucción que se va a ejecutar; y
+	 *        arg    es el argumento de la instrucción, el cual
+	 *               puede ser "nulo".
+	 */
     while( fnHasInstr( ) )
     {
         fnGetInstr( );
@@ -30,153 +72,132 @@ void fnGenAsmCode( )
         if ( fnInstrMatch( "ent" ) )
         {
             fnGetArg( );
-            printf( "%s:\n", g_strArg );
+			fnGenLabel( g_strArg );
 
-			// SYMBOLTABLE
-			entry = fnSearchSymbolTable( global_symbol_table, g_strArg, PROCEDURE, 0 );
-
-			if( entry != NULL && fnGetType( entry ) != VOID_T )
-					g_bReturn = 1;
-			//
+			entryCurrProcedure = fnSearchSymbolTable( global_symbol_table, g_strArg, PROCEDURE, 0 );
+			iNumberOfParameters = fnGetNumberOfParameters( entryCurrProcedure );
         }
         else if ( fnInstrMatch( "lda" ) )
         {
             fnGetArg( );
+			fnGetTemporary( strReg0 );
 
-            strcpy( strReg0, fnGetLast( listOfTemporaries ) );
-            fnRemoveLast( listOfTemporaries );
-
-            printf( " la %s, %s\n", strReg0, g_strArg );
+            fnGenPseudoInstr( "la", strReg0, g_strArg, "" );
             fnPush( stackOfPMachine, strReg0 );
         }
         else if ( fnInstrMatch( "ldc" ) )
         {
             fnGetArg( );
-
-            strcpy( strReg0, fnGetLast( listOfTemporaries ) );
-            fnRemoveLast( listOfTemporaries );
+			fnGetTemporary( strReg0 );
 			
-            printf( " li %s, %s\n", strReg0, g_strArg );
+            fnGenPseudoInstr( "li", strReg0, "", g_strArg );
             fnPush( stackOfPMachine, strReg0 );
         }
         else if ( fnInstrMatch( "lod" ) )
         {
             fnGetArg( );
 
-            strcpy( strReg0, fnGetLast( listOfTemporaries ) );
-            fnRemoveLast( listOfTemporaries );
+			// TODO: Considerar más de 4 parámetros
+			if ( fnIsArgument( entryCurrProcedure, g_strArg ) )
+				sprintf( strReg0, "$a%d", g_iNumParam );
+			else
+			{
+				fnGetTemporary( strReg0 );
+				fnGenIFormat( "lw", strReg0, g_strArg, "" );
+			}
 
-            printf( " lw %s, %s\n", strReg0, g_strArg );
             fnPush( stackOfPMachine, strReg0 );
         }
         else if ( fnInstrMatch( "stn" ) )
         {
-            if ( strcmp( fnPeek( stackOfPMachine ), "Hi" ) == 0 )
-            {
-                strcpy( strReg0, fnGetLast( listOfTemporaries ) );
-                //fnRemoveLast( listOfTemporaries );
+            strcpy( strReg0, fnPop( stackOfPMachine ) );
+			fnInsertRegister( strReg0 );
 
-                fnPop( stackOfPMachine ); // Pop Hi
+			strcpy( strReg1, fnPop( stackOfPMachine ) );
+			fnInsertRegister( strReg1 );
 
-                printf( " mfhi %s\n", strReg0 );
-
-                strcpy( strReg1, fnPop( stackOfPMachine ) );
-                fnInsertInPlace( listOfTemporaries, strReg1 );
-
-                printf( " sw %s, 0(%s)\n", strReg0, strReg1 );
-            }
-            else if( strcmp( fnPeek( stackOfPMachine ), "Lo" ) == 0 )
-            {
-                strcpy( strReg0, fnGetLast( listOfTemporaries ) );
-                //fnRemoveLast( listOfTemporaries );
-
-                fnPop( stackOfPMachine ); // Pop Lo
-
-                printf( " mflo %s\n", strReg0 );
-
-                strcpy( strReg1, fnPop( stackOfPMachine ) );
-                fnInsertInPlace( listOfTemporaries, strReg1 );
-
-                printf( " sw %s, 0(%s)\n", strReg0, strReg1 );
-            }
-            else
-            {
-                strcpy( strReg0, fnPop( stackOfPMachine ) );
-				fnInsertInPlace( listOfTemporaries, strReg0 );
-
-                strcpy( strReg1, fnPop( stackOfPMachine ) );
-                fnInsertInPlace( listOfTemporaries, strReg1 );
-
-                printf( " sw %s, 0(%s)\n", strReg0, strReg1 );
-            }
+			// TODO: REVISAR
+			// De acuerdo al código P siempre asignamos un valor de esta forma.
+			sprintf( strAuxReg, "0(%s)", strReg1 );
+            fnGenIFormat( "sw", strReg0, strAuxReg, "" );
         }
         else if ( fnInstrMatch( "adi" ) )
         {
-            strcpy( strReg2, fnPop( stackOfPMachine ) );
-            fnInsertInPlace( listOfTemporaries, strReg2 );
-
+			strcpy( strReg2, fnPop( stackOfPMachine ) );
+			fnInsertRegister( strReg2 );
+			
             strcpy( strReg1, fnPop( stackOfPMachine ) );
-            fnInsertInPlace( listOfTemporaries, strReg1 );
+			fnInsertRegister( strReg1 ); 
 
-            strcpy( strReg0, fnGetLast( listOfTemporaries ) );
+			fnGetTemporary( strReg0 );
 
-            fnRemoveLast( listOfTemporaries );
-
-            printf( " add %s, %s, %s\n", strReg0, strReg1, strReg2 );
-
+            fnGenRFormat( "add", strReg0, strReg1, strReg2, "" );
             fnPush( stackOfPMachine, strReg0 );
         }
         else if ( fnInstrMatch( "sbi" ) )
         {
             strcpy( strReg2, fnPop( stackOfPMachine ) );
-            fnInsertInPlace( listOfTemporaries, strReg2 );
+			fnInsertRegister( strReg2 );
 
             strcpy( strReg1, fnPop( stackOfPMachine ) );
-            fnInsertInPlace( listOfTemporaries, strReg1 );
+			fnInsertRegister( strReg1 );
 
-            strcpy( strReg0, fnGetLast( listOfTemporaries ) );
-            fnRemoveLast( listOfTemporaries );
+			fnGetTemporary( strReg0 );
 
-            printf( " sub %s, %s, %s\n", strReg0, strReg1, strReg2 );
-
+            fnGenRFormat( "sub", strReg0, strReg1, strReg2, "" );
             fnPush( stackOfPMachine, strReg0 );
         }
         else if ( fnInstrMatch( "mpi" ) )
         {
-            strcpy( strReg0, fnPop( stackOfPMachine ) );
-            fnInsertInPlace( listOfTemporaries, strReg0 );
-
             strcpy( strReg1, fnPop( stackOfPMachine ) );
-            fnInsertInPlace( listOfTemporaries, strReg1 );
+			fnInsertRegister( strReg1 );
 
-            printf( " mult %s, %s\n", strReg0, strReg1 );
+            strcpy( strReg0, fnPop( stackOfPMachine ) );
+			fnInsertRegister( strReg0 );
 
-            fnPush( stackOfPMachine, "Hi" );
+			fnGenRFormat( "mult", "", strReg0, strReg1, "" );
+			
+			fnGetTemporary( strReg0 );
+
+			fnGenRFormat( "mflo", strReg0, "", "", "" );
+			fnPush( stackOfPMachine, strReg0 );
         }
         else if ( fnInstrMatch( "dvi" ) )
         {
             strcpy( strReg1, fnPop( stackOfPMachine ) );
-            fnInsertInPlace( listOfTemporaries, strReg1 );
+			fnInsertRegister( strReg1 );
 
             strcpy( strReg0, fnPop( stackOfPMachine ) );
-            fnInsertInPlace( listOfTemporaries, strReg0 );
+			fnInsertRegister( strReg0 );
 
-            printf( " div %s, %s\n", strReg0, strReg1 );
+			fnGenRFormat( "div", "", strReg0, strReg1, "" );
 
-            fnPush( stackOfPMachine, "Lo" );
+			fnGetTemporary( strReg0 );
+
+			fnGenRFormat( "mflo", strReg0, "", "", "" );
+			fnPush( stackOfPMachine, strReg0 );
         }
         else if ( fnInstrMatch( "mod" ) )
         {
             strcpy( strReg1, fnPop( stackOfPMachine ) );
-            fnInsertInPlace( listOfTemporaries, strReg1 );
+			fnInsertRegister( strReg1 );
 
             strcpy( strReg0, fnPop( stackOfPMachine ) );
-            fnInsertInPlace( listOfTemporaries, strReg0 );
+			fnInsertRegister( strReg0 );
 
-            printf( " div %s, %s\n", strReg0, strReg1 );
+			fnGenRFormat( "div", "", strReg0, strReg1, "" );
 
-            fnPush( stackOfPMachine, "Hi" );
+			fnGetTemporary( strReg0 );
+
+			fnGenRFormat( "mfhi", strReg0, "", "", "" );
+			fnPush( stackOfPMachine, strReg0 );
         }
+		else if ( fnInstrMatch( "ngi" ) )
+		{
+			strcpy( strReg0, fnPop( stackOfPMachine ) );
+			fnGenRFormat( "sub", strReg0, "$zero", strReg0, "" );
+			fnPush( stackOfPMachine, strReg0 );
+		}
         else if ( fnInstrMatch( "les" ) )
         {
             fnPush( stackOfPMachine, "bge" );
@@ -204,79 +225,404 @@ void fnGenAsmCode( )
         else if ( fnInstrMatch( "fjp" ) )
         {
             fnGetArg( );
-            strcpy( strBranchAddr, fnPop( stackOfPMachine ) );
+            strcpy( strOpcode, fnPop( stackOfPMachine ) );
 
             strcpy( strReg1, fnPop( stackOfPMachine ) );
-            fnInsertInPlace( listOfTemporaries, strReg1 );
+			fnInsertRegister( strReg1 );
 
             strcpy( strReg0, fnPop( stackOfPMachine ) );
-            fnInsertInPlace( listOfTemporaries, strReg0 );
+			fnInsertRegister( strReg0 );
 
-            printf( " %s %s, %s, %s\n", strBranchAddr, strReg0, strReg1, g_strArg );
+           if ( strcmp( strOpcode, "beq" ) == 0 || strcmp( strOpcode, "bne" ) == 0 )
+				fnGenIFormat( strOpcode, strReg0, strReg1, g_strArg );
+			else
+				fnGenPseudoInstr( strOpcode, strReg0, strReg1, g_strArg );
         }
         else if ( fnInstrMatch( "ujp" ) )
         {
             fnGetArg( );
-            printf( " j %s\n", g_strArg );
+			fnGenJFormat( "j", g_strArg );
         }
         else if ( fnInstrMatch( "lab" ) )
         {
             fnGetArg( );
-            printf( " %s:\n", g_strArg );
+			fnGenLabel( g_strArg );
         }
 		else if ( fnInstrMatch( "mst" ) )
 		{
-			printf( " addi $sp, $sp, -4\n" );
-			printf( " sw $ra, 0($sp)\n" );
+			// Ahora está en "ent"
+			// iNumberOfParameters = fnGetNumberOfParameters( entryCurrProcedure );
 
-			g_bMarkStack = 1;
+			sprintf( strAuxReg, "-%d", 4 * ( g_iTemporariesUsed + iNumberOfParameters + 1 ) );
+			fnGenIFormat( "addi", "$sp", "$sp", strAuxReg );
+
+			// TODO: Liberar los registros temporales, para que puedan ser usados.
+			// Consirera que al liberlos el valor de g_iTemporariesUsed cambia.
+			//
+			// Salvar los valores de los registros temporales que han sido usados.
+			for ( i = 0; i < g_iTemporariesUsed; i++ )
+			{
+				sprintf( strReg0, "$t%d", i );
+				sprintf( strAuxReg, "%d($sp)", 4 * i );
+
+				// fnInsertRegister( strReg0 );
+				fnGenIFormat( "sw", strReg0, strAuxReg, "" );
+			}
+			
+			// Se salvan los valores de los argumentos, del procedimiento actual.
+			// Y se liberan para que se puedan volver a utilizar.
+			for ( i = 0; i < iNumberOfParameters; i++ )
+			{
+				sprintf( strReg0, "$a%d", i);
+				sprintf( strAuxReg, "%d($sp)", 4 * ( i + g_iTemporariesUsed ) );
+
+				fnInsertRegister( strReg0 );
+				fnGenIFormat( "sw", strReg0, strAuxReg, "" );
+			}
+
+			sprintf( strAuxReg, "%d($sp)", 4 * ( g_iTemporariesUsed + iNumberOfParameters ) );			
+			
+			fnGenIFormat( "sw", "$ra", strAuxReg, "" );
+			fnPush( stackOfPMachine, "mst" );
+
+			bMarkStack = 1;
 		}
 		else if ( fnInstrMatch( "cup" ) )
 		{
 			fnGetArg( );
 
-			printf( " jal %s\n", g_strArg );
+			entry = fnSearchSymbolTable( global_symbol_table, g_strArg, PROCEDURE, 0 );
+			// Se calcula el número de parámetros del procedimiento que se va a llamar.
+			i = fnGetNumberOfParameters( entry ) - 1;
 
-			printf( " lw $ra, 0($sp)\n" );
-			printf( " addi $sp, $sp, 4\n" );
-
-		}
-		else if( fnInstrMatch( "ret" ) )
-        {
-			if( g_bReturn )
+			strcpy( strReg1, fnPop( stackOfPMachine ) );
+			
+			/* Guardar los valores de los parámetros
+			 */
+			while ( strcmp( strReg1, "mst" ) != 0 )
 			{
-				strcpy( strReg0, fnPop( stackOfPMachine ) );
-				fnInsertInPlace( listOfTemporaries, strReg0 );
+				// Obtenemos un registro para guardar el argumento
+				sprintf( strReg0, "$a%d", i );
+				fnSetOcupied( i--, g_listOfArguments );
+				//
+				fnGenPseudoInstr( "move", strReg0, strReg1, "" );
 
-				printf( " move $v0, %s\n", strReg0 );
-
-				g_bReturn = 0;
+				fnInsertRegister( strReg1 );
+				strcpy( strReg1, fnPop( stackOfPMachine ) );
 			}
 
-            printf( " jr $ra\n" );
+			fnGenJFormat( "jal", g_strArg );
+
+			// TODO: Si Se liberan los registros auqí se tiene que volver a 
+			// establecer cómo ocupados.
+			//
+			// Restaurar los valores de los registros temporales.
+			for ( i = 0; i < g_iTemporariesUsed; i++ )
+			{
+				sprintf( strReg0, "$t%d", i );
+				sprintf( strAuxReg, "%d($sp)", 4 * i );
+
+				fnGenIFormat( "lw", strReg0, strAuxReg, "" );
+				// fnSetOcupied( i, g_listOfTemporaries );
+			}
+
+			// Restaurar los valores argumentos, si hay
+			for ( i = 0; i < iNumberOfParameters; i++ )
+			{
+				sprintf( strReg0, "$a%d", i );
+				sprintf( strAuxReg, "%d($sp)", 4 * ( i + g_iTemporariesUsed ) );
+				
+				fnGenIFormat( "lw", strReg0, strAuxReg, "" );
+				fnSetOcupied( i, g_listOfArguments );
+			}
+
+			sprintf( strAuxReg, "%d($sp)", 4 * ( g_iTemporariesUsed + iNumberOfParameters ) );
+			fnGenIFormat( "lw", "$ra", strAuxReg, "" );
+
+			sprintf( strAuxReg, "%d", 4 * ( g_iTemporariesUsed + iNumberOfParameters + 1 ) );
+			fnGenIFormat( "addi", "$sp", "$sp", strAuxReg );
+
+			// Se busca, en la tabla de símbolos, el procedimiento que se va a llamar
+			entry = fnSearchSymbolTable( global_symbol_table, g_strArg, PROCEDURE, 0 );
+			
+			// Si regresa algo se guarda en un registro temporal
+			if ( !fnIsVoid( entry ) )
+			{
+				fnGetTemporary( strReg0 );
+
+				fnGenPseudoInstr( "move", strReg0, "$v0", "" );
+				fnPush( stackOfPMachine, strReg0 );
+			}
+
+			bMarkStack = 0;
+		}
+		else if ( fnInstrMatch( "ret" ) )
+        {
+			if ( !fnIsVoid( entryCurrProcedure ) )
+			{
+				strcpy( strReg0, fnPop( stackOfPMachine ) );
+				fnInsertRegister( strReg0 );
+
+				fnGenPseudoInstr( "move", "$v0", strReg0, "" );
+			}
+
+			fnGenRFormat( "jr", "", "$ra", "", "" );
         }
     }
+	//
 
-    fnDestroyList( listOfTemporaries );
+    fnDestroyList( g_listOfTemporaries );
+	fnDestroyList( g_listOfArguments );
     fnDestroyStack( stackOfPMachine );
+}
+
+void fnGenLabel( char* label )
+{
+	printf( "%s:\n", label );
+}
+
+void fnGenDirective( char* directive )
+{
+	printf( "     %s\n", directive );
+}
+
+void fnGenVariable( char* var, int type )
+{
+	printf( "%s: ", var );
+
+	if ( type == INT_T )
+		printf( ".word 0" );
+	else if ( type == CHAR_T )
+		printf( ".byte 0" );
+
+	printf( "\n" );
+}
+
+void fnGenRFormat( char* opcode, char* rd, char* rs, char* rt, char* funct )
+{
+	int bComma = 0;
+
+	printf( "     %s", opcode );
+
+	if ( strcmp( rd, "" ) != 0 )
+	{
+		printf( " %s", rd );
+		bComma = 1;
+	}
+
+	if ( strcmp( rs, "" ) != 0 )
+	{ 
+		if ( bComma )
+			printf( "," );
+
+		printf( " %s", rs );
+	}
+
+	if ( strcmp( rt, "" ) != 0 )
+		printf( ", %s", rt );
+
+	if ( strcmp( funct, "" ) != 0 )
+		printf( ", %s", funct );
+
+	printf( "\n" );
+}
+
+void fnGenIFormat( char* opcode, char* rt, char* rs, char* imm )
+{
+	printf( "     %s %s", opcode, rt );
+
+	if( strcmp( rs, "" ) != 0 )
+		printf( ", %s", rs );
+
+	if ( strcmp( imm, "" ) != 0 )
+		printf( ", %s", imm );
+
+	printf( "\n" );
+}
+
+void fnGenJFormat( char* opcode, char* addr )
+{
+	printf( "     %s %s\n", opcode, addr );
+}
+
+void fnGenPseudoInstr( char * opcode, char * rx, char * ry, char * imm )
+{
+	printf( "     %s", opcode );
+
+	if ( strcmp( rx, "" ) != 0 )
+		printf( " %s", rx );
+
+	if ( strcmp( ry, "" ) != 0 )
+		printf( ", %s", ry );
+
+	if ( strcmp( imm, "" ) != 0 )
+		printf( ", %s", imm );
+
+	printf( "\n" );
 }
 
 int fnInstrMatch( char* strInstr )
 {
-    if( strcmp( g_strInstr, strInstr ) == 0 )
-        return 1;
+	if ( strcmp( g_strInstr, strInstr ) == 0 )
+		return 1;
 
-    return 0;
+	return 0;
+}
+
+void fnGetTemporary( char * out_strReg )
+{
+	int regAvailable = fnGetAvailable( g_listOfTemporaries );
+
+	if ( regAvailable == -1 )
+	{
+		printf( "\nError: No hay registros temporales disponibles.\n" );
+		getch( );
+
+		exit( 1 );
+	}
+
+	sprintf( out_strReg, "$t%d", regAvailable );
+	fnSetOcupied( regAvailable, g_listOfTemporaries );
+	g_iTemporariesUsed++;
+}
+
+void fnGetArgument( char * out_strReg )
+{
+	int regAvailable = fnGetAvailable( g_listOfArguments );
+
+	if ( regAvailable == -1 )
+	{
+		printf( "\nError: No hay registros para argumentos disponibles.\n" );
+		getch();
+
+		exit( 1 );
+	}
+
+	sprintf( out_strReg, "$a%d", regAvailable );
+	fnSetOcupied( regAvailable, g_listOfArguments );
+}
+
+int fnIsVoid( sEntry * procedure )
+{
+	if (  fnGetType( procedure ) == VOID_T )
+		return 1;
+
+	return 0;
+}
+
+int fnIsParameter( sEntry * variable )
+{
+	char * strParent;
+	sEntry * entryProcedure;
+	sParameter * tmpParam;
+
+	strParent = fnGetParent( variable );
+
+	entryProcedure = fnSearchSymbolTable( global_symbol_table, strParent, PROCEDURE, 0 );
+
+	if ( entryProcedure )
+	{
+		tmpParam = entryProcedure->parameter;
+
+		while( tmpParam )
+		{
+			if ( strcmp( fnGetIdParameter( tmpParam ), fnGetString( variable ) ) == 0 )
+				return 1;
+
+			tmpParam =  fnGetNextParameter( tmpParam );
+		}
+	}
+
+	return 0;
+}
+
+int fnGetNumberOfParameters( sEntry *  procedure )
+{
+	int count = 0;
+	sParameter* tmpParam;
+
+	if ( procedure->parameter )
+	{
+		tmpParam = procedure->parameter;
+
+		while ( tmpParam != NULL )
+		{
+			tmpParam = tmpParam->next;
+			count++;
+		}
+	}
+
+	return count;
+}
+
+int fnRegisterType( char *strReg )
+{
+	if ( strReg[ 1 ] == 't' )
+		return REGISTER_TEMPORARY;
+
+	if (strReg[ 1 ] == 'a')
+		return REGISTER_ARGUMENT;
+
+	return -1;
+}
+
+// TODO: MEJORAR
+int fnGetNumberOfRegister( char * strReg )
+{
+	return (int)strReg[ 2 ] - 48;
+}
+
+void fnInsertRegister( char *strReg )
+{
+	int regType = fnRegisterType( strReg );
+
+	if ( regType == REGISTER_TEMPORARY )
+	{
+		fnSetAvailable( fnGetNumberOfRegister( strReg ), g_listOfTemporaries );
+		g_iTemporariesUsed--;
+	}
+	else if ( regType == REGISTER_ARGUMENT )
+		fnSetAvailable( fnGetNumberOfRegister( strReg ), g_listOfArguments );
+}
+
+int fnIsArgument( sEntry *entryProcedure, char * strArg )
+{
+	sParameter* tmpParam;
+
+	if ( entryProcedure->parameter )
+	{
+		tmpParam = entryProcedure->parameter;
+		g_iNumParam = 0;
+
+		while( tmpParam != NULL )
+		{
+			if ( strcmp( tmpParam->id, strArg ) == 0 )
+				return 1;
+
+			tmpParam = tmpParam->next;
+			g_iNumParam++;
+		}
+	}
+
+	return 0;
+}
+
+void fnInitListOfRegisters( stList * L, int numOfElements )
+{
+	int i;
+
+	for ( i = 0; i < numOfElements; i++ )
+		fnSetAvailable( i, L );
+
+	fnSetFirstAvailable( 0, L );
 }
 
 void fnInitListOfTemporaries( stList* L )
 {
-    fnInsertInPlace( L, "$t7" );
-    fnInsertInPlace( L, "$t6" );
-    fnInsertInPlace( L, "$t5" );
-    fnInsertInPlace( L, "$t4" );
-    fnInsertInPlace( L, "$t3" );
-    fnInsertInPlace( L, "$t2" );
-    fnInsertInPlace( L, "$t1" );
-    fnInsertInPlace( L, "$t0" );
+	fnInitListOfRegisters( L, 8 );
+}
+
+void fnInitListOfArguments( stList* L )
+{
+	fnInitListOfRegisters( L, 4 );
 }

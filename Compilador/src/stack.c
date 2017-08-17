@@ -46,8 +46,13 @@ char* fnPop( stStack* S )
         iTemp = S -> data[ S -> iTop ];
         ( S -> iTop )--;
     }
-    else
-        printf( "\nError: Stack underflow.\n" );
+	else
+	{
+		printf( "\nError: Stack underflow.\n" );
+		getch(  );
+
+		exit( 1 );
+	}   
 
     return iTemp;
 }

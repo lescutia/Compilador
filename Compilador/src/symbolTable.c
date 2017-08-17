@@ -109,7 +109,7 @@ void fnPrintType( int type )
 	else
 		printf( "UNKNOWN" );
 
-	printf("\n");
+	printf( "\n" );
 }
 
 void fnPrintClass( int class )
@@ -156,7 +156,7 @@ void fnPrintTable( int whichTable )
 		if( it->parent )
 			printf( " parent:  %s\n", it->parent );
 		
-		if (it->parameter)
+		if ( it->parameter )
 		{
 			sParameter* tmpParam = it -> parameter;
 			printf( " param:   " );

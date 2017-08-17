@@ -1,15 +1,17 @@
-int fnAdd( int var1, int var2 );
+int fnSum( int n );
 
 int main( )
 {
-	int result;	
+    int sum;
+    sum = fnSum( 5 );
 
-	result = fnAdd( 5, 3 );
-
-	return 0;
+    return 0;
 }
 
-int fnAdd( int var1, int var2 )
+int fnSum( int n )
 {
-	return var1 + var2;
+    if( n == 1 )
+        return 1;
+
+    return n + fnSum( n - 1);
 }

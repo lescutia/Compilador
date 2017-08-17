@@ -10,25 +10,6 @@
 
 #include "../CompilerPCH.h"
 #include "../includes/parser.h"
-//classes, types y symbol tables se movieron a compilerPCH.h
-// classes
-//int VARIABLE  = 1;
-//int PROCEDURE = 2;
-//int STRING    = 3;
-
-// types
-//int INT_T      = 1;
-//int INTSTAR_T  = 2;
-//int VOID_T     = 3;
-
-//Tipos  no soportados por C*
-//int CHAR_T     = 4;
-//int CHARSTAR_T = 5;
-
-// symbol tables
-//int GLOBAL_TABLE  = 1;
-//int LOCAL_TABLE   = 2;
-//int LIBRARY_TABLE = 3;
 
 char* g_lastProc = 0;
 int g_iNumberOfAssignments  = 0;
