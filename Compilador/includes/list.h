@@ -51,7 +51,7 @@ void fnSetFirstAvailable( int index, stList * L );
  * @Param index		Índice del elemento que se establecerá como ocupado.
  * @Param L			Lista.
  */
-void fnSetOcupied( int index, stList * L );
+void fnSetOccupied( int index, stList * L );
 
 /**
  * Desc: Regresa la posición del primer elemento de la lista que esté disponible.

@@ -25,7 +25,7 @@ void fnSetScope		( sEntry* entry, int scope )        { entry->scope = scope; }
 void fnSetDefined	( sEntry* entry, int defined )		{ entry->defined = defined; }
 void fnSetParent	( sEntry* entry, char* parent ) 	{ entry->parent = parent; }
 
-void fnAddParameter	( sEntry* entry, char* varname, int type )
+int fnAddParameter	( sEntry* entry, char* varname, int type )
 {
 	sParameter* newParam = ( sParameter* )malloc( sizeof( sParameter ) );
 
@@ -38,13 +38,20 @@ void fnAddParameter	( sEntry* entry, char* varname, int type )
 
 	if ( prevParam )
 	{
-		while ( prevParam->next )
+		//while (prevParam->next && strcmp( prevParam->id, varname ) != 0)
+		while (prevParam->next)
 			prevParam = prevParam->next;
 
+		/*
+		if (prevParam->next)
+			return 1;
+		else
+		//*/
 		prevParam->next = newParam;
 	}
 	else
 		entry->parameter = newParam;
+	return 0;
 }
 
 // PARA VERIFICAR EL NÚMERO DE PARÁMETROS
@@ -85,10 +92,17 @@ void fnInitializeSymbolTables( )
 {
 	global_symbol_table  = 0;
 	local_symbol_table   = 0;
+	library_symbol_table = 0;
 
 	numberOfGlobalVariables = 0;
 	numberOfProcedures      = 0;
 	numberOfStrings         = 0;
+
+	fnCreateSymbolTableEntry( LIBRARY_TABLE, "printi", -1, PROCEDURE, VOID_T, 0, -1, 1, 0 );
+	fnCreateSymbolTableEntry( LIBRARY_TABLE, "prints", -1, PROCEDURE, VOID_T, 0, -1, 1, 0 );
+	fnCreateSymbolTableEntry( LIBRARY_TABLE, "scani", -1, PROCEDURE, VOID_T, 0, -1, 1, 0 );
+	fnCreateSymbolTableEntry( LIBRARY_TABLE, "scans", -1, PROCEDURE, VOID_T, 0, -1, 1, 0 );
+
 }
 
 //BORRAR - FUNCIONES AXUXILIARES, PARA IMPRIMIR
@@ -129,7 +143,7 @@ void fnPrintClass( int class )
 
 void fnPrintTable( int whichTable )
 {
-	sEntry* it;
+	sEntry* it = NULL;
 
 	if( whichTable == GLOBAL_TABLE )
 	{
@@ -139,7 +153,7 @@ void fnPrintTable( int whichTable )
 
 		it = global_symbol_table;
 	}
-	else
+	else if( whichTable == LOCAL_TABLE )
 	{
 		printf( "\n/****************************************\n" );
 		printf( "*		LOCAL TABLE		*\n" );
@@ -217,8 +231,28 @@ void fnResetSymbolTables( )
 		local_symbol_table = next;
 	}
 
+
+	while ( library_symbol_table != 0 )
+	{
+		sEntry* next = fnGetNextEntry( library_symbol_table );
+		SAFE_RELEASE( library_symbol_table->string );
+		
+		sParameter* it = library_symbol_table->parameter;
+		while (library_symbol_table->parameter)
+		{
+			it = it->next;
+			SAFE_RELEASE( library_symbol_table->parameter->id );
+			SAFE_RELEASE( library_symbol_table->parameter );
+			library_symbol_table->parameter = it;
+		}
+
+		SAFE_RELEASE( library_symbol_table );
+		library_symbol_table = next;
+	}
+	
 	global_symbol_table  = 0;
 	local_symbol_table   = 0;
+	library_symbol_table = 0;
 
 	numberOfGlobalVariables = 0;
 	numberOfProcedures      = 0;
@@ -279,7 +313,9 @@ void fnCreateSymbolTableEntry( int whichTable, char* string, int line, int class
 	}
 	else
 	{
-		printf( "Error: no existen funciones de libreria.\n" );
+		fnSetNextEntry( newEntry, library_symbol_table );
+		library_symbol_table = newEntry;
+		//printf( "Error: no existen funciones de libreria.\n" );
 	}
 }
 
@@ -315,6 +351,8 @@ sEntry* fnGetScopedSymbolTableEntry( char* string, int class, char* actualProc )
 
 	if( class == VARIABLE )
 		entry = fnSearchSymbolTable( local_symbol_table, string, VARIABLE, actualProc );
+	else
+		entry = fnSearchSymbolTable( library_symbol_table, string, PROCEDURE, 0 );
 
 	// Si es una variable global o una función
 	if( entry == 0 )

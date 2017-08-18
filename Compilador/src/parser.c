@@ -39,6 +39,8 @@ int g_bHasReturn = 0;
  */
 int g_bSearchParameters = 0;
 
+int g_bCompareParameters = 0;
+
 // Label actual
 int g_iLabel = 0;
 
@@ -936,8 +938,13 @@ void fnVariable( )
 			if ( g_bSearchParameters )
 			{				
 				entry = fnSearchSymbolTable( global_symbol_table, g_lastProc, PROCEDURE, 0 );
-				fnAddParameter( entry, g_identifier, iType );
-
+				int result = fnAddParameter( entry, g_identifier, iType );
+				if (result)
+				{
+					printf("[Error] Los parametros no coinciden para la funcion: %s", g_identifier );
+					getch();
+					exit( 1 );
+				}
 				// Se busca el parámetro g_identifier en la tabla local y se establece como definido.
 				entry = fnSearchSymbolTable( local_symbol_table, g_identifier, VARIABLE, g_lastProc );
 				fnSetDefined( entry, 1 );
@@ -1059,13 +1066,13 @@ int fnInitialization( int iType )
 			{
 				initialValue = -initialValue;
 				// CODEGEN
-				fnDebugCodeGen("ngi", "", NO_LABEL);
+				fnDebugCodeGen( "ngi", "", NO_LABEL );
 				//
 			}
 			// CODEGEN
-			fnDebugCodeGen("stn ", "", NO_LABEL);
+			fnDebugCodeGen( "stn ", "", NO_LABEL );
 			//
-			fnGetSymbol();
+			fnGetSymbol( );
 		}
 		else
 			fnSyntaxErrorUnexpected( );
@@ -1490,7 +1497,9 @@ void fnProcedure( char* procedure, int type )
 	{
 		//Se crea una entrada en la tabla para el procedimiento.
 		fnCreateSymbolTableEntry( GLOBAL_TABLE, procedure, g_lineNumber, PROCEDURE, type, 0, -1, 0, 0 );
+		g_bCompareParameters = 0;
 	}
+		g_bCompareParameters = 1;
 
 	// try parsing formal parameters
 	/* type identifier '('...
@@ -1754,7 +1763,10 @@ int fnCall( char* procedure )
 		if( g_symbol == SYM_RPARENTHESIS )
 		{
 			// CODEGEN
-			fnDebugCodeGen( "cup", procedure, NO_LABEL );
+			if( fnSearchSymbolTable( library_symbol_table, procedure, PROCEDURE, 0 ) != NULL )
+				fnDebugCodeGen( "csp", procedure, NO_LABEL );
+			else
+				fnDebugCodeGen( "cup", procedure, NO_LABEL );
 			//
 			fnDebugParser( ")" );
 			fnGetSymbol( );

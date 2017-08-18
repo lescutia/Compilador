@@ -92,9 +92,6 @@
     <ClInclude Include="includes\registers.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="includes\MIPS_Globals.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="includes\stack.h">
       <Filter>Header Files</Filter>
     </ClInclude>

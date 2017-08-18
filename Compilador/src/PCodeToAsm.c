@@ -7,8 +7,8 @@
 #define REGISTER_TEMPORARY 0
 #define REGISTER_ARGUMENT 1
 
-void fnInitListOfTemporaries( stList * L );
-void fnInitListOfArguments( stList * L );
+void fnInitListOfTemporaries( );
+void fnInitListOfArguments( );
 void fnInsertRegister( char * strReg );
 int fnRegisterType( char * strReg );
 int fnGetNumberOfParameters( sEntry *  procedure );
@@ -36,8 +36,8 @@ void fnGenAsmCode( )
     g_listOfTemporaries = fnInitList( );
 	g_listOfArguments = fnInitList( );
 
-    fnInitListOfTemporaries( g_listOfTemporaries );
-	fnInitListOfArguments( g_listOfArguments );
+    fnInitListOfTemporaries( );
+	fnInitListOfArguments( );
 
 	// Sección de datos
 	fnGenDirective( ".data" );
@@ -303,13 +303,17 @@ void fnGenAsmCode( )
 			{
 				// Obtenemos un registro para guardar el argumento
 				sprintf( strReg0, "$a%d", i );
-				fnSetOcupied( i--, g_listOfArguments );
+				fnSetOccupied( i--, g_listOfArguments );
 				//
 				fnGenPseudoInstr( "move", strReg0, strReg1, "" );
 
 				fnInsertRegister( strReg1 );
 				strcpy( strReg1, fnPop( stackOfPMachine ) );
 			}
+
+			// TODO: Modificar
+			fnInitListOfArguments( );
+			//
 
 			fnGenJFormat( "jal", g_strArg );
 
@@ -333,7 +337,7 @@ void fnGenAsmCode( )
 				sprintf( strAuxReg, "%d($sp)", 4 * ( i + g_iTemporariesUsed ) );
 				
 				fnGenIFormat( "lw", strReg0, strAuxReg, "" );
-				fnSetOcupied( i, g_listOfArguments );
+				fnSetOccupied( i, g_listOfArguments );
 			}
 
 			sprintf( strAuxReg, "%d($sp)", 4 * ( g_iTemporariesUsed + iNumberOfParameters ) );
@@ -355,6 +359,36 @@ void fnGenAsmCode( )
 			}
 
 			bMarkStack = 0;
+		}
+		else if ( fnInstrMatch( "csp" ) )
+		{
+			fnGetArg();
+
+			if ( strcmp( g_strArg, "printi" ) == 0 )
+			{
+				fnGetArgument( strReg0 );
+				strcpy( strReg1, fnPop( stackOfPMachine ) );
+
+				fnGenPseudoInstr( "move", strReg0, strReg1, "" );
+				fnGenIFormat( "li", "$v0", "", "1" );
+				fnGenRFormat( "syscall", "", "", "", "" );
+
+				fnInsertRegister( strReg0 );
+			}
+			else if ( strcmp( g_strArg, "scani" ) == 0 )
+			{
+				fnInsertRegister( fnPop( stackOfPMachine ) );
+
+				fnGetTemporary( strReg0 );
+
+				fnGenIFormat( "li", "$a0", "", "5" );
+				fnGenRFormat( "syscall", "", "", "", "" );
+				fnGenPseudoInstr( "la", strReg0, "param", "" );
+				sprintf( strAuxReg, "0(%s)", strReg0 );
+				fnGenIFormat( "sw", "$v0", strAuxReg, "" );
+
+				fnInsertRegister( strReg0 );
+			}
 		}
 		else if ( fnInstrMatch( "ret" ) )
         {
@@ -482,7 +516,7 @@ void fnGetTemporary( char * out_strReg )
 	}
 
 	sprintf( out_strReg, "$t%d", regAvailable );
-	fnSetOcupied( regAvailable, g_listOfTemporaries );
+	fnSetOccupied( regAvailable, g_listOfTemporaries );
 	g_iTemporariesUsed++;
 }
 
@@ -499,7 +533,7 @@ void fnGetArgument( char * out_strReg )
 	}
 
 	sprintf( out_strReg, "$a%d", regAvailable );
-	fnSetOcupied( regAvailable, g_listOfArguments );
+	fnSetOccupied( regAvailable, g_listOfArguments );
 }
 
 int fnIsVoid( sEntry * procedure )
@@ -617,12 +651,12 @@ void fnInitListOfRegisters( stList * L, int numOfElements )
 	fnSetFirstAvailable( 0, L );
 }
 
-void fnInitListOfTemporaries( stList* L )
+void fnInitListOfTemporaries( )
 {
-	fnInitListOfRegisters( L, 8 );
+	fnInitListOfRegisters( g_listOfTemporaries, 8 );
 }
 
-void fnInitListOfArguments( stList* L )
+void fnInitListOfArguments( )
 {
-	fnInitListOfRegisters( L, 4 );
+	fnInitListOfRegisters( g_listOfArguments, 4 );
 }

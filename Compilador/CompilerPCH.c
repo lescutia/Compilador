@@ -8,6 +8,7 @@ void fnInitCompiler( )
 	g_numberOfComments			= 0;
 	g_numberOfScannedSymbols	= 0;
 
+	fnInitializeSymbolTables();
 	fnInitScanner( );
 	fnInitRegisters( );
 	fnInitInterpreter( );
@@ -20,6 +21,7 @@ void fnUninitializeCompiler( )
 	fnUninitializeRegisters( );
 	//fnUninitializeInterpreter( );
 	fnUninitializeDecoder( );
+	fnResetSymbolTables();
 }
 
 int fnLeftShift( int iNumberToShift, int iShifting )

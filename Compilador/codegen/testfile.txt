@@ -1,9 +1,15 @@
 ent main
+mst
+lod n
+csp scani
 lda sum
 mst
-ldc 5
+lod n
 cup fnSum
 stn
+mst
+lod sum
+csp printi
 ldc 0
 ret
 stp

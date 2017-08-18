@@ -55,6 +55,7 @@ static int LIBRARY_TABLE = 3;
 // table pointers
 sEntry* global_symbol_table;
 sEntry* local_symbol_table;
+sEntry* library_symbol_table;
 
 int numberOfGlobalVariables;
 int numberOfProcedures;
@@ -141,7 +142,7 @@ void fnSetAddress	( sEntry* entry, int address );
 void fnSetScope		( sEntry* entry, int scope );
 void fnSetDefined	( sEntry* entry, int defined );
 void fnSetParent	( sEntry* entry, char* parent );
-void fnAddParameter	( sEntry* entry, char* varname, int type );
+int fnAddParameter	( sEntry* entry, char* varname, int type );
 void fnPrintType( int type );
 
 // PARA VERIFICAR EL NÚMERO DE PARÁMETROS

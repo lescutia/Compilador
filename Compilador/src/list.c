@@ -49,7 +49,7 @@ void fnSetFirstAvailable( int index, stList * L )
 	L->firstAvailable = index;
 }
 
-void fnSetOcupied( int index, stList * L )
+void fnSetOccupied( int index, stList * L )
 {
 	L->element[ index ] = 0;
 
