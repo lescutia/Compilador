@@ -1,28 +1,12 @@
 #include "../CompilerPCH.h"
 #include "../includes/message.h"
 
-char* TypeToStrng(int iType)
-{
-	if (iType == INT_T)
-		return "int";
-	else if (iType == INTSTAR_T)
-		return "int*";
-	else if (iType == VOID_T)
-		return "void";
-	else if (iType == CHAR_T)
-		return "char";
-	else if (iType == CHARSTAR_T)
-		return "char*";
-	else
-		return "";
-}
-
-void fnWarningMessage(int iWarningType, int iTypeExpected, int iTypeFound, int iLineNO, char* strName )
+void fnWarningMessage(int iWarningType, int iSymbolExpected, int iSymbolFound, int iLineNO, char* strName )
 {
 	printf("%s", "[WARNING]: ");
 
 	if (iWarningType == WARNING_CAST_MISSTMATCH)
-		printf("cast missmatch in line %d. Trying to convert %s to %s.\n", iLineNO, TypeToStrng(iTypeFound), TypeToStrng(iTypeExpected));
+		printf("cast missmatch in line %d. Trying to convert %s to %s.\n", iLineNO, *(g_SYMBOLS + iSymbolFound), *(g_SYMBOLS + iSymbolExpected) );
 	else if (iWarningType == WARNING_VAR_DEF_NUSED)
 		printf("variable %s defined in line %d but it is never used.\n", strName, iLineNO);
 	else if (iWarningType == WARNING_FUNC_REDEF)
@@ -45,9 +29,9 @@ void fnErrorMessage(int iErrorType, int iTypeExpected, int iTypeFound, int iLine
 	{
 		printf("data type unknown in line %d", iLineNO );
 		if (iTypeExpected !=-1 && iTypeFound != -1)
-			printf(", expexted %s or %s.", TypeToStrng(iTypeExpected), TypeToStrng(iTypeFound) );
+			printf(", expexted %s or %s.", *(g_SYMBOLS + iTypeExpected), *(g_SYMBOLS + iTypeFound) );
 		else if( iTypeExpected != -1 )
-			printf(", expexted %s", TypeToStrng(iTypeExpected) );
+			printf(", expexted %s", *(g_SYMBOLS + iTypeExpected) );
 	}
 	else if (iErrorType == ERROR_VAR_NDEF)
 		printf("variable %s used in line %d but is not defined.", strName, iLineNO );
@@ -56,7 +40,7 @@ void fnErrorMessage(int iErrorType, int iTypeExpected, int iTypeFound, int iLine
 	//else if (iErrorType == ERROR_P_NF)
 		//printf("param %s not found in line %d.\n", strName, iLineNO );
 	else if (iErrorType == ERROR_PARAM_MISSMATCH)
-		printf("type missmatch with param %s in line %d expected %s but found %s.", strName, iLineNO, TypeToStrng(iTypeExpected), TypeToStrng(iTypeFound) );
+		printf("type missmatch with param %s in line %d expected %s but found %s.", strName, iLineNO, *(g_SYMBOLS + iTypeExpected), *(g_SYMBOLS + iTypeFound));
 	else if (iErrorType == ERROR_SEMICOLON_NFOUND)
 		printf("semicolon not found. Expected in line %d.", iLineNO);
 	else if( iErrorType == ERROR_FUNC_NDEF)

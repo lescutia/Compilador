@@ -39,10 +39,10 @@
 /************************************************************************/
 /*								FUNCTIONS								*/
 /************************************************************************/
-// if any param is equals to -1, then the param is not used.
+// if any symbol param is equals to -1, then the param is not used.
 // strName must be "" in case it dont have name.
 
-void fnWarningMessage	( int iWarningType, int iTypeExpected, int iTypeFound, int iLineNO, char* strName );
+void fnWarningMessage	( int iWarningType, int iSymbolExpected, int iSymbolFound, int iLineNO, char* strName );
 
 // NOTE: in the case of UNK iType Found can be another expected type.
-void fnErrorMessage		( int iErrorType, int iTypeExpected, int iTypeFound, int iLineNO, char* strName );
+void fnErrorMessage		( int iErrorType, int iSymbolExpected, int iSymbolFound, int iLineNO, char* strName );
