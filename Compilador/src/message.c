@@ -34,7 +34,7 @@ void fnWarningMessage(int iWarningType, int iTypeExpected, int iTypeFound, int i
 	//else if (iWarningType == WARNING_P_R)
 		//printf("procedure %s redefinition.\n", strName );
 	else
-		printf("warning with id %d is not defined.\n", iWarningType );
+		printf("warning id %d is not defined.\n", iWarningType );
 }
 
 
@@ -58,6 +58,6 @@ void fnErrorMessage(int iErrorType, int iTypeExpected, int iTypeFound, int iLine
 	else if( iErrorType == ERROR_F_MA)
 		printf("many parameters with the function %s in line %d.\n", strName, iLineNO);
 	else
-		printf("error with id %d is not defined.\n", iErrorType );
+		printf("error id %d is not defined.\n", iErrorType );
 	exit(iErrorType);
 }
