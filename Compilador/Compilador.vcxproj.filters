@@ -57,6 +57,9 @@
     <ClCompile Include="src\interpreter.c">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="src\message.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="includes\parser.h">
@@ -96,6 +99,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="includes\list.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="includes\message.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

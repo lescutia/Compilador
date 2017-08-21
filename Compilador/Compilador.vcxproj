@@ -154,6 +154,7 @@
     <ClCompile Include="src\encoder.c" />
     <ClCompile Include="src\list.c" />
     <ClCompile Include="src\interpreter.c" />
+    <ClCompile Include="src\message.c" />
     <ClCompile Include="src\parser.c" />
     <ClCompile Include="src\registers.c" />
     <ClCompile Include="src\PCodeToAsm.c" />
