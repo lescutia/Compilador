@@ -156,5 +156,6 @@ int fnRightShift( int iNumberToShift, int iShifting );
 #include "./includes/PCodeToAsm.h"
 #include "./includes/intermediateCode.h"
 #include "./includes/symbolTable.h"
+#include "./includes/message.h"
 #include "./includes/scanner.h"
 #include "./includes/parser.h"
