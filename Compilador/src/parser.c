@@ -370,7 +370,7 @@ int fnType( )
 	{
 		printf( "\n Error: line %d, ", g_lineNumber );
 		printf( "'%s' or '%s' expected but ", *( g_SYMBOLS + SYM_INT ), *( g_SYMBOLS + SYM_CHAR ) );
-
+		
 		if( g_symbol == SYM_EOF )
 			printf( "EOF" );
 		else
