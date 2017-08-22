@@ -1,24 +1,13 @@
-int fnSum( int n );
-// void printi( int a );
+int fnSum( char a, char b );
 
 int main( )
 {
-    int n;
-    int sum;
+    printi( fnSum( 'a', 'b' ) );
 
-    scani( n );
-
-    sum = fnSum( n );
-
-    printi( sum );
-    // prints( a );
     return 0;
 }
 
-int fnSum( int an )
+int fnSum( char a, char b )
 {
-    if( n == 1 )
-        return 1;
-
-    return n + fnSum( n - 1);
+    return a + b;
 }

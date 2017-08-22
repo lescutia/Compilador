@@ -41,6 +41,10 @@ int g_bSearchParameters = 0;
 
 int g_bCompareParameters = 0;
 
+int g_iPositionOfParameter = 0;
+
+sParameter * g_entryCurrentParameter = NULL;
+
 // Label actual
 int g_iLabel = 0;
 
@@ -54,10 +58,6 @@ int g_iL2While = 0;
 
 // Para saber en fnDebugCodeGen se va a imprimir una etiqueta
 static int NO_LABEL = -1;
-
-// TODO: MEJORAR
-// Para no enviarle entry a fnVariable, desde fnProcedure
-sEntry* g_entry;
 
 /******* MOVER AL LUGAR APROPIADO *******/
 static int DEBUG_PARSER  = 0;
@@ -152,7 +152,7 @@ void fnParser( )
 
 				g_lastProc = variableOrProcedureName;
 
-				/*Antes de llamar a fnProcedure() se obtiene
+				/*Antes de llamar a fnProcedure( ) se obtiene
 				 *el siguiente token.
 				 */
 				fnGetSymbol( );
@@ -910,69 +910,90 @@ int fnFactor( )
 	return iType;
 }
 
+void fnParameter( sEntry * entryProcedure )
+{
+	int iType;
+
+	/* type ...
+	*/
+	iType = fnType();
+
+	/* type identifier ...
+	*/
+	if ( g_symbol == SYM_IDENTIFIER )
+	{
+		fnDebugParser( "id" );
+				
+		if ( g_bCompareParameters )
+		{
+			if ( g_entryCurrentParameter == NULL  )
+			{
+				printf( "\n Error: line %d, number of arguments does not match prototype.\n", g_lineNumber );
+				getch( );
+				exit( 1 );
+			}
+
+			if ( fnGetTypeParameter( g_entryCurrentParameter ) != iType )
+			{
+				printf( "\n Error: line %d, conflicting types for '%s'.\n", g_lineNumber, fnGetString( entryProcedure ) );
+				getch();
+				exit( 1 );
+			}
+
+			g_entryCurrentParameter = fnGetNextParameter( g_entryCurrentParameter );
+		}
+		else if( g_bSearchParameters )
+		{
+			if ( fnSearchParameter( entryProcedure, g_identifier ) != NULL )
+			{
+				printf( " Error: line %d, redefinition parameter '%s' from '%s'\n", g_lineNumber, g_identifier, fnGetString( entryProcedure ) );
+				getch();
+				exit( 1 );
+			}
+			else
+			{
+				fnCreateSymbolTableEntry( LOCAL_TABLE, g_identifier, g_lineNumber, VARIABLE, iType, 0, -1, 0, g_lastProc );
+				fnAddParameter( entryProcedure, g_identifier, iType );
+			}
+		}
+
+		fnGetSymbol();
+	}
+	else
+		fnSyntaxErrorSymbol( SYM_IDENTIFIER );
+}
+
 void fnVariable( )
 {
 	int iType;
 	sEntry* entry;
 
 	/* type ...
-	 *
-	 *donde,
-	 *       type ::= int | int*| char | char*
 	 */
 	iType = fnType( );
 
-	/*type identifier ...
+	/* type identifier ...
 	 */
-	if( g_symbol == SYM_IDENTIFIER )
+	if ( g_symbol == SYM_IDENTIFIER )
 	{
 		fnDebugParser( "id" );
-
-		// SÓLO EN LA TABLA LOCAL
+		
 		entry = fnSearchSymbolTable( local_symbol_table, g_identifier, VARIABLE, g_lastProc );
 		
-		if( entry == 0 )
-		{
+		if ( entry == 0 )
 			fnCreateSymbolTableEntry( LOCAL_TABLE, g_identifier, g_lineNumber, VARIABLE, iType, 0, -1, 0, g_lastProc );
-
-			if ( g_bSearchParameters )
-			{				
-				entry = fnSearchSymbolTable( global_symbol_table, g_lastProc, PROCEDURE, 0 );
-				int result = fnAddParameter( entry, g_identifier, iType );
-				if (result)
-				{
-					printf("[Error] Los parametros no coinciden para la funcion: %s", g_identifier );
-					getch();
-					exit( 1 );
-				}
-				// Se busca el parámetro g_identifier en la tabla local y se establece como definido.
-				entry = fnSearchSymbolTable( local_symbol_table, g_identifier, VARIABLE, g_lastProc );
-				fnSetDefined( entry, 1 );
-			}
+		else
+		{
+			printf("\n Warning, line %d, ", g_lineNumber);
+			printf("redefinition of local variable ");
+			printf("'%s' ", g_identifier);
+			printf("ignored.\n");
 		}
-		// TODO: redefinition variable
-		/* Se comentó porque detecta los parámetros de un prototipo
-		 * de función y los mismos parámteros en la definición de la
-		 * función, y los detecta como redefinidos.
-		 */
-		 /*else // TODO: REVISAR SI ES NECESARIO
-		 {
-			 printf("\n Warning, line %d, ", g_lineNumber);
-			 printf("redefinition of local variable ");
-			 printf("'%s' ", g_identifier);
-			 printf("ignored.\n");
-		 }*/
 
 		fnGetSymbol( );
 	}
-	else // TODO: TRATAR EL CASO CUANDO NO ES UN IDENTIFICADOR
-	{
+	else
 		fnSyntaxErrorSymbol( SYM_IDENTIFIER );
-		//createSymbolTableEntry( LOCAL_TABLE, "missing variable name", lineNumber, VARIABLE, type, 0, offset, 0 );
-
-		// TODO: VER SI ES NECESARIO CREAR ESTA ENTRADA EN LA TABLA
-		//fnCreateSymbolTableEntry( LOCAL_TABLE, "missing variable name", g_lineNumber, VARIABLE, type, 0, -1, 0 );
-	}
 }
 
 // HASTA EL MOMENTO SÓLO SE CONSIDERAN LOS TIPOS INT Y CHAR
@@ -1153,7 +1174,8 @@ int fnIsPointer( int  iType )
 {
 	if( iType == INTSTAR_T )
 		return 1;
-	else if( iType == CHARSTAR_T )
+	
+	if( iType == CHARSTAR_T )
 		return 1;
 
 	return 0;
@@ -1477,13 +1499,16 @@ void fnStatement( )
 // COMPLETAR ALGUNOS DETALLES
 void fnProcedure( char* procedure, int type )
 {
-	int bIsUndefined;
+	int bIsDeclared;
+	int bIsDefined;
 	int iNumberOfParameters;
 	int iParameters;
 	int iLocalVariables;
 	sEntry* entry;
 
-	bIsUndefined = 1; // No ha sido usado
+	bIsDeclared = 0;
+	bIsDefined = 0;
+
 	iNumberOfParameters = 0;
 
 	g_bHasReturn = 0;
@@ -1496,10 +1521,14 @@ void fnProcedure( char* procedure, int type )
 	if ( entry == 0 ) //NULL
 	{
 		//Se crea una entrada en la tabla para el procedimiento.
-		fnCreateSymbolTableEntry( GLOBAL_TABLE, procedure, g_lineNumber, PROCEDURE, type, 0, -1, 0, 0 );
-		g_bCompareParameters = 0;
+		entry = fnCreateSymbolTableEntry( GLOBAL_TABLE, procedure, g_lineNumber, PROCEDURE, type, 0, -1, 0, 0 );
+		g_bSearchParameters = 1;
 	}
+	else
+	{
+		bIsDeclared = 1; // Ya está declarado
 		g_bCompareParameters = 1;
+	}		
 
 	// try parsing formal parameters
 	/* type identifier '('...
@@ -1513,16 +1542,20 @@ void fnProcedure( char* procedure, int type )
 		 */
 		if( g_symbol != SYM_RPARENTHESIS )
 		{
-			// TODO: REVISAR
-			// Para verificar que los parámetros coincidan o
-			// crear la lista de parámetros de la función
-			g_bSearchParameters = 1;
-			g_entry = entry;
-			//
-
 			/* type identifier '(' type identifier ...
 			 */
-			fnVariable( );
+			// fnVariable( );
+			// PARAM
+			// Si ya está declarado, entonces ya se capuron los parámetros
+			if ( bIsDeclared )
+			{
+				// obtener el primer parámetro.
+				g_entryCurrentParameter = entry->parameter;
+			}
+
+			fnParameter( entry );
+			//
+
 			iNumberOfParameters = 1;
 
 			/* type identifier '(' type identifier ',' ...
@@ -1532,12 +1565,24 @@ void fnProcedure( char* procedure, int type )
 				fnDebugParser( "," );
 
 				fnGetSymbol( );
-				fnVariable( );
+				// fnVariable( );
+				// PARAM
+				fnParameter( entry );
+				//
 
 				iNumberOfParameters = iNumberOfParameters + 1;
 			}
 
 			// Faltan algunas cosas aquí para los parámetros
+			if ( bIsDeclared )
+			{				
+				if ( g_entryCurrentParameter != NULL )
+				{
+					printf( "\n Error: line %d, number of arguments does not match prototype.\n", g_lineNumber );
+					getch( );
+					exit( 1 );
+				}	
+			}
 
 			/* type identifier '(' type identifier ',' ... ')' ...
 			 */
@@ -1551,12 +1596,21 @@ void fnProcedure( char* procedure, int type )
 
 			// TODO: REVISAR
 			g_bSearchParameters = 0;
+			g_bCompareParameters = 0;
 		}
 		/* Si g_symbol == SYM_RPARENTHESIS
 		 * type identifier '(' ')'
 		 */
 		else
 		{
+			// PARAM
+			if ( entry->parameter != NULL )
+			{
+				printf( "\n Error: line %d, number of arguments does not match prototype.\n", g_lineNumber );
+				getch( );
+				exit( 1 );
+			}
+			//
 			fnDebugParser( ")" );
 			fnGetSymbol( );
 		}
@@ -1578,9 +1632,11 @@ void fnProcedure( char* procedure, int type )
 	{
 		fnDebugParser( ";" );
 
-		//Si entry es NULL (0), entonces es una declaración de
-		//procedimiento.
-		if ( entry != 0 ) //NULL
+		// Si entry es NULL (0), entonces es una declaración de
+		// procedimiento.
+		// TODO: MOVER
+		// if ( entry != 0 )
+		if ( bIsDeclared )
 		{
 			printf( "\n Warning: line %d, previous declaration of '%s'.", g_lineNumber, procedure );
 
@@ -1726,11 +1782,31 @@ void fnProcedure( char* procedure, int type )
 // FALTA COMPLETAR ALGUNOS DETALLES
 int fnCall( char* procedure )
 {
+	int type; //Borrar
 	int iType;
 	// NO LO NECECITAMOS, POR EL MOMENTO
 	int iNumberOfTemporaries;
 	sEntry* entry;
 
+	sParameter * param;
+
+	// PARAM
+	entry = fnSearchSymbolTable( library_symbol_table, procedure, PROCEDURE, 0 );
+
+	if ( entry == NULL )
+	{
+		entry = fnSearchSymbolTable( global_symbol_table, procedure, PROCEDURE, 0 );
+
+		if ( entry == NULL )
+		{
+			printf( "\n Error: line %d, undefined reference to '%s'.", g_lineNumber, procedure );
+			getch( );
+			exit( 1 );
+		}
+	}
+
+	param = entry->parameter;
+	//
 	entry = fnGetScopedSymbolTableEntry( procedure, PROCEDURE, g_lastProc );
 
 	iNumberOfTemporaries = g_iAllocatedTemporaries;
@@ -1742,7 +1818,25 @@ int fnCall( char* procedure )
 		// CODEGEN
 		fnDebugCodeGen( "mst", "", NO_LABEL );
 		//
-		fnExpression( );
+		type = fnExpression( );
+
+		// PARAM
+		if ( param == NULL )
+		{
+			printf( "\n Error: line %d, too many arguments to function '%s'.\n", g_lineNumber, procedure );
+			getch();
+			exit( 1 );
+		}
+
+		if ( fnGetTypeParameter( param ) != type )
+		{
+			printf( "\n Error: line %d, mismatch types in '%s'.\n", g_lineNumber, procedure );
+			getch( );
+			exit( 1 );
+		}
+
+		param = param->next;
+		//
 
 		// TODO: check if types/number of parameters is correct
 
@@ -1755,7 +1849,25 @@ int fnCall( char* procedure )
 
 			/* identifier '(' expression ',' expression ...
 			 */
-			fnExpression( );
+			type = fnExpression( );
+
+			// PARAM
+			if ( param == NULL )
+			{
+				printf( "\n Error: line %d, too many arguments to function '%s'.\n", g_lineNumber, procedure );
+				getch();
+				exit( 1 );
+			}
+
+			if ( fnGetTypeParameter( param ) != type )
+			{
+				printf( "\n Error: line %d, mismatch types in '%s'.\n", g_lineNumber, procedure );
+				getch();
+				exit( 1 );
+			}
+
+			param = param->next;
+			//
 		}
 
 		/* identifier '(' expression [, expression ',' ...] ')' ...
@@ -1767,6 +1879,14 @@ int fnCall( char* procedure )
 				fnDebugCodeGen( "csp", procedure, NO_LABEL );
 			else
 				fnDebugCodeGen( "cup", procedure, NO_LABEL );
+			//
+			// PARAM
+			if ( param != NULL )
+			{
+				printf( "\n Error: line %d, too few arguments to function '%s'.\n", g_lineNumber, procedure );
+				getch( );
+				exit( 1 );
+			}
 			//
 			fnDebugParser( ")" );
 			fnGetSymbol( );
@@ -1805,6 +1925,16 @@ int fnCall( char* procedure )
 		// CODEGEN
 		fnDebugCodeGen( "cup", g_identifier, NO_LABEL );
 		//
+
+		// PARAM
+		if( param != NULL )
+		{
+			printf( "\n Error: line %d, too few arguments to function '%s'.\n", g_lineNumber, procedure );
+			getch( );
+			exit( 1 );
+		}
+		//
+
 		fnDebugParser( ")" );
 		fnGetSymbol( );
 

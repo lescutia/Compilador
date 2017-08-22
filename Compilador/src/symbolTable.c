@@ -13,7 +13,6 @@ int  fnGetAddress	( sEntry* entry )		{ return	entry->address; }
 int  fnGetScope 	( sEntry* entry )		{ return	entry->scope; }
 int  fnIsDefined	( sEntry* entry )		{ return	entry->defined; }
 char* fnGetParent 	( sEntry* entry )		{ return	entry->parent; }
-
 void fnSetNextEntry	( sEntry* entry, sEntry* next )    	{ entry->next = next; }
 void fnSetString	( sEntry* entry, char* identifier ) { entry->string = identifier; }
 void fnSetLineNumber( sEntry* entry, int line )    		{ entry->line = line; }
@@ -90,6 +89,8 @@ void fnCreateParameter( sEntry* entry, int type, char* id )
 
 void fnInitializeSymbolTables( )
 {
+	sEntry * entry;
+
 	global_symbol_table  = 0;
 	local_symbol_table   = 0;
 	library_symbol_table = 0;
@@ -98,7 +99,9 @@ void fnInitializeSymbolTables( )
 	numberOfProcedures      = 0;
 	numberOfStrings         = 0;
 
-	fnCreateSymbolTableEntry( LIBRARY_TABLE, "printi", -1, PROCEDURE, VOID_T, 0, -1, 1, 0 );
+	entry = fnCreateSymbolTableEntry( LIBRARY_TABLE, "printi", -1, PROCEDURE, VOID_T, 0, -1, 1, 0 );
+	fnAddParameter( entry, "n", INT_T );
+
 	fnCreateSymbolTableEntry( LIBRARY_TABLE, "prints", -1, PROCEDURE, VOID_T, 0, -1, 1, 0 );
 	fnCreateSymbolTableEntry( LIBRARY_TABLE, "scani", -1, PROCEDURE, VOID_T, 0, -1, 1, 0 );
 	fnCreateSymbolTableEntry( LIBRARY_TABLE, "scans", -1, PROCEDURE, VOID_T, 0, -1, 1, 0 );
@@ -259,7 +262,7 @@ void fnResetSymbolTables( )
 	numberOfStrings         = 0;
 }
 
-void fnCreateSymbolTableEntry( int whichTable, char* string, int line, int class, int type, int value, int address, int defined, char* parent )
+sEntry * fnCreateSymbolTableEntry( int whichTable, char* string, int line, int class, int type, int value, int address, int defined, char* parent )
 {
 	sEntry* newEntry;
 	newEntry = (sEntry*)malloc( sizeof( sEntry ) );
@@ -317,6 +320,8 @@ void fnCreateSymbolTableEntry( int whichTable, char* string, int line, int class
 		library_symbol_table = newEntry;
 		//printf( "Error: no existen funciones de libreria.\n" );
 	}
+
+	return newEntry;
 }
 
 sEntry* fnSearchSymbolTable( sEntry* entry, char* string, int class, char* actualProc )
@@ -343,6 +348,26 @@ sEntry* fnSearchSymbolTable( sEntry* entry, char* string, int class, char* actua
 	}
 
 	return 0; // NULL
+}
+
+sParameter * fnSearchParameter( sEntry * entryProcedure, char * strParameter )
+{
+	sParameter* tmpParam;
+
+	if ( entryProcedure->parameter )
+	{
+		tmpParam = entryProcedure->parameter;
+
+		while( tmpParam != NULL )
+		{
+			if ( strcmp( tmpParam->id, strParameter ) == 0 )
+				return tmpParam;
+
+			tmpParam = tmpParam->next;
+		}
+	}
+
+	return NULL;
 }
 
 sEntry* fnGetScopedSymbolTableEntry( char* string, int class, char* actualProc )

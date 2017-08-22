@@ -1,31 +1,13 @@
 ent main
 mst
-lod n
-csp scani
-lda sum
 mst
-lod n
 cup fnSum
-stn
-mst
-lod sum
 csp printi
 ldc 0
 ret
 stp
 ent fnSum
-lod n
-ldc 1
-equ
-fjp L1
-ldc 1
-ret
-lab L1
-lod n
-mst
-lod n
-ldc 1
-sbi
-cup fnSum
+lod a
+lod b
 adi
 ret

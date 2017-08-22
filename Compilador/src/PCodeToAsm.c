@@ -377,17 +377,10 @@ void fnGenAsmCode( )
 			}
 			else if ( strcmp( g_strArg, "scani" ) == 0 )
 			{
-				fnInsertRegister( fnPop( stackOfPMachine ) );
-
-				fnGetTemporary( strReg0 );
-
-				fnGenIFormat( "li", "$a0", "", "5" );
+				fnGenIFormat( "li", "$v0", "", "5" );
 				fnGenRFormat( "syscall", "", "", "", "" );
-				fnGenPseudoInstr( "la", strReg0, "param", "" );
-				sprintf( strAuxReg, "0(%s)", strReg0 );
-				fnGenIFormat( "sw", "$v0", strAuxReg, "" );
-
-				fnInsertRegister( strReg0 );
+				
+				//fnInsertRegister( fnPop( stackOfPMachine ) );
 			}
 		}
 		else if ( fnInstrMatch( "ret" ) )

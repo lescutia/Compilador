@@ -75,11 +75,20 @@ int numberOfStrings;
 *	@Param address 		es la direccion de memoria en caso de procedimiento, de otro modo es un offset
 *	@Param defined 		es una bandera para indicar si se esta definiendo el valor
 */
-void fnCreateSymbolTableEntry( int whichTable, char* string, int line, int class, int type, int value, int address, int defined, char* parent );
+sEntry * fnCreateSymbolTableEntry( int whichTable, char* string, int line, int class, int type, int value, int address, int defined, char* parent );
 void fnResetSymbolTables( );
 void fnInitializeSymbolTables( );
 void fnPrintTable( int whichTable );
 sEntry* fnSearchSymbolTable( sEntry* entry, char* string, int class, char* actualProc );
+
+/**
+ * @Param entryProcedure	entrada en la tabla de símbolos del procedimiento.
+ * @Param strParam			nombre del parámteros.
+ * Return					direccion del paramtero, si existe; y NULL en caso contrario.
+ */
+sParameter * fnSearchParameter( sEntry * entryProcedure, char * strParameter );
+
+
 sEntry* fnGetScopedSymbolTableEntry( char* string, int class, char* actualProc );
 //funciones para buscar procedimientos de la libreria de kirsch
 //int fnReportUndefinedProcedures();

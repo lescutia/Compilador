@@ -31,7 +31,7 @@ int 	fnIsIntOrChar	( );
 int 	fnIsComparison	( );
 int 	fnIsPlusOrMinus	( );
 int 	fnIsLiteral		( );
-int 	isExpression	( );
+int 	fnIsExpression	( );
 
 int		fnIsAsteriskOrDivOrMod		( );
 int		fnIsRbraceOrSemicolonOrEOF	( );
