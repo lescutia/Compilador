@@ -105,8 +105,13 @@ void fnInitializeSymbolTables( )
 	entry = fnCreateSymbolTableEntry( LIBRARY_TABLE, "printc", -1, PROCEDURE, VOID_T, 0, -1, 1, 0 );
 	fnAddParameter( entry, "c", CHAR_T );
 
-	/* fnCreateSymbolTableEntry( LIBRARY_TABLE, "prints", -1, PROCEDURE, VOID_T, 0, -1, 1, 0 );
+	entry = fnCreateSymbolTableEntry( LIBRARY_TABLE, "prints", -1, PROCEDURE, VOID_T, 0, -1, 1, 0 );
+	fnAddParameter( entry, "s", CHARSTAR_T );
 
+	entry = fnCreateSymbolTableEntry( LIBRARY_TABLE, "println", -1, PROCEDURE, VOID_T, 0, -1, 1, 0 );
+
+	fnCreateSymbolTableEntry( GLOBAL_TABLE, "string_buffer", -1, VARIABLE, CHARSTAR_T, -1, -1, 1, 0 );
+	/*
 	fnCreateSymbolTableEntry( LIBRARY_TABLE, "scani", -1, PROCEDURE, VOID_T, 0, -1, 1, 0 );
 	fnCreateSymbolTableEntry( LIBRARY_TABLE, "scans", -1, PROCEDURE, VOID_T, 0, -1, 1, 0 ); */
 

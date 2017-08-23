@@ -7,6 +7,7 @@
 #define REGISTER_TEMPORARY 0
 #define REGISTER_ARGUMENT 1
 
+void fnGenPrintsFunction( );
 void fnInitListOfTemporaries( );
 void fnInitListOfArguments( );
 void fnInsertRegister( char * strReg );
@@ -46,6 +47,7 @@ void fnGenAsmCode( )
 	fnGenDirective( ".data" );
 	entry = local_symbol_table;
 
+	printf( "string_buffer: .space 128\n" );
 	/* Generar código para todas las variables, que no sean parámetros
 	 */
 	while( entry )
@@ -55,6 +57,9 @@ void fnGenAsmCode( )
 
 		entry =  fnGetNextEntry( entry );
 	}
+
+	
+
 	//
 
 	// Sección de texto
@@ -68,6 +73,7 @@ void fnGenAsmCode( )
 	 *        arg    es el argumento de la instrucción, el cual
 	 *               puede ser "nulo".
 	 */
+	int stringSegments = 0;
     while( fnHasInstr( ) )
     {
         fnGetInstr( );
@@ -96,6 +102,31 @@ void fnGenAsmCode( )
             fnGenPseudoInstr( "li", strReg0, "", g_strArg );
             fnPush( stackOfPMachine, strReg0 );
         }
+		else if( fnInstrMatch( "lds" ) )
+		{
+			
+			fnGetTemporary( strReg0 );
+			fnGetTemporary( strReg1 );
+
+			fnGenPseudoInstr("la", strReg0, "string_buffer", "" );
+			//printf( "la %s, string_buffer\n", strReg0 );
+
+			// TODO: guardar en arreglo
+			fnGetArg( );
+			
+			fnGenPseudoInstr("li", strReg1, "", g_strArg );
+			//fnGenIFormat( "li", strReg1, g_strArg, "" );
+			//printf( "li %s, %s\n", strReg1, g_strArg );
+
+			sprintf( strAuxReg, "%d(%s)", stringSegments, strReg0 );
+			fnGenIFormat( "sw", strReg1, strAuxReg, "" );
+			//printf( "sw %s, %d(%s)\n", strReg1, stringSegments, strReg0 );
+
+			stringSegments += 4;
+
+			fnInsertRegister( strReg0 );
+			fnInsertRegister( strReg1 );
+		}
         else if ( fnInstrMatch( "lod" ) )
         {
             fnGetArg( );
@@ -401,6 +432,7 @@ void fnGenAsmCode( )
 		{
 			fnGetArg();
 
+			
 			if ( strcmp( g_strArg, "printi" ) == 0 )
 			{
 				strcpy( strReg1, fnPop( stackOfPMachine ) );
@@ -442,6 +474,63 @@ void fnGenAsmCode( )
 					fnInsertRegister( strReg0 );
 				}
 			}
+			else if( strcmp( g_strArg, "prints") == 0 )
+			{
+				if( iNumberOfParameters > 0 )
+				{
+					fnGenIFormat( "addi", "$sp", "$sp", "-8" );
+					fnGenIFormat( "sw", "$a0", "0($sp)", "" );
+					fnGenIFormat( "sw", "$ra", "4($sp)", "" );
+				}
+				else
+				{
+					fnGenIFormat( "addi", "$sp", "$sp", "-4" );
+					fnGenIFormat( "sw", "$ra", "0($sp)", "" );
+				}
+
+				fnGetTemporary( strReg0 );
+				fnGenPseudoInstr("la", strReg0, "string_buffer", "" );
+				//printf("la %s, string_buffer\n", strReg0);
+
+				sprintf(strAuxReg, "%d(%s)", stringSegments, strReg0 );
+				fnGenIFormat("sw", "$zero", strAuxReg, "" );
+				//printf("sw $zero, %d(%s)\n", stringSegments, strReg0);
+				
+				fnGenJFormat("jal", "prints" );
+				//printf("jal prints\n");
+				fnInsertRegister( strReg0 );
+				stringSegments = 0;
+
+				if( iNumberOfParameters > 0 )
+				{
+					fnGenIFormat( "lw", "$a0", "0($sp)", "" );
+					fnGenIFormat( "lw", "$ra", "4($sp)", "" );
+					fnGenIFormat( "addi", "$sp", "$sp", "8" );
+				}
+				else
+				{
+					fnGenIFormat( "lw", "$ra", "0($sp)", "" );
+					fnGenIFormat( "addi", "$sp", "$sp", "4" );
+				}
+			}
+			else if( strcmp( g_strArg, "println" ) == 0 )
+			{
+				if( iNumberOfParameters > 0 )
+				{
+					fnGetTemporary( strReg0 );
+					fnGenPseudoInstr( "move", strReg0, "$a0", "" );
+				}
+
+				fnGenPseudoInstr( "li", "$a0", "", "'\\n'");
+				fnGenPseudoInstr( "li", "$v0", "", "11");
+				fnGenRFormat( "syscall", "", "", "", "" );
+
+				if( iNumberOfParameters > 0 )
+				{
+					fnGenPseudoInstr( "move", "$a0", strReg0, "" );
+					fnInsertRegister( strReg0 );
+				}
+			}
 			/* else if ( strcmp( g_strArg, "scani" ) == 0 )
 			{
 				fnGenIFormat( "li", "$v0", "", "5" );
@@ -464,10 +553,19 @@ void fnGenAsmCode( )
         }
     }
 	//
-
+	fnGenPrintsFunction( );
     fnDestroyList( g_listOfTemporaries );
 	fnDestroyList( g_listOfArguments );
     fnDestroyStack( stackOfPMachine );
+}
+
+void fnGenPrintsFunction( )
+{
+	fnGenLabel( "prints" );
+	fnGenPseudoInstr("la", "$a0", "string_buffer", "" );
+	fnGenPseudoInstr("li", "$v0", "", "4" );
+	fnGenRFormat( "syscall", "", "", "", "" );
+	fnGenJFormat("jr", "$ra" );
 }
 
 void fnGenLabel( char* label )
@@ -484,11 +582,12 @@ void fnGenVariable( char* var, int type )
 {
 	printf( "%s: ", var );
 
-	if ( type == INT_T )
+	if( type == INT_T )
 		printf( ".word 0" );
-	else if ( type == CHAR_T )
+	else if( type == CHAR_T )
 		printf( ".byte 0" );
-
+	//else if( type == CHARSTAR_T )
+		//printf( ".asciiz \"%s\"" );
 	printf( "\n" );
 }
 

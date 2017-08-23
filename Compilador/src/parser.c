@@ -886,10 +886,21 @@ int fnFactor( )
 	{
 		fnDebugParser( "string" );
 		fnGetSymbol( );
-
+		char* tmpString = g_string;
+		int tmpSize = strlen(tmpString);
+		tmpSize = (tmpSize + 3)/4;
 		// CODEGEN
 		// TODO: AGREGAR
-		// fnDebugCodeGen( "ldc", , NO_LABEL );
+		int cont = 0;
+		while( cont < tmpSize )
+		{
+			int nextCharacters = *((int*)tmpString + cont);
+			sprintf( g_integer, "%d", nextCharacters );
+
+			fnDebugCodeGen( "lds", g_integer, NO_LABEL );
+			cont++;
+		}
+		//fnDebugCodeGen( "ldc", g_string, NO_LABEL );
 		//
 		iType = CHARSTAR_T;
 	}
@@ -1993,7 +2004,10 @@ int fnCall( char* procedure )
 	else if( g_symbol == SYM_RPARENTHESIS )
 	{
 		// CODEGEN
-		fnDebugCodeGen( "cup", g_identifier, NO_LABEL );
+		if( fnSearchSymbolTable( library_symbol_table, procedure, PROCEDURE, 0 ) != NULL )
+			fnDebugCodeGen( "csp", procedure, NO_LABEL );
+		else
+			fnDebugCodeGen( "cup", procedure, NO_LABEL );
 		//
 
 		// PARAM

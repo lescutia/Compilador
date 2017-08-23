@@ -1,78 +1,56 @@
 ent main
-lda gcd
 mst
-ldc 4
+lds 1952670022
+lds 1634300527
+lds 1701060716
+lds 976236832
+lds 32
+csp prints
+csp println
+lda n
 ldc 10
-cup fnGCD
+stn
+lda n
+mst
+lod n
+cup fnFactorial
 stn
 mst
-lod gcd
+lod n
 csp printi
 ldc 0
 ret
 stp
-ent fnMax
-lod a
-lod b
-grt
+ent fnFactorial
+lod n
+ldc 0
+les
 fjp L1
-lod a
+ldc 0
 ret
 lab L1
-lod b
-ret
-ent fnMin
-lod a
-lod b
-les
-fjp L2
-lod a
-ret
+lda i
+ldc 2
+stn
+lda iResult
+ldc 1
+stn
 lab L2
-lod b
-ret
-ent fnGCD
-lda iMax
-mst
-lod a
-lod b
-cup fnMax
-stn
-lda iMin
-mst
-lod a
-lod b
-cup fnMin
-stn
-lod iMin
-ldc 0
-equ
+lod i
+lod n
+leq
 fjp L3
-lod iMax
-ret
+lda iResult
+lod iResult
+lod i
+mpi
+stn
+lda i
+lod i
+ldc 1
+adi
+stn
+ujp L2
 lab L3
-lda iRemainder
-lod iMax
-lod iMin
-mod
-stn
-lab L4
-lod iRemainder
-ldc 0
-neq
-fjp L5
-lda iMax
-lod iMin
-stn
-lda iMin
-lod iRemainder
-stn
-lda iRemainder
-lod iMax
-lod iMin
-mod
-stn
-ujp L4
-lab L5
-lod iMin
+lod iResult
 ret
