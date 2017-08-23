@@ -34,6 +34,9 @@ void fnWarningMessage(int iWarningType, char* SymbolExpected, char* SymbolFound,
 	case WARNING_CAST_MISTMATCH:
 		printf( "cast mismatch in line %d. Trying to convert '%s' to '%s'.", iLineNO, SymbolFound, SymbolExpected );
 		break;
+	//case WARNING_TYPE_MISMATCH:
+		//printf("type mismatch, '%s' expected but '%s' found in line %d.", SymbolExpected, SymbolFound, iLineNO );
+		//break;
 	case WARNING_VAR_DEF_NUSED:
 		printf( "variable '%s' defined in line %d but it is never used.", strName, iLineNO );
 		break;
@@ -42,6 +45,12 @@ void fnWarningMessage(int iWarningType, char* SymbolExpected, char* SymbolFound,
 		break;
 	case WARNING_FUNC_REDEF:
 		printf( "function '%s' redefinition in line %d.", strName, iLineNO );
+		break;
+	case WARNING_FUNC_NRETURN:
+		printf( "in function '%s', a value of type '%s' should be returned in line %d.", strName, SymbolExpected, iLineNO );
+		break;
+	case WARNING_FUNC_VOID_RETURN:
+		printf( "'return' with no value, in function '%s' returning non-void in line %d.", strName, iLineNO );
 		break;
 	case WARNING_VAR_REDEF:
 		printf( "variable '%s' redefinition in line %d.", strName, iLineNO );
@@ -64,6 +73,9 @@ void fnErrorMessage(int iErrorType, char* iTypeExpected, char* iTypeFound, int i
 		break;
 	case ERROR_SYNTAX_UNEXPECTED:
 		printf( "unexpected symbol %s found in line %d.", iTypeFound, iLineNO );
+		break;
+	case ERROR_TYPE_MISMATCH:
+		printf("type mismatch, '%s' expected but '%s' found in line %d.", iTypeExpected, iTypeFound, iLineNO );
 		break;
 	case ERROR_TYPE_INCOMPATIBLE:
 		printf("incompatible types, expected %s but %s found in line %d", iTypeExpected, iTypeFound, iLineNO);
@@ -103,6 +115,7 @@ void fnErrorMessage(int iErrorType, char* iTypeExpected, char* iTypeFound, int i
 		printf( "type error %d is not defined.", iErrorType );
 	}
 	printf("\n");
+	printf( "\nPress any key to exit..." );
 	getch();
 	exit(iErrorType);
 }
