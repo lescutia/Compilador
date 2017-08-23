@@ -1799,9 +1799,12 @@ void fnProcedure( char* procedure, int type )
 				//
 				if( type != VOID_T )
 				{
+					fnWarningMessage( WARNING_FUNC_NRETURN, fnTypeToString( type ), "", g_lineNumber, procedure );
+					/*
 					printf( "\n Warning: in function '%s', a value of type '", procedure );
 					fnPrintType( type );
 					printf( "' should be returned.\n" );
+					//*/
 				}
 			}
 			/********************/
@@ -2354,8 +2357,10 @@ void fnReturn( )
 	 */
 	else if( g_iReturnType != VOID_T )
 	{
-		printf( "\n Warning: line %d, 'return' with ", g_lineNumber );
-		printf( "no value, in function returning non-void.\n" );
+		// TODO: revisar si g_lastproc coincide
+		fnWarningMessage( WARNING_FUNC_VOID_RETURN, "", "", g_lineNumber, g_lastProc );
+		//printf( "\n Warning: line %d, 'return' with ", g_lineNumber );
+		//printf( "no value, in function returning non-void.\n" );
 	}
 
 	g_bHasReturn = 1;
@@ -2640,6 +2645,9 @@ void fnSyntaxErrorUnexpected( )
 
 void fnTypeWarning( int expected, int found )
 {
+	//fnWarningMessage( WARNING_TYPE_MISMATCH, fnTypeToString( expected ), fnTypeToString( found ), g_lineNumber, "" );
+	fnErrorMessage( ERROR_TYPE_MISMATCH, fnTypeToString( expected ), fnTypeToString( found ), g_lineNumber, "" );
+	/*
 	printf( "\n Warning: line %d, ", g_lineNumber );
 
 	printf( "type mismatch, '" );
@@ -2649,4 +2657,5 @@ void fnTypeWarning( int expected, int found )
 	fnPrintType( found );
 
 	printf( "' found.\n" );
+	//*/
 }
