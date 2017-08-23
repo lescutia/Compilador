@@ -2646,7 +2646,7 @@ void fnSyntaxErrorUnexpected( )
 void fnTypeWarning( int expected, int found )
 {
 	//fnWarningMessage( WARNING_TYPE_MISMATCH, fnTypeToString( expected ), fnTypeToString( found ), g_lineNumber, "" );
-	fnErrorMessage( WARNING_TYPE_MISMATCH, fnTypeToString( expected ), fnTypeToString( found ), g_lineNumber, "" );
+	fnErrorMessage( ERROR_TYPE_MISMATCH, fnTypeToString( expected ), fnTypeToString( found ), g_lineNumber, "" );
 	/*
 	printf( "\n Warning: line %d, ", g_lineNumber );
 
