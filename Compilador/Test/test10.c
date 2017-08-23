@@ -2,12 +2,13 @@ int fnSum( char a, char b );
 
 int main( )
 {
-    printi( fnSum( 'a', 'b' ) );
+    int n;
+    printi( fnSum( '1', '2' ) );
 
     return 0;
 }
 
 int fnSum( char a, char b )
 {
-    return a + b;
+    return (int)(a + b);
 }

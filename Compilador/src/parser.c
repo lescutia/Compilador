@@ -296,10 +296,13 @@ void fnParser( )
 					 */
 					else
 					{
+						fnWarningMessage( WARNING_VAR_REDEF, "", "", iCurrentLineNumber, variableOrProcedureName );
+						/*
 						printf( "\n Warning, line %d, ", iCurrentLineNumber );
 						printf( "redefinition of global variable " );
 						printf( "'%s' ", variableOrProcedureName );
 						printf( "ignored.\n" );
+						//*/
 					}
 				}
 			}
@@ -324,7 +327,7 @@ void fnParser( )
 
 int fnType( )
 {
-	int iType;
+	int iType = -1;
 
 	/* int ...
 	 */
@@ -368,18 +371,11 @@ int fnType( )
 	*/
 	else
 	{
-		printf( "\n Error: line %d, ", g_lineNumber );
-		printf( "'%s' or '%s' expected but ", *( g_SYMBOLS + SYM_INT ), *( g_SYMBOLS + SYM_CHAR ) );
-		
-		if( g_symbol == SYM_EOF )
-			printf( "EOF" );
+		// TODO: CHECAR ÚLTIMO PARÁMETRO EN ESTE CASO
+		if (g_symbol == SYM_EOF)
+			fnErrorMessage( ERROR_TYPE_UNK, fnSymbolToString( SYM_INT ), fnSymbolToString( SYM_CHAR ), g_lineNumber, "EOF");
 		else
-			printf( "'%s' found.", *( g_SYMBOLS + g_symbol ) );
-
-		printf( "\n\n Press any key to exit..." );
-		_getch( );
-
-		exit( 1 );
+			fnErrorMessage( ERROR_TYPE_UNK, fnSymbolToString( SYM_INT ), fnSymbolToString( SYM_CHAR ), g_lineNumber, fnSymbolToString( g_symbol) );
 	}
 
 	return iType;
@@ -524,17 +520,19 @@ int fnSimpleExpression( )
 			// }
 			// else if ( iRType == INTSTAR_T )
 			/*if ( iRType == INTSTAR_T )*/
-			if( iLType != iRType )
+			if (iLType != iRType)
 				// fnTypeWarning( iLType, iRType );
 				// TODO: CONSIDERAR DIFERENTES CASOS
-				printf( "\n Warning: line %d, incompatible types.\n", g_lineNumber );
+				fnErrorMessage(ERROR_TYPE_INCOMPATIBLE, fnTypeToString( iLType ), fnTypeToString( iRType ), g_lineNumber, "");
+				//printf( "\n Warning: line %d, incompatible types.\n", g_lineNumber );
 		}
 		else if( iOperatorSymbol == SYM_MINUS )
 		{
 			if( iLType != iRType )
+				fnErrorMessage( ERROR_TYPE_INCOMPATIBLE, fnTypeToString( iLType ), fnTypeToString( iRType ), g_lineNumber, "" );
 				// fnTypeWarning( iLType, iRType );
 				// TODO: MEJORAR
-				printf( "\n Warning: line %d, incompatible types.\n", g_lineNumber );
+				//printf( "\n Warning: line %d, incompatible types.\n", g_lineNumber );
 		}
 	}
 
@@ -569,9 +567,10 @@ int fnTerm( )
 		fnDebugCodeGen( fnGetInstPCode( iOperatorSymbol ), "", NO_LABEL );
 		//
 		if( iLType != iRType )
+			fnErrorMessage( ERROR_TYPE_INCOMPATIBLE, fnTypeToString( iLType ), fnTypeToString( iRType ), g_lineNumber, "" );
 			//fnTypeWarning( iLType, iRType );
 			// TODO: MEJORAR
-			printf( "\n Warning: line %d, incompatible types.\n", g_lineNumber );
+			//printf( "\n Warning: line %d, incompatible types.\n", g_lineNumber );
 	}
 
 	return iLType;
@@ -643,8 +642,8 @@ int fnFactor( )
 	// Lo usa para asignar el tipo de dato del cast
 	// debido a que el cast es opcional y se puede
 	// cambiar el valor de iType.
-	int iCast;
-	int iType;
+	int iCast = 0;
+	int iType = -1;
 	// char* variableOrProcedureName;
 	// Para evitar problemas
 	char variableOrProcedureName[ 64 ];
@@ -735,17 +734,20 @@ int fnFactor( )
 			 */
 			else
 			{
+				fnErrorMessage( ERROR_VAR_NDEF, "", "", g_lineNumber, g_identifier );
+				/*
 				printf( "\n Error: line %d, ", g_lineNumber );
 				printf( "'%s' undeclared.", g_identifier );
 				
 				printf( "\n\n Press any key to exit..." );
 				_getch( );
-
+				//*/
 				/* TODO: CREAR UNA FUNCIÓN fnExitCompiler() EN
 				 * LA CUAL LIBEREMOS TODA LA MEMORIA QUE HEMOS
 				 * SOLICITADO.
 				 */
-				exit( 1 );
+				//exit( 1 );
+
 			}
 			/************************************************/
 
@@ -783,10 +785,11 @@ int fnFactor( )
 			iType = CHAR_T;
 		else
 		{
-			printf( "\n Warning: line %d, ", g_lineNumber );
-			printf( "type mismatch, a pointer data type " );
+			fnWarningMessage( WARNING_CAST_MISTMATCH, "a pointer data type", fnSymbolToString( g_symbol ), g_lineNumber, "" );
+			//printf( "\n Warning: line %d, ", g_lineNumber );
+			//printf( "type mismatch, a pointer data type " );
 			// TODO: REVISAR
-			printf( "expected but '%s' found.\n", *( g_SYMBOLS + g_symbol ) );
+			//printf( "expected but '%s' found.\n", *( g_SYMBOLS + g_symbol ) );
 			// TODO: VER SI ES NECESARIO SALIR DEL PROGRAMA O CONTINUAR
 		}
 		/*******************************************/
@@ -827,22 +830,24 @@ int fnFactor( )
 			if( fnIsDeclared( g_identifier ) )
 				iType = g_iTypeCurrIdentifier;
 			/* Si el identificador no se ha definido, entonces
-			 * imprimimos un mensaje de erro y salimos del
+			 * imprimimos un mensaje de error y salimos del
 			 * compilador.
 			 */
 			else
 			{
+				fnErrorMessage( ERROR_VAR_NDEF, "", "", g_lineNumber, g_identifier );
+				/*
 				printf( "\n Error: line %d, ", g_lineNumber );
 				printf( "'%s' undeclared.", g_identifier );
 				
 				printf( "\n\n Press any key to exit..." );
 				_getch( );
-
+				//*/
 				/* TODO: CREAR UNA FUNCIÓN fnExitCompiler() EN
 				 * LA CUAL LIBEREMOS TODA LA MEMORIA QUE HEMOS
 				 * SOLICITADO.
 				 */
-				exit( 1 );
+				//exit( 1 );
 			}
 			/************************************************/
 		}
@@ -867,6 +872,12 @@ int fnFactor( )
 		fnDebugParser( "character" );
 		fnGetSymbol( );
 
+		// CODEGEN
+		char tmpLiteral[4] = {'\0'};
+
+		sprintf( tmpLiteral, "'%c'", g_literal[0] );
+		fnDebugCodeGen( "ldc", tmpLiteral, NO_LABEL );
+		//
 		iType = CHAR_T;
 	}
 	/* string ...
@@ -876,6 +887,10 @@ int fnFactor( )
 		fnDebugParser( "string" );
 		fnGetSymbol( );
 
+		// CODEGEN
+		// TODO: AGREGAR
+		// fnDebugCodeGen( "ldc", , NO_LABEL );
+		//
 		iType = CHARSTAR_T;
 	}
 	/* '(' ...
@@ -928,16 +943,22 @@ void fnParameter( sEntry * entryProcedure )
 		{
 			if ( g_entryCurrentParameter == NULL  )
 			{
+				fnErrorMessage( ERROR_FUNC_MISMATCH, "", "", g_lineNumber, fnGetString( entryProcedure ) );
+				/*
 				printf( "\n Error: line %d, number of arguments does not match prototype.\n", g_lineNumber );
 				getch( );
 				exit( 1 );
+				//*/
 			}
 
 			if ( fnGetTypeParameter( g_entryCurrentParameter ) != iType )
 			{
+				fnErrorMessage( ERROR_PARAM_MISMATCH, fnTypeToString( fnGetTypeParameter( g_entryCurrentParameter ) ), fnTypeToString( iType ), g_lineNumber, fnGetString( entryProcedure ) );
+				/*
 				printf( "\n Error: line %d, conflicting types for '%s'.\n", g_lineNumber, fnGetString( entryProcedure ) );
 				getch();
 				exit( 1 );
+				//*/
 			}
 
 			g_entryCurrentParameter = fnGetNextParameter( g_entryCurrentParameter );
@@ -946,9 +967,12 @@ void fnParameter( sEntry * entryProcedure )
 		{
 			if ( fnSearchParameter( entryProcedure, g_identifier ) != NULL )
 			{
+				fnErrorMessage( ERROR_PARAM_REDEF, "", g_identifier, g_lineNumber, fnGetString( entryProcedure ) );
+				/*
 				printf( " Error: line %d, redefinition parameter '%s' from '%s'\n", g_lineNumber, g_identifier, fnGetString( entryProcedure ) );
 				getch();
 				exit( 1 );
+				//*/
 			}
 			else
 			{
@@ -984,10 +1008,13 @@ void fnVariable( )
 			fnCreateSymbolTableEntry( LOCAL_TABLE, g_identifier, g_lineNumber, VARIABLE, iType, 0, -1, 0, g_lastProc );
 		else
 		{
+			fnWarningMessage( WARNING_VAR_REDEF, "", "", g_lineNumber, g_identifier );
+			/*
 			printf("\n Warning, line %d, ", g_lineNumber);
 			printf("redefinition of local variable ");
 			printf("'%s' ", g_identifier);
 			printf("ignored.\n");
+			//*/
 		}
 
 		fnGetSymbol( );
@@ -999,10 +1026,10 @@ void fnVariable( )
 // HASTA EL MOMENTO SÓLO SE CONSIDERAN LOS TIPOS INT Y CHAR
 int fnInitialization( int iType )
 {
-	int iAssignedType;
+	int iAssignedType = -1;
 	int initialValue;
 	int hasCast;
-	int cast;
+	int cast = 0;
 	int sign;
 
 	initialValue = 0; //Quitar
@@ -1183,8 +1210,8 @@ int fnIsPointer( int  iType )
 
 void fnStatement( )
 {
-	int iLType;
-	int iRType;
+	int iLType = -1;
+	int iRType = -1;
 	// char* variableOrProcedureName;
 	char variableOrProcedureName[ 64 ];
 	sEntry* entry;
@@ -1220,17 +1247,19 @@ void fnStatement( )
 			 */
 			else // Mensaje de error y salir del programa
 			{
+				fnErrorMessage(ERROR_VAR_NDEF, "", "", g_lineNumber, g_identifier );
+				/*
 				printf( "\n Error: line %d, ", g_lineNumber );
 				printf( "'%s' undeclared.", g_identifier );
 				
 				printf( "\n\n Press any key to exit..." );
 				_getch( );
-
+				//*/
 				/* TODO: CREAR UNA FUNCIÓN fnExitCompiler() EN
 				 * LA CUAL LIBEREMOS TODA LA MEMORIA QUE HEMOS
 				 * SOLICITADO.
 				 */
-				exit( 1 );
+				//exit( 1 );
 			}
 			/************************************************/
 
@@ -1414,6 +1443,8 @@ void fnStatement( )
 
 			if( entry == 0 )
 			{
+				fnErrorMessage( ERROR_VAR_NDEF, "", "", g_lineNumber, g_identifier );
+				/*
 				printf( "\n Error: line %d, ", g_lineNumber );
 				printf( "'%s' undeclared.", g_identifier );
 				
@@ -1421,6 +1452,7 @@ void fnStatement( )
 				_getch( );
 
 				exit( 1 );
+				//*/
 			}
 
 			iLType = fnGetType( entry );
@@ -1502,7 +1534,7 @@ void fnProcedure( char* procedure, int type )
 	int bIsDeclared;
 	int bIsDefined;
 	int iNumberOfParameters;
-	int iParameters;
+	// int iParameters = 0;
 	int iLocalVariables;
 	sEntry* entry;
 
@@ -1578,9 +1610,12 @@ void fnProcedure( char* procedure, int type )
 			{				
 				if ( g_entryCurrentParameter != NULL )
 				{
+					fnErrorMessage( ERROR_FUNC_MISMATCH, "", "", g_lineNumber, procedure );
+					/*
 					printf( "\n Error: line %d, number of arguments does not match prototype.\n", g_lineNumber );
 					getch( );
 					exit( 1 );
+					//*/
 				}	
 			}
 
@@ -1606,9 +1641,12 @@ void fnProcedure( char* procedure, int type )
 			// PARAM
 			if ( entry->parameter != NULL )
 			{
+				fnErrorMessage( ERROR_FUNC_MISMATCH, "", "", g_lineNumber, procedure );
+				/*
 				printf( "\n Error: line %d, number of arguments does not match prototype.\n", g_lineNumber );
 				getch( );
 				exit( 1 );
+				//*/
 			}
 			//
 			fnDebugParser( ")" );
@@ -1638,11 +1676,15 @@ void fnProcedure( char* procedure, int type )
 		// if ( entry != 0 )
 		if ( bIsDeclared )
 		{
-			printf( "\n Warning: line %d, previous declaration of '%s'.", g_lineNumber, procedure );
+			fnWarningMessage(WARNING_FUNC_REDEF, "", "", g_lineNumber, procedure );
+			//printf( "\n Warning: line %d, previous declaration of '%s'.", g_lineNumber, procedure );
 
-			if ( fnGetType( entry ) != type )
-				printf( "\n Warning: line %d, conflicting types for '%s'.", g_lineNumber, procedure );
-
+			if (fnGetType( entry ) != type)
+			{
+				printf( "\n Error: line %d, conflicting types for '%s'.", g_lineNumber, procedure );
+				getch( );
+				exit( 1 );
+			}
 			printf( "\n" );
 		}
 
@@ -1678,9 +1720,13 @@ void fnProcedure( char* procedure, int type )
 				fnSetDefined( entry, 1 );
 			else
 			{
+				fnWarningMessage( WARNING_FUNC_REDEF, "", "", g_lineNumber, procedure );
+
+				/*
 				printf( "\n Warning: line %d, ", g_lineNumber );
 				printf( "redefinition of procedure '%s'.", procedure );
 				// printf( "ignored.\n" );
+				//*/
 			}
 		}
 
@@ -1767,7 +1813,7 @@ void fnProcedure( char* procedure, int type )
 			fnSyntaxErrorSymbol( SYM_RBRACE );
 
 			printf( "\n Press any key to exit..." );
-			_getch( );
+			getch( );
 
 			exit( 1 );
 		}
@@ -1783,7 +1829,7 @@ void fnProcedure( char* procedure, int type )
 int fnCall( char* procedure )
 {
 	int type; //Borrar
-	int iType;
+	int iType = -1;
 	// NO LO NECECITAMOS, POR EL MOMENTO
 	int iNumberOfTemporaries;
 	sEntry* entry;
@@ -1799,9 +1845,12 @@ int fnCall( char* procedure )
 
 		if ( entry == NULL )
 		{
+			fnErrorMessage(ERROR_FUNC_NDEF, "", "", g_lineNumber, procedure );
+			/*
 			printf( "\n Error: line %d, undefined reference to '%s'.", g_lineNumber, procedure );
 			getch( );
 			exit( 1 );
+			//*/
 		}
 	}
 
@@ -1823,16 +1872,22 @@ int fnCall( char* procedure )
 		// PARAM
 		if ( param == NULL )
 		{
+			fnErrorMessage( ERROR_FUNC_MA, "", "", g_lineNumber, procedure );
+			/*
 			printf( "\n Error: line %d, too many arguments to function '%s'.\n", g_lineNumber, procedure );
 			getch();
 			exit( 1 );
+			//*/
 		}
 
 		if ( fnGetTypeParameter( param ) != type )
 		{
+			fnErrorMessage( ERROR_PARAM_MISMATCH, fnTypeToString( fnGetTypeParameter( param ) ), fnTypeToString( type ), g_lineNumber, procedure );
+			/*
 			printf( "\n Error: line %d, mismatch types in '%s'.\n", g_lineNumber, procedure );
 			getch( );
 			exit( 1 );
+			//*/
 		}
 
 		param = param->next;
@@ -1854,16 +1909,22 @@ int fnCall( char* procedure )
 			// PARAM
 			if ( param == NULL )
 			{
+				fnErrorMessage( ERROR_FUNC_MA, "", "", g_lineNumber, procedure );
+				/*
 				printf( "\n Error: line %d, too many arguments to function '%s'.\n", g_lineNumber, procedure );
 				getch();
 				exit( 1 );
+				//*/
 			}
 
 			if ( fnGetTypeParameter( param ) != type )
 			{
+				fnErrorMessage( ERROR_PARAM_MISMATCH, fnTypeToString( fnGetTypeParameter( param ) ), fnTypeToString( type ), g_lineNumber, procedure );
+				/*
 				printf( "\n Error: line %d, mismatch types in '%s'.\n", g_lineNumber, procedure );
 				getch();
 				exit( 1 );
+				//*/
 			}
 
 			param = param->next;
@@ -1883,9 +1944,12 @@ int fnCall( char* procedure )
 			// PARAM
 			if ( param != NULL )
 			{
+				fnErrorMessage( ERROR_FUNC_FA, "", "", g_lineNumber, procedure );
+				/*
 				printf( "\n Error: line %d, too few arguments to function '%s'.\n", g_lineNumber, procedure );
 				getch( );
 				exit( 1 );
+				//*/
 			}
 			//
 			fnDebugParser( ")" );
@@ -1899,6 +1963,8 @@ int fnCall( char* procedure )
 				// Suponemos que todo procedimiento que sea
 				// llamado tiene que haber sido declarado o
 				// definido.
+				fnErrorMessage( ERROR_FUNC_NDEF, "", "", g_lineNumber, g_identifier );
+				/*
 				printf( "\n Error: line %d, procedure '%s' ", g_lineNumber, g_identifier );
 				printf( "has never been declared or defined." );
 				
@@ -1906,6 +1972,7 @@ int fnCall( char* procedure )
 				_getch( );
 
 				exit( 1 );
+				//*/
 			}
 			else
 				iType = fnGetType( entry );
@@ -1929,9 +1996,12 @@ int fnCall( char* procedure )
 		// PARAM
 		if( param != NULL )
 		{
+			fnErrorMessage( ERROR_FUNC_FA, "", "", g_lineNumber, procedure );
+			/*
 			printf( "\n Error: line %d, too few arguments to function '%s'.\n", g_lineNumber, procedure );
 			getch( );
 			exit( 1 );
+			//*/
 		}
 		//
 
@@ -1942,10 +2012,13 @@ int fnCall( char* procedure )
 		// declarado ni definido.
 		if( entry == 0 )
 		{
+			fnErrorMessage( ERROR_FUNC_NDEF, "", "", g_lineNumber, g_identifier );
+
 			// TODO: REVISAR
 			// Suponemos que todo procedimiento que sea
 			// llamado tiene que haber sido declarado o
 			// definido.
+			/*
 			printf( "\n Error: line %d, procedure '%s' ", g_lineNumber, g_identifier );
 			printf( "has never been declared or defined." );
 			
@@ -1953,6 +2026,7 @@ int fnCall( char* procedure )
 			_getch( );
 
 			exit( 1 );
+			//*/
 		}
 		else
 			iType = fnGetType( entry );
@@ -2041,7 +2115,7 @@ void fnWhile( )
 						fnSyntaxErrorSymbol( SYM_RBRACE );
 
 						printf( "\n Press any key to exit..." );
-						_getch( );
+						getch( );
 
 						exit( 1 );
 					}
@@ -2136,7 +2210,7 @@ void fnIf( )
 						fnSyntaxErrorSymbol( SYM_RBRACE );
 
 						printf( "\n Press any key to exit..." );
-						_getch( );
+						getch( );
 
 						exit( 1 );
 					}
@@ -2208,7 +2282,7 @@ void fnIf( )
 							fnSyntaxErrorSymbol( SYM_RBRACE );
 
 							printf( "\n Press any key to exit..." );
-							_getch( );
+							getch( );
 
 							exit( 1 );
 						}
@@ -2526,6 +2600,12 @@ int fnIsNotRbraceOrEOF( )
 
 void fnSyntaxErrorSymbol( int expected )
 {
+	if (g_symbol == SYM_EOF)
+		fnErrorMessage( ERROR_SYNTAX_SYMBOL, fnSymbolToString( expected ), "EOF", g_lineNumber, "" );
+	else
+		fnErrorMessage( ERROR_SYNTAX_SYMBOL, fnSymbolToString( expected ), fnSymbolToString(g_symbol), g_lineNumber, "" );
+
+	/*
 	printf( "\n Error: line %d, ", g_lineNumber );
 	printf( "'%s' expected but ", *( g_SYMBOLS + expected ) );
 
@@ -2535,10 +2615,17 @@ void fnSyntaxErrorSymbol( int expected )
 		printf( "'%s'", *( g_SYMBOLS + g_symbol ) );
 
 	printf( " found.\n" );
+	//*/
 }
 
 void fnSyntaxErrorUnexpected( )
 {
+	if (g_symbol == SYM_EOF)
+		fnErrorMessage( ERROR_SYNTAX_UNEXPECTED, "", "EOF", g_lineNumber, "" );
+	else
+		fnErrorMessage( ERROR_SYNTAX_UNEXPECTED, "", fnSymbolToString(g_symbol), g_lineNumber, "" );
+
+	/*
 	printf( "\n Error: line %d, ", g_lineNumber );
 	printf( "unexpected symbol " );
 
@@ -2548,6 +2635,7 @@ void fnSyntaxErrorUnexpected( )
 		printf( "'%s'", *( g_SYMBOLS + g_symbol ) );
 
 	printf( " found.\n" );
+	//*/
 }
 
 void fnTypeWarning( int expected, int found )

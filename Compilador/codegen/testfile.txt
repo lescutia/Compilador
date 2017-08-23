@@ -1,6 +1,8 @@
 ent main
 mst
 mst
+ldc '1'
+ldc '2'
 cup fnSum
 csp printi
 ldc 0
