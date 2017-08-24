@@ -27,9 +27,6 @@
     <ClCompile Include="src\symbolTable.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\intermediateCode.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="src\encoder.c">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -60,6 +57,9 @@
     <ClCompile Include="src\message.c">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="src\codeGen.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="includes\parser.h">
@@ -69,9 +69,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="includes\symbolTable.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="includes\intermediateCode.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="includes\encoder.h">
@@ -102,6 +99,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="includes\message.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="includes\codeGen.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

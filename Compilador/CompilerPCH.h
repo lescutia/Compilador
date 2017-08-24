@@ -130,6 +130,12 @@ int g_numberOfIgnoredCharacters;
 int g_numberOfComments;
 int g_numberOfScannedSymbols;
 
+int g_iNumberOfAssignments;
+int g_iNumberOfWhile;
+int g_iNumberOfIf;
+int g_iNumberOfReturn;
+int g_iNumberOfCalls;
+
 /************************************************
 *				LIBRARY FUNCTIONS				*
 *************************************************/
@@ -154,7 +160,7 @@ int fnRightShift( int iNumberToShift, int iShifting );
 
 #include "./includes/PCodeRead.h"
 #include "./includes/PCodeToAsm.h"
-#include "./includes/intermediateCode.h"
+#include "./includes/codeGen.h"
 #include "./includes/symbolTable.h"
 #include "./includes/message.h"
 #include "./includes/scanner.h"

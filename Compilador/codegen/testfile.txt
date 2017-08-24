@@ -1,100 +1,85 @@
 ent main
-lda gcd
-mst
-ldc 4
-ldc 10
-cup fnGCD
+lda i
+ldc 1
+stn
+lda n
+ldc 15
 stn
 mst
-lod gcd
+lds 1835627088
+lds 1936683621
+lds 32
+csp prints
+mst
+lod n
+ldc 1
+sbi
 csp printi
-lda gcd
-cup fn
+mst
+lds 1836412448
+lds 1936683621
+lds 543515680
+lds 1931501932
+lds 1936024437
+lds 544108393
+lds 1713399140
+lds 1852793449
+lds 1768121185
+lds 58
+csp prints
+csp println
+lab L1
+lod i
+lod n
+les
+fjp L2
+mst
+mst
+lod i
+cup fnFibonacci
+csp printi
+lda i
+lod i
+ldc 1
+adi
 stn
+lod i
+lod n
+les
+fjp L3
+mst
+lds 8236
+csp prints
+lab L3
+ujp L1
+lab L2
 ldc 0
 ret
 stp
-ent fnAbs
-lod x
-ldc 0
-les
-fjp L1
-lod x
-ngi
-ret
-lab L1
-lod x
-ret
-ent fnMax
-lod a
-lod b
-grt
-fjp L2
-lod a
-ret
-lab L2
-lod b
-ret
-ent fnMin
-lod a
-lod b
-les
-fjp L3
-lod a
-ret
-lab L3
-lod b
-ret
-ent fnGCD
-lda iMax
-mst
-mst
-lod a
-cup fnAbs
-mst
-lod b
-cup fnAbs
-cup fnMax
-stn
-lda iMin
-mst
-mst
-lod a
-cup fnAbs
-mst
-lod b
-cup fnAbs
-cup fnMin
-stn
-lod iMin
+ent fnFibonacci
+lod n
 ldc 0
 equ
 fjp L4
-lod iMax
+ldc 0
 ret
 lab L4
-lda iRemainder
-lod iMax
-lod iMin
-mod
-stn
+lod n
+ldc 1
+equ
+fjp L5
+ldc 1
+ret
 lab L5
-lod iRemainder
-ldc 0
-neq
-fjp L6
-lda iMax
-lod iMin
-stn
-lda iMin
-lod iRemainder
-stn
-lda iRemainder
-lod iMax
-lod iMin
-mod
-stn
-ujp L5
-lab L6
-lod iMin
+mst
+lod n
+ldc 1
+sbi
+cup fnFibonacci
+mst
+lod n
+ldc 2
+sbi
+cup fnFibonacci
+adi
 ret

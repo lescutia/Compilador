@@ -12,11 +12,13 @@
 #include "../includes/parser.h"
 
 char* g_lastProc = 0;
-int g_iNumberOfAssignments  = 0;
+
+// Se movieron a CompilerPCH.h
+/* int g_iNumberOfAssignments  = 0;
 int g_iNumberOfWhile        = 0;
 int g_iNumberOfIf           = 0;
 int g_iNumberOfReturn       = 0;
-int g_iNumberOfCalls        = 0;
+int g_iNumberOfCalls        = 0; */
 
 int g_iAllocatedTemporaries = 0;
 
@@ -76,7 +78,7 @@ void fnDebugCodeGen( char* strInstr, char* strArg, int iLabel )
 
 	if( DEBUG_CODEGEN )
 	{
-		printf( " %s",strInstr );
+		printf( " %s", strInstr );
 		printf( " " );
 		printf( "%s", strArg );			
 

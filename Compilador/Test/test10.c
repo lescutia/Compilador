@@ -1,67 +1,39 @@
-// GCD
-int fnAbs( int x );
-int fnMax( int a, int b );
-int fnMin( int a, int b );
-int fnGCD( int a, int b );
+//FIBONACCI
+int fnFibonacci( int n );
 
 int main( )
 {
-    int gcd;
-    gcd = fnGCD( 4, 10 );
+    int i;
+    int n;
 
-    printi( gcd );
+    i = 1;
+    n = 15;
 
-    return 0;
-}
+    prints( "Primeros " );
+    printi( n - 1 );
+    prints( " numeros de la sucesion de fibonacci:" );
+    println( );
 
-int fnAbs( int x )
-{
-    if ( x < 0 )
-        return -x;
-
-    return x;
-}
-
-int fnMax( int a, int b )
-{
-    if ( a > b )
-        return a;
-
-    return b;
-}
-
-int fnMin( int a, int b )
-{
-    if ( a < b )
-        return a;
-
-    return b;
-}
-
-int fnGCD( int a, int b )
-{
-    int iRemainder;
-    int iMax;
-    int iMin;
-
-    iMax = fnMax( fnAbs( a ), fnAbs( b ) );
-    iMin = fnMin( fnAbs( a ), fnAbs( b ) );
-
-    // GCD(a, 0) = a     
-    if ( iMin == 0 )
-        return iMax;
-
-    iRemainder = iMax % iMin;
-
-    // GCD( a, b ) = GCD( b, r  ),
-    // donde, a > b y a = b * q + r     
-    while ( iRemainder != 0 )
+    while( i < n )
     {
-        iMax = iMin;
-        iMin = iRemainder;
+        printi( fnFibonacci( i ) );
+        
+        i = i + 1;
 
-        iRemainder = iMax % iMin;
+        if ( i < n )
+            prints( ", " );
     }
 
-    return iMin;
+     return 0;
+}
+
+int fnFibonacci( int n )
+{
+     if ( n == 0 )
+          return 0;
+
+     if ( n == 1 )
+          return 1;
+
+     return fnFibonacci( n - 1 ) + fnFibonacci( n - 2 );
 }

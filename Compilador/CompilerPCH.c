@@ -8,6 +8,12 @@ void fnInitCompiler( )
 	g_numberOfComments			= 0;
 	g_numberOfScannedSymbols	= 0;
 
+	g_iNumberOfAssignments = 0;
+	g_iNumberOfWhile = 0;
+	g_iNumberOfIf = 0;
+	g_iNumberOfReturn = 0;
+	g_iNumberOfCalls = 0;
+
 	fnInitializeSymbolTables();
 	fnInitScanner( );
 	fnInitRegisters( );

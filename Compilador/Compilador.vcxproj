@@ -162,7 +162,7 @@
     <ClCompile Include="src\scanner.c" />
     <ClCompile Include="src\stack.c" />
     <ClCompile Include="src\symbolTable.c" />
-    <ClCompile Include="src\intermediateCode.c" />
+    <ClCompile Include="src\codeGen.c" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="CompilerPCH.h" />
@@ -178,7 +178,7 @@
     <ClInclude Include="includes\scanner.h" />
     <ClInclude Include="includes\stack.h" />
     <ClInclude Include="includes\symbolTable.h" />
-    <ClInclude Include="includes\intermediateCode.h" />
+    <ClInclude Include="includes\codeGen.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

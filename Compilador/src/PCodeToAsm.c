@@ -1,3 +1,4 @@
+#include "../includes/codeGen.h"
 #include "../includes/symbolTable.h"
 #include "../includes/PCodeRead.h"
 #include "../includes/stack.h"
@@ -6,6 +7,8 @@
 
 #define REGISTER_TEMPORARY 0
 #define REGISTER_ARGUMENT 1
+
+#define DEBUG_TARGET_CODE 0
 
 void fnGenPrintsFunction( );
 void fnInitListOfTemporaries( );
@@ -44,10 +47,12 @@ void fnGenAsmCode( )
 	fnInitListOfArguments( );
 
 	// Sección de datos
-	fnGenDirective( ".data" );
+	fnGenDirective( "data" );
 	entry = local_symbol_table;
 
-	printf( "string_buffer: .space 128\n" );
+	//printf( "string_buffer: .space 128\n" );
+	fnGenLabel( "string_buffer" );
+	fnGenDirective( "space 128" );
 	/* Generar código para todas las variables, que no sean parámetros
 	 */
 	while( entry )
@@ -57,14 +62,11 @@ void fnGenAsmCode( )
 
 		entry =  fnGetNextEntry( entry );
 	}
-
-	
-
 	//
 
 	// Sección de texto
-	fnGenDirective( ".text" );
-	fnGenDirective( ".globl main" );
+	fnGenDirective( "text" );
+	fnGenDirective( "globl main" );
 
 	/* Consideramos que cada línea de código P es de la sigueinte forma
 	 *                         instr arg
@@ -284,46 +286,6 @@ void fnGenAsmCode( )
         }
 		else if ( fnInstrMatch( "mst" ) )
 		{
-			// Ahora está en "ent"
-			// iNumberOfParameters = fnGetNumberOfParameters( entryCurrProcedure );
-
-			// Se cambió a cup y csp
-			/* sprintf( strAuxReg, "-%d", 4 * ( g_iTemporariesUsed + iNumberOfParameters + 1 ) );
-			fnGenIFormat( "addi", "$sp", "$sp", strAuxReg ); */
-
-			// TODO: Liberar los registros temporales, para que puedan ser usados.
-			// Consirera que al liberlos el valor de g_iTemporariesUsed cambia.
-			//
-			// Salvar los valores de los registros temporales que han sido usados.
-			/* for ( i = 0; i < g_iTemporariesUsed; i++ )
-			{
-				sprintf( strReg0, "$t%d", i );
-				sprintf( strAuxReg, "%d($sp)", 4 * i );
-
-				// fnInsertRegister( strReg0 );
-				fnGenIFormat( "sw", strReg0, strAuxReg, "" );
-			} */
-
-			// Se cambió a cup y csp
-			// fnSaveTemporariesUsed( );
-			
-			// Se salvan los valores de los argumentos, del procedimiento actual.
-			// Y se liberan para que se puedan volver a utilizar.
-			/* for ( i = 0; i < iNumberOfParameters; i++ )
-			{
-				sprintf( strReg0, "$a%d", i);
-				sprintf( strAuxReg, "%d($sp)", 4 * ( i + g_iTemporariesUsed ) );
-
-				fnInsertRegister( strReg0 );
-				fnGenIFormat( "sw", strReg0, strAuxReg, "" );
-			} */
-
-			// Se cambió a cup y csp
-			/* fnSaveArgumentsUsed( iNumberOfParameters );
-
-			sprintf( strAuxReg, "%d($sp)", 4 * ( g_iTemporariesUsed + iNumberOfParameters ) );
-			fnGenIFormat( "sw", "$ra", strAuxReg, "" ); */
-
 			fnPush( stackOfPMachine, "mst" );
 			bMarkStack = 1;
 		}
@@ -570,88 +532,116 @@ void fnGenPrintsFunction( )
 
 void fnGenLabel( char* label )
 {
-	printf( "%s:\n", label );
+	fnTargetCodeLabel( label );
+
+	if ( DEBUG_TARGET_CODE )
+		printf( "%s:\n", label );
 }
 
 void fnGenDirective( char* directive )
 {
-	printf( "     %s\n", directive );
+	fnTargetCodeDirective( directive );
+
+	if ( DEBUG_TARGET_CODE )
+		printf( "     .%s\n", directive );
 }
 
 void fnGenVariable( char* var, int type )
 {
-	printf( "%s: ", var );
+	fnTargetCodeVariable( var, type );
 
-	if( type == INT_T )
-		printf( ".word 0" );
-	else if( type == CHAR_T )
-		printf( ".byte 0" );
-	//else if( type == CHARSTAR_T )
-		//printf( ".asciiz \"%s\"" );
-	printf( "\n" );
+	if ( DEBUG_TARGET_CODE )
+	{
+		printf( "%s: ", var );
+
+		if (type == INT_T)
+			printf( ".word 0" );
+		else if (type == CHAR_T)
+			printf( ".byte 0" );
+
+		printf( "\n" );
+	}
 }
 
 void fnGenRFormat( char* opcode, char* rd, char* rs, char* rt, char* funct )
 {
 	int bComma = 0;
 
-	printf( "     %s", opcode );
+	fnTargetCodeRFormat( opcode, rd, rs, rt, funct );
 
-	if ( strcmp( rd, "" ) != 0 )
+	if ( DEBUG_TARGET_CODE )
 	{
-		printf( " %s", rd );
-		bComma = 1;
-	}
+		printf( "     %s", opcode );
 
-	if ( strcmp( rs, "" ) != 0 )
-	{ 
-		if ( bComma )
-			printf( "," );
+		if (strcmp( rd, "" ) != 0)
+		{
+			printf( " %s", rd );
+			bComma = 1;
+		}
 
-		printf( " %s", rs );
-	}
+		if (strcmp( rs, "" ) != 0)
+		{
+			if (bComma)
+				printf( "," );
 
-	if ( strcmp( rt, "" ) != 0 )
-		printf( ", %s", rt );
+			printf( " %s", rs );
+		}
 
-	if ( strcmp( funct, "" ) != 0 )
-		printf( ", %s", funct );
+		if (strcmp( rt, "" ) != 0)
+			printf( ", %s", rt );
 
-	printf( "\n" );
+		if (strcmp( funct, "" ) != 0)
+			printf( ", %s", funct );
+
+		printf( "\n" );
+	}	
 }
 
 void fnGenIFormat( char* opcode, char* rt, char* rs, char* imm )
 {
-	printf( "     %s %s", opcode, rt );
+	fnTargetCodeIFormat( opcode, rt, rs, imm );
 
-	if( strcmp( rs, "" ) != 0 )
-		printf( ", %s", rs );
+	if ( DEBUG_TARGET_CODE )
+	{
+		printf( "     %s %s", opcode, rt );
 
-	if ( strcmp( imm, "" ) != 0 )
-		printf( ", %s", imm );
+		if (strcmp( rs, "" ) != 0)
+			printf( ", %s", rs );
 
-	printf( "\n" );
+		if (strcmp( imm, "" ) != 0)
+			printf( ", %s", imm );
+
+		printf( "\n" );
+	}
 }
 
 void fnGenJFormat( char* opcode, char* addr )
 {
-	printf( "     %s %s\n", opcode, addr );
+	fnTargetCodeJFormat( opcode, addr );
+
+	if ( DEBUG_TARGET_CODE )
+		printf( "     %s %s\n", opcode, addr );
 }
 
 void fnGenPseudoInstr( char * opcode, char * rx, char * ry, char * imm )
 {
-	printf( "     %s", opcode );
+	fnTargetCodePseudoInstr( opcode, rx, ry, imm );
 
-	if ( strcmp( rx, "" ) != 0 )
-		printf( " %s", rx );
+	if ( DEBUG_TARGET_CODE )
+	{
+		printf( "     %s", opcode );
 
-	if ( strcmp( ry, "" ) != 0 )
-		printf( ", %s", ry );
+		if (strcmp( rx, "" ) != 0)
+			printf( " %s", rx );
 
-	if ( strcmp( imm, "" ) != 0 )
-		printf( ", %s", imm );
+		if (strcmp( ry, "" ) != 0)
+			printf( ", %s", ry );
 
-	printf( "\n" );
+		if (strcmp( imm, "" ) != 0)
+			printf( ", %s", imm );
+
+		printf( "\n" );
+	}
 }
 
 int fnInstrMatch( char* strInstr )
