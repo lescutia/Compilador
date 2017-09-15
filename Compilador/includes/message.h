@@ -46,7 +46,7 @@
 #define ERROR_FUNC_FA		(ERROR_FUNC_NDEF + 1)
 #define ERROR_FUNC_MA		(ERROR_FUNC_FA	+ 1)
 #define ERROR_FUNC_MISMATCH (ERROR_FUNC_MA + 1)
-
+#define ERROR_FUNC_TYPE_MISMATCH (ERROR_FUNC_MISMATCH + 1)
 /************************************************************************/
 /*								FUNCTIONS								*/
 /************************************************************************/

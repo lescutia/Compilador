@@ -3,13 +3,13 @@
 
 void fnInitDecoder( )
 {
-	int g_iOpCode		= 0;
-	int g_iRS			= 0;
-	int g_iRT			= 0;
-	int g_iRD			= 0;
-	int g_iImmediate	= 0;
-	int g_iFunction		= 0;
-	int g_iInstrIndex	= 0;
+	g_iOpCode		= 0;
+	g_iRS			= 0;
+	g_iRT			= 0;
+	g_iRD			= 0;
+	g_iImmediate	= 0;
+	g_iFunction		= 0;
+	g_iAddress		= 0;
 
 	// el opcode más grande (utilizado) es 0x2B por lo que la memoria que se necesita es 43 + 1.
 	g_OPCODES = (int*)malloc( 44 * sizeof(int) );

@@ -28,7 +28,7 @@ char* fnTypeToString( int iType )
 
 void fnWarningMessage( int iWarningType, char* strSymbolExpected, char* strSymbolFound, int iLineNO, char* strName )
 {
-	printf( "[WARNING]: " );
+	printf( "[PARSER WARNING]: " );
 
 	switch( iWarningType )
 	{
@@ -45,7 +45,7 @@ void fnWarningMessage( int iWarningType, char* strSymbolExpected, char* strSymbo
 		printf( "" );
 		break;
 	case WARNING_FUNC_REDEF:
-		printf( "function '%s' redefinition in line %d.", strName, iLineNO );
+		printf( "function '%s' redefined in line %d.", strName, iLineNO );
 		break;
 	case WARNING_FUNC_NRETURN:
 		printf( "in function '%s', a value of type '%s' should be returned in line %d.", strName, strSymbolExpected, iLineNO );
@@ -54,7 +54,7 @@ void fnWarningMessage( int iWarningType, char* strSymbolExpected, char* strSymbo
 		printf( "'return' with no value, in function '%s' returning non-void in line %d.", strName, iLineNO );
 		break;
 	case WARNING_VAR_REDEF:
-		printf( "variable '%s' redefinition in line %d.", strName, iLineNO );
+		printf( "variable '%s' redefined in line %d.", strName, iLineNO );
 		break;
 	default:
 		printf( "type warning %d is not defined.", iWarningType );
@@ -66,7 +66,7 @@ void fnWarningMessage( int iWarningType, char* strSymbolExpected, char* strSymbo
 
 void fnErrorMessage( int iErrorType, char* strTypeExpected, char* strTypeFound, int iLineNO, char* strName )
 {
-	printf( "[ERROR]: " );
+	printf( "[PARSER ERROR]: " );
 
 	switch( iErrorType )
 	{
@@ -112,6 +112,9 @@ void fnErrorMessage( int iErrorType, char* strTypeExpected, char* strTypeFound, 
 		break;
 	case ERROR_FUNC_MISMATCH:
 		printf( "number of arguments does not match prototype '%s' in line %d.", strName, iLineNO );
+		break;
+	case ERROR_FUNC_TYPE_MISMATCH:
+		printf("conflict types for '%s', expected '%s' but '%s' found in line %d.", strName, strTypeExpected, strTypeFound, iLineNO );
 		break;
 	default:
 		printf( "type error %d is not defined.", iErrorType );

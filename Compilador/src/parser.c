@@ -865,6 +865,7 @@ int fnFactor( )
 		// CODEGEN
 		fnDebugCodeGen( "ldc", g_integer, NO_LABEL );
 		//
+
 		iType = INT_T;
 	}
 	/* character ...
@@ -876,11 +877,24 @@ int fnFactor( )
 
 		// CODEGEN
 		char tmpLiteral[4] = {'\0'};
+		if (!iCast)
+		{
+			sprintf( tmpLiteral, "'%c'", g_literal[0] );
+			fnDebugCodeGen( "ldc", tmpLiteral, NO_LABEL );
+			iType = CHAR_T;
+		}
+		else
+		{
+			sprintf( tmpLiteral, "%d", g_literal[0] );
+			fnDebugCodeGen( "ldc", tmpLiteral, NO_LABEL );
+		}
 
+		/*
 		sprintf( tmpLiteral, "'%c'", g_literal[0] );
 		fnDebugCodeGen( "ldc", tmpLiteral, NO_LABEL );
 		//
 		iType = CHAR_T;
+		//*/
 	}
 	/* string ...
 	 */
@@ -1694,11 +1708,14 @@ void fnProcedure( char* procedure, int type )
 
 			if (fnGetType( entry ) != type)
 			{
+				fnErrorMessage( ERROR_FUNC_TYPE_MISMATCH, fnTypeToString( fnGetType( entry ) ), fnTypeToString( type ), g_lineNumber, procedure );
+				/*
 				printf( "\n Error: line %d, conflicting types for '%s'.", g_lineNumber, procedure );
 				getch( );
 				exit( 1 );
+				//*/
 			}
-			printf( "\n" );
+			// printf( "\n" );
 		}
 
 		fnGetSymbol( );

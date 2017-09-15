@@ -33,8 +33,8 @@ int main( int argc, char** argv )
 		exit( 1 );
 	}
 
-	/*fnPrintTable( GLOBAL_TABLE );
-	fnPrintTable( LOCAL_TABLE );*/
+	/* fnPrintTable( GLOBAL_TABLE );
+	fnPrintTable( LOCAL_TABLE ); */
 
 	fnOpenFileToWrite( "testfile.s" );
 

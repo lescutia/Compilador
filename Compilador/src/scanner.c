@@ -481,13 +481,17 @@ int fnIdentifierOrKeyword( )
 
 void fnSyntaxErrorMessage( char* message )
 {
-	printf( "\n Error: line %d, ", g_lineNumber );
-	//printf(message);
+	//fnErrorMessage();
+	printf( "[SCANNER ERROR]: line %d, ", g_lineNumber );
+	printf("%s\n", message);
+	printf("\nPress any key to exit...\n");
+	getch();
+	exit( 1 );
 }
 
 void fnsyntaxErrorCharacter( char expected )
 {
-	printf( "\n Error: line %d, ", g_lineNumber );
+	printf( "[SCANNER ERROR]: line %d, ", g_lineNumber );
 	printf( "'%c' expected but ", expected );
 
 	if( g_currCharacter == EOF )
@@ -500,6 +504,10 @@ void fnsyntaxErrorCharacter( char expected )
 		printf( "'%c'", g_currCharacter );
 
 	printf( " found.\n" );
+
+	printf( "\nPress any key to exit...\n" );
+	getch();
+	exit( 1 );
 }
 
 void fnLog( )
