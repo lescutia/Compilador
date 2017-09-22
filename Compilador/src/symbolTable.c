@@ -24,6 +24,14 @@ void fnSetScope		( sEntry* entry, int scope )        { entry->scope = scope; }
 void fnSetDefined	( sEntry* entry, int defined )		{ entry->defined = defined; }
 void fnSetParent	( sEntry* entry, char* parent ) 	{ entry->parent = parent; }
 
+int fnIsVoid( sEntry * procedure )
+{
+	if ( fnGetType( procedure ) == VOID_T )
+		return 1;
+
+	return 0;
+}
+
 int fnAddParameter	( sEntry* entry, char* varname, int type )
 {
 	sParameter* newParam = ( sParameter* )malloc( sizeof( sParameter ) );

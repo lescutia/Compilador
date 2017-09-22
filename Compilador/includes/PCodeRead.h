@@ -19,6 +19,9 @@ int fnHasArg( );
 void fnGetInstr( );
 void fnGetArg( );
 
+// se movió para ser compartida para la generación de código ASM y TACode
+int fnInstrMatch( char * strInstr );
+
 FILE *g_pPCodeFile;
 
 extern char g_chCurrChar;

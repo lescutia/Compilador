@@ -1,0 +1,52 @@
+entry main
+begin_args
+arg 4
+arg 10
+call fnGCD
+t1 = fnGCD
+gcd = t1
+begin_args
+arg gcd
+call printi
+return 0
+entry fnMax
+t2 = a > b
+if_false t2 goto L1
+return a
+label L1
+return b
+entry fnMin
+t3 = a < b
+if_false t3 goto L2
+return a
+label L2
+return b
+entry fnGCD
+begin_args
+arg a
+arg b
+call fnMax
+t4 = fnMax
+iMax = t4
+begin_args
+arg a
+arg b
+call fnMin
+t5 = fnMin
+iMin = t5
+t6 = iMin == 0
+if_false t6 goto L3
+return iMax
+label L3
+t7 = iMax % iMin
+iRemainder = t7
+label L4
+t8 = iRemainder != 0
+if_false t8 goto L5
+iMax = iMin
+iMin = iRemainder
+t9 = iMax % iMin
+iRemainder = t9
+goto L4
+label L5
+return iMin

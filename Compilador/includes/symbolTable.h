@@ -151,6 +151,13 @@ void fnSetAddress	( sEntry* entry, int address );
 void fnSetScope		( sEntry* entry, int scope );
 void fnSetDefined	( sEntry* entry, int defined );
 void fnSetParent	( sEntry* entry, char* parent );
+
+/**
+ * @Param procedure		Procedimiento del cual se desea saber si es de tipo void.
+ * @Return				1 si procedure es de tipo void; 0 en otro caso.
+ */
+int fnIsVoid( sEntry * procedure );
+
 int fnAddParameter	( sEntry* entry, char* varname, int type );
 void fnPrintType( int type );
 

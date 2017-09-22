@@ -160,6 +160,7 @@ int fnRightShift( int iNumberToShift, int iShifting );
 
 #include "./includes/PCodeRead.h"
 #include "./includes/PCodeToAsm.h"
+#include "./includes/PCodeToTACode.h"
 #include "./includes/codeGen.h"
 #include "./includes/symbolTable.h"
 #include "./includes/message.h"

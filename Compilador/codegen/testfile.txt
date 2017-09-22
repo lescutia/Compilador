@@ -1,30 +1,78 @@
 ent main
+lda gcd
 mst
 ldc 4
-cup fnSum
 ldc 10
-grt
-fjp L1
-ldc 1
-ret
-stp
-lab L1
+cup fnGCD
+stn
+mst
+lod gcd
+csp printi
 ldc 0
 ret
 stp
-ent fnSum
-lod n
-ldc 1
-equ
+ent fnMax
+lod a
+lod b
+grt
+fjp L1
+lod a
+ret
+lab L1
+lod b
+ret
+ent fnMin
+lod a
+lod b
+les
 fjp L2
-ldc 1
+lod a
 ret
 lab L2
-lod n
+lod b
+ret
+ent fnGCD
+lda iMax
 mst
-lod n
-ldc 1
-sbi
-cup fnSum
-adi
+lod a
+lod b
+cup fnMax
+stn
+lda iMin
+mst
+lod a
+lod b
+cup fnMin
+stn
+lod iMin
+ldc 0
+equ
+fjp L3
+lod iMax
+ret
+lab L3
+lda iRemainder
+lod iMax
+lod iMin
+mod
+stn
+lab L4
+lod iRemainder
+ldc 0
+neq
+fjp L5
+lda iMax
+lod iMin
+stn
+lda iMin
+lod iRemainder
+stn
+lda iRemainder
+lod iMax
+lod iMin
+mod
+stn
+ujp L4
+lab L5
+lod iMin
 ret

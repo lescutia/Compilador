@@ -36,18 +36,26 @@ int main( int argc, char** argv )
 	/* fnPrintTable( GLOBAL_TABLE );
 	fnPrintTable( LOCAL_TABLE ); */
 
-	fnOpenFileToWrite( "testfile.s" );
+	fnOpenPCodeToRead( "codegen/testfile.txt" );
+
+	fnOpenFileToWrite( "tacode.txt" ); // Three Address Code
+	fnGenTACode();
+	fnCloseFile();
+
+	fnClosePCode();
 
 	fnOpenPCodeToRead( "codegen/testfile.txt" );
-	fnGenAsmCode( );
-	fnClosePCode( );
 
+	fnOpenFileToWrite( "testfile.s" ); // ASM
+	fnGenAsmCode( );
 	fnCloseFile( );
+
+	fnClosePCode();
 	
 	fnUninitializeCompiler( );
 	fnResetSymbolTables( );
 
-	printf( "\n lines: %d\n", g_lineNumber );
+	/* printf( "\n lines: %d\n", g_lineNumber );
 	printf( " comments: %d\n", g_numberOfComments );
 	printf( " characters read: %d\n", g_numberOfReadCharacters );
 	printf( " characters ignored: %d\n", g_numberOfIgnoredCharacters );
@@ -56,7 +64,7 @@ int main( int argc, char** argv )
 	printf( " if: %d\n", g_iNumberOfIf );
 	printf( " return: %d\n", g_iNumberOfReturn );
 	printf( " calls: %d\n", g_iNumberOfCalls );
-	printf( " assignments: %d\n", g_iNumberOfAssignments );
+	printf( " assignments: %d\n", g_iNumberOfAssignments ); */
 
 	printf( "\n Press any key to exit..." );
 	_getch( );

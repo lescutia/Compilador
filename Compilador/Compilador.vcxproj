@@ -156,6 +156,7 @@
     <ClCompile Include="src\interpreter.c" />
     <ClCompile Include="src\message.c" />
     <ClCompile Include="src\parser.c" />
+    <ClCompile Include="src\PCodeToTACode.c" />
     <ClCompile Include="src\registers.c" />
     <ClCompile Include="src\PCodeToAsm.c" />
     <ClCompile Include="src\PCodeRead.c" />
@@ -163,6 +164,7 @@
     <ClCompile Include="src\stack.c" />
     <ClCompile Include="src\symbolTable.c" />
     <ClCompile Include="src\codeGen.c" />
+    <ClCompile Include="src\ThreeAddressCode.c" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="CompilerPCH.h" />
@@ -172,6 +174,7 @@
     <ClInclude Include="includes\list.h" />
     <ClInclude Include="includes\message.h" />
     <ClInclude Include="includes\parser.h" />
+    <ClInclude Include="includes\PCodeToTACode.h" />
     <ClInclude Include="includes\registers.h" />
     <ClInclude Include="includes\PCodeToAsm.h" />
     <ClInclude Include="includes\PCodeRead.h" />
@@ -179,6 +182,7 @@
     <ClInclude Include="includes\stack.h" />
     <ClInclude Include="includes\symbolTable.h" />
     <ClInclude Include="includes\codeGen.h" />
+    <ClInclude Include="includes\ThreeAddressCode.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

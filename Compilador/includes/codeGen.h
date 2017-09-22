@@ -81,3 +81,51 @@ void fnTargetCodeJFormat( char* opcode, char* addr );
  * @Param imm
  */
 void fnTargetCodePseudoInstr( char * opcode, char * rx, char * ry, char * imm );
+
+/**
+ * @Param strName	Nombre del procedimiento
+ */
+void fnTACEntry( char * strName );
+
+/**
+ */
+void fnTACBeginArgs( );
+
+/**
+ * @Param strArg	Nombre del argumento
+ */
+void fnTACArg( char * strArg );
+
+/**
+ * @Param strProcedure	Nombre del procedimiento
+ */
+void fnTACCall( char * strProcedure );
+
+/**
+ * @Param strValue	Valor de retorno
+ */
+void fnTACReturn( char * strValue );
+
+/**
+ * @Param strValue
+ * @Param strLabel
+ */
+void fnTACIfFalse( char * strValue, char * strLabel );
+
+/**
+ * @Param strLabel	Nombre de la etiqueta
+ */
+void fnTACLabel( char * strLabel );
+
+/**
+* @Param strLabel	Etiqueta a la que se va a dar el salto
+*/
+void fnTACGoto( char * strLabel );
+
+/**
+ * @Param strOp			Operador
+ * @Param strOperand1	Operando izquierdo
+ * @Param strOperand2	Operando derecho
+ * @Param strResult		Resultado
+ */
+void fnTACOperation( char * strOp, char * strOperand1, char * strOperand2, char * strResult );

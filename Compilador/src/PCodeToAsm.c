@@ -16,7 +16,8 @@ void fnInitListOfArguments( );
 void fnInsertRegister( char * strReg );
 int fnRegisterType( char * strReg );
 int fnGetNumberOfParameters( sEntry *  procedure );
-int fnIsVoid( sEntry * procedure );
+// Se movió a symbolTable.c
+// int fnIsVoid( sEntry * procedure );
 int fnIsParameter( sEntry * variable );
 
 void fnGetTemporary( char * out_strReg );
@@ -644,6 +645,8 @@ void fnGenPseudoInstr( char * opcode, char * rx, char * ry, char * imm )
 	}
 }
 
+/*
+// Se movió a PCodeRead.h
 int fnInstrMatch( char* strInstr )
 {
 	if ( strcmp( g_strInstr, strInstr ) == 0 )
@@ -651,6 +654,7 @@ int fnInstrMatch( char* strInstr )
 
 	return 0;
 }
+*/
 
 void fnGetTemporary( char * out_strReg )
 {
@@ -683,14 +687,6 @@ void fnGetArgument( char * out_strReg )
 
 	sprintf( out_strReg, "$a%d", regAvailable );
 	fnSetOccupied( regAvailable, g_listOfArguments );
-}
-
-int fnIsVoid( sEntry * procedure )
-{
-	if (  fnGetType( procedure ) == VOID_T )
-		return 1;
-
-	return 0;
 }
 
 int fnIsParameter( sEntry * variable )

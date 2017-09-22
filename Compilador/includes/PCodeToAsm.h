@@ -11,6 +11,7 @@ void fnGenRFormat( char * opcode, char * rs, char * rt, char * rd, char * funct 
 void fnGenIFormat( char * opcode, char * rs, char * rt, char * imm );
 void fnGenJFormat( char * opcode, char * addr );
 void fnGenPseudoInstr( char * opcode, char * rx, char * ry, char * imm );
-int fnInstrMatch( char * strInstr );
+// Se movió a PCodeRead.h
+// int fnInstrMatch( char * strInstr );
 
 #endif // PCODETOASM_H_INCLUDED

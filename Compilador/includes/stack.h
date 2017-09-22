@@ -4,7 +4,7 @@
 #define STACK_H_INCLUDED
 
 #define MAX_STACK_SIZE 100//500
-#define MAX_DATA_SIZE 4
+#define MAX_DATA_SIZE 128
 
 typedef struct
 {

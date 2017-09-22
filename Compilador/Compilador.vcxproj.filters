@@ -60,6 +60,12 @@
     <ClCompile Include="src\codeGen.c">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="src\PCodeToTACode.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\ThreeAddressCode.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="includes\parser.h">
@@ -102,6 +108,12 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="includes\codeGen.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="includes\PCodeToTACode.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="includes\ThreeAddressCode.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

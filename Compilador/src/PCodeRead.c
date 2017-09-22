@@ -85,3 +85,11 @@ void fnGetArg( )
 
     g_strArg[ i ] = '\0';
 }
+
+int fnInstrMatch( char* strInstr )
+{
+	if (strcmp( g_strInstr, strInstr ) == 0)
+		return 1;
+
+	return 0;
+}

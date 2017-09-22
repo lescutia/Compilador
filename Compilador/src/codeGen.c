@@ -130,3 +130,58 @@ void fnTargetCodePseudoInstr( char * opcode, char * rx, char * ry, char * imm )
 
 	fprintf( g_pFile, "\n" );
 }
+
+void fnTACEntry( char * strName )
+{
+	fprintf( g_pFile, "entry %s\n", strName );
+}
+
+void fnTACBeginArgs( )
+{
+	fprintf( g_pFile, "begin_args\n" );
+}
+
+void fnTACArg( char * strArg )
+{
+	fprintf( g_pFile, "arg %s\n", strArg );
+}
+
+void fnTACCall( char * strProcedure )
+{
+	fprintf( g_pFile, "call %s\n", strProcedure );
+}
+
+void fnTACReturn( char * strValue )
+{
+	fprintf( g_pFile, "return" );
+
+	if ( strcmp( strValue, "" ) != 0 )
+		fprintf( g_pFile, " %s", strValue );
+
+	fprintf( g_pFile, "\n" );
+}
+
+void fnTACIfFalse( char * strValue, char * strLabel )
+{
+	fprintf( g_pFile, "if_false %s goto %s\n", strValue, strLabel );
+}
+
+void fnTACLabel( char * strLabel )
+{
+	fprintf( g_pFile, "label %s\n", strLabel );
+}
+
+void fnTACGoto( char * strLabel )
+{
+	fprintf( g_pFile, "goto %s\n", strLabel );
+}
+
+void fnTACOperation( char * strOp, char * strOperand1, char * strOperand2, char * strResult )
+{
+	fprintf( g_pFile, "%s = %s", strResult, strOperand1 );
+
+	if ( strcmp( strOp, "" ) != 0 )
+		fprintf( g_pFile, " %s %s", strOp, strOperand2 );
+
+	fprintf( g_pFile, "\n" );
+}
