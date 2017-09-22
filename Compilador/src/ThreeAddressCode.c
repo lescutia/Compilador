@@ -103,10 +103,11 @@ void fnPrintGraph( stGraph * G )
 {
 	for ( int i = 0; i <= G->numOfBlocks; i++ )
 	{
+		printf( "\n Block %d; next: %d; jump: %d\n", i, G->block[ i ].next, G->block[ i ].jump );
 		/* printf( "\n Block %d; next: %d; jump: %d\n", i, G->block[i].next, G->block[i].jump );
 		fnPrintBlock( &G->block[ i ] ); */
 
-		printf( "\nBlock %d\n", i + 1 );
+		//printf( "\nBlock %d\n", i + 1 );
 		fnBlockToTACode( &G->block[ i ] );
 	}
 }

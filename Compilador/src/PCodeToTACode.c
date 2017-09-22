@@ -4,6 +4,7 @@
 #include "../includes/stack.h"
 #include "../includes/PCodeToTACode.h"
 #include "../includes/ThreeAddressCode.h"
+#include "../includes/list.h"
 
 #define DEBUG_TACODE 0
 
@@ -13,7 +14,27 @@ int g_iCurrGraph = -1;
 
 // TACBLOCK
 stGraph graph[ MAX_GRAPHS ];
+sList g_lstLabels;
+sList g_lstJumps;
+
 //
+void fnMapLabelsAndJumps( )
+{
+	sListNode* jumpIt = g_lstJumps.head;
+	sListNode* labelIt = g_lstLabels.head;
+
+	if( !jumpIt || !labelIt )
+		return;
+
+	jumpIt = jumpIt->next;
+	while( jumpIt )
+	{
+		sListNode* tmp = fnGetNode( &g_lstLabels, jumpIt->value );
+		if( tmp )
+			graph[ g_iCurrGraph ].block[ jumpIt->block ].jump = tmp->block;
+		jumpIt = jumpIt->next;
+	}
+}
 
 void fnGenTACode( )
 {
@@ -248,8 +269,8 @@ void fnGenTACode( )
     }
 
 	// TACBLOCK
+	fnMapLabelsAndJumps( );
 	fnPrintFlowGraphs( graph, g_iCurrGraph + 1 );
-
 	// fnLocalCopyProp( &graph[ g_iCurrGraph ].block[ 1 ] );
 	// fnGraphToTACode( graph );
 
@@ -266,6 +287,13 @@ void fnNewTemp( ) { g_iTemp++; }
 
 void fnTACGenEntry( char * strName )
 {
+	fnMapLabelsAndJumps( );
+	fnClearList( &g_lstLabels );
+	fnInitializeList( &g_lstLabels );
+
+	fnClearList( &g_lstJumps );
+	fnInitializeList( &g_lstJumps );
+
 	fnTACEntry( strName );
 	// TACBLOCK
 	g_iCurrGraph++;
@@ -340,6 +368,8 @@ void fnTACGenIfFalse( char * strValue, char * strLabel )
 	// TACBLOCK
 	fnAddInstr( &graph[ g_iCurrGraph ].block[ g_iCurrBlock ], "if_f", strValue, strLabel, "", NO_EXPRESSION );
 	
+	fnInsertNewElem( &g_lstJumps, strLabel[ 1 ] - '0', g_iCurrBlock );
+
 	fnSetNextBlock( &graph[ g_iCurrGraph ].block[ g_iCurrBlock ], g_iCurrBlock + 1 );
 	fnInitBlock( &graph[ g_iCurrGraph ].block[ ++g_iCurrBlock ] );
 	graph[ g_iCurrGraph ].numOfBlocks++;
@@ -363,6 +393,7 @@ void fnTACGenLabel( char * strLabel )
 	}
 
 	fnAddInstr( &graph[ g_iCurrGraph ].block[ g_iCurrBlock ], "label", strLabel, "", "", NO_EXPRESSION );
+	fnInsertNewElem( &g_lstLabels, strLabel[ 1 ] - '0', g_iCurrBlock );
 	//
 	if ( DEBUG_TACODE )
 		printf( " label %s\n", strLabel );
@@ -378,7 +409,7 @@ void fnTACGenGoto( char * strLabel )
 	// if ( fnKindOfLastInstr( &graph[ g_iCurrGraph ].block[ g_iCurrBlock ] ) != INST_RETURN )
 	// {
 		fnAddInstr( &graph[ g_iCurrGraph ].block[ g_iCurrBlock ], "goto", strLabel, "", "", NO_EXPRESSION );
-
+		fnInsertNewElem( &g_lstJumps, strLabel[ 1 ] - '0', g_iCurrBlock );
 		fnSetNextBlock( &graph[ g_iCurrGraph ].block[ g_iCurrBlock ], g_iCurrBlock + 1 );
 		fnInitBlock( &graph[ g_iCurrGraph ].block[ ++g_iCurrBlock ] );
 		graph[ g_iCurrGraph ].numOfBlocks++;
