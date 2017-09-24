@@ -1,5 +1,6 @@
 #include "../CompilerPCH.h"
 #include "../includes/ThreeAddressCode.h"
+#include <ctype.h>
 
 /* void fnNewBlock( stGraph * G )
 {
@@ -214,10 +215,10 @@ void fnLocalCopyProp( stBlock * B )
 			}
 			//
 		}
-		
+
 		// Que sea una asignación, que se asigne una variable y que no sea de
 		// la forma x = x
-		if ( strcmp( B->instr[ i ].Op, "=" ) == 0 )
+		if (strcmp( B->instr[i].Op, "=" ) == 0)
 			fnAddInstr( &auxBlock, B->instr[i].Op, B->instr[i].operand1, B->instr[i].operand2, B->instr[i].tmp, B->instr[i].kind ); // cambiar
 	}
 }
@@ -227,10 +228,10 @@ void fnLocalCopyProp( stBlock * B )
 /*******************************************************************/
 int fnIsCommutative( char * strOp )
 {
-	if ( strcmp( strOp, "+" ) )
+	if (strcmp( strOp, "+" ))
 		return 1;
 
-	if ( strcmp( strOp, "*" ) )
+	if (strcmp( strOp, "*" ))
 		return 1;
 
 	return 0;
@@ -238,16 +239,16 @@ int fnIsCommutative( char * strOp )
 
 int fnMatchBinaryInstr( stInstr instr1, stInstr instr2 )
 {
-	if ( strcmp( instr1.Op, instr2.Op ) == 0 )
+	if (strcmp( instr1.Op, instr2.Op ) == 0)
 	{
-		if ( strcmp( instr1.operand1, instr2.operand1 ) == 0 )
-			if ( strcmp( instr1.operand2, instr2.operand2 ) == 0)
+		if (strcmp( instr1.operand1, instr2.operand1 ) == 0)
+			if (strcmp( instr1.operand2, instr2.operand2 ) == 0)
 				return 1;
 
-		if ( fnIsCommutative( instr1.Op ) )
+		if (fnIsCommutative( instr1.Op ))
 		{
-			if ( strcmp( instr1.operand1, instr2.operand2 ) == 0 )
-				if ( strcmp( instr1.operand2, instr2.operand1 ) == 0 )
+			if (strcmp( instr1.operand1, instr2.operand2 ) == 0)
+				if (strcmp( instr1.operand2, instr2.operand1 ) == 0)
 					return 1;
 		}
 	}
@@ -262,25 +263,25 @@ void fnLocalCSE( stBlock * B )
 
 	fnInitBlock( &auxBlock );
 
-	for ( i = 0; i < B->numOfInstr; i++ )
+	for (i = 0; i < B->numOfInstr; i++)
 	{
 		bFound = 0;
 
-		if ( B->instr[ i ].kind == BINARY_EXPRESSION )
+		if (B->instr[i].kind == BINARY_EXPRESSION)
 		{
 			// TODO: CABIAR POR UN WHILE
-			for ( j = 0; j < auxBlock.numOfInstr; j++ )
+			for (j = 0; j < auxBlock.numOfInstr; j++)
 			{
-				if ( fnMatchBinaryInstr( B->instr[ i ], auxBlock.instr[ j ] ) )
+				if (fnMatchBinaryInstr( B->instr[i], auxBlock.instr[j] ))
 				{
 					bFound = 1;
 
-					strcpy( B->instr[ i ].Op, "=" );
-					strcpy( B->instr[ i ].operand1, auxBlock.instr[ j ].tmp );
-					strcpy( B->instr[ i ].operand2, "" );
+					strcpy( B->instr[i].Op, "=" );
+					strcpy( B->instr[i].operand1, auxBlock.instr[j].tmp );
+					strcpy( B->instr[i].operand2, "" );
 
 					// Se convierte en una asignación
-					B->instr[ i ].kind = UNARY_EXPRESSION;
+					B->instr[i].kind = UNARY_EXPRESSION;
 
 					// TODO: REVISAR
 					// Ya no es necesario seguir comparando con las demás instrucciones de auxBlock
@@ -288,22 +289,93 @@ void fnLocalCSE( stBlock * B )
 				}
 			}
 
-			if ( !bFound )
-				fnAddInstr( &auxBlock, B->instr[ i ].Op, B->instr[i].operand1, B->instr[i].operand2, B->instr[i].tmp, B->instr[i].kind );
+			if (!bFound)
+				fnAddInstr( &auxBlock, B->instr[i].Op, B->instr[i].operand1, B->instr[i].operand2, B->instr[i].tmp, B->instr[i].kind );
 		}
 
-		for ( j = 0; j < auxBlock.numOfInstr; j++ )
+		for (j = 0; j < auxBlock.numOfInstr; j++)
 		{
-			if ( strcmp( B->instr[ i ].tmp, auxBlock.instr[ j ].operand1 ) == 0 )
+			if (strcmp( B->instr[i].tmp, auxBlock.instr[j].operand1 ) == 0)
 			{
 				fnRemoveInstr( j, &auxBlock );
 				j--; // Para no saltar un elemento
-			}	
-			else if ( strcmp( B->instr[ i ].tmp, auxBlock.instr[ j ].operand2 ) == 0 )
+			}
+			else if (strcmp( B->instr[i].tmp, auxBlock.instr[j].operand2 ) == 0)
 			{
 				fnRemoveInstr( j, &auxBlock );
 				j--; // Para no saltar un elemento
-			}	
+			}
+		}
+	}
+}
+
+/*******************************************************************/
+/*        CONSTANT-EXPRESSION EVALUATION (CONSTANT FOLDING)        */
+/*******************************************************************/
+
+int fnIsConstant( char * operand )
+{
+	int i = 0;
+
+	while ( operand[ i ] != '\0' )
+	{
+		if ( !isdigit( operand[ i ] )  )
+			return 0;
+
+		i++;
+	}
+
+	return 1;
+}
+
+int fnGetValueOperand( char * operand )
+{
+	int i = 0, value = 0, relativeValue = 1, digit;
+
+	while ( operand[ i ] != '\0' )
+	{
+		digit = operand[ i ] - '0';
+		value += digit * relativeValue;
+
+		relativeValue *= 10;
+		i++;
+	}
+
+	return value;
+}
+
+void fnPerformBinryOperation( char * operand1, char * op, char * operand2, char * result )
+{
+	int opd1 = fnGetValueOperand( operand1 ),
+		opd2 = fnGetValueOperand( operand2 );
+
+	if ( strcmp( op, "+" ) == 0 )
+		sprintf( result, "%d", opd1 + opd2 );
+	else if ( strcmp( op, "-" ) == 0 )
+		sprintf( result, "%d", opd1 - opd2 );
+	else if ( strcmp( op, "*" ) == 0 )
+		sprintf( result, "%d", opd1 * opd2 );
+	else if ( strcmp( op, "/" ) == 0 )
+		sprintf( result, "%d", opd1 / opd2 );
+	else
+		sprintf( result, "error" );
+}
+
+void fnConstEval( stInstr * instr )
+{
+	char result[ 9 ];
+
+	if ( instr->kind == BINARY_EXPRESSION )
+	{
+		if ( fnIsConstant( instr->operand1 ) && fnIsConstant( instr->operand2 ) )
+		{
+			fnPerformBinryOperation( instr->operand1, instr->Op, instr->operand2, result );
+
+			strcpy( instr->Op, "=" );
+			strcpy( instr->operand1, result );
+			strcpy( instr->operand2, "" );
+
+			instr->kind = UNARY_EXPRESSION;
 		}
 	}
 }

@@ -250,8 +250,10 @@ void fnGenTACode( )
 	// TACBLOCK
 	fnPrintFlowGraphs( graph, g_iCurrGraph + 1 );
 
+	fnConstEval( &graph[ g_iCurrGraph ].block[ 1 ].instr[ 0 ] );
 	// fnLocalCopyProp( &graph[ g_iCurrGraph ].block[ 1 ] );
 	// fnGraphToTACode( graph );
+	fnPrintFlowGraphs( graph, g_iCurrGraph + 1 );
 
 	// fnLocalCSE( &graph[ g_iCurrGraph ].block[ 1 ] );
 	// fnGraphToTACode( graph );

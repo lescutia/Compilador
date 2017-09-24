@@ -124,13 +124,13 @@ void fnGraphToTACode( stGraph * G );
 int fnHasLeft( stInstr instr );
 
 /**
- * @Param strOperand	Operando
- * @Param B				Bloque de instrucciones
+ * @Param strOperand	Operando.
+ * @Param B				Bloque de instrucciones.
  */
 char * fnCopyValue( char * strOperand, stBlock * B );
 
 /**
- * @Param 
+ * @Param B		Puntero al bloque, en el cual se va a realizar la propagación de copias.
  */
 void fnLocalCopyProp( stBlock * B );
 
@@ -148,7 +148,33 @@ int fnMatchBinaryInstr( stInstr instr1, stInstr instr2 );
 
 /**
  * @Brief Local Common-Subexpression Elimination
- * @Param B		Bloque del cual se quieren eliminar las subexpresiones comunes
- *				locales.
+ * @Param B		Bloque en el cual se quieren eliminar las subexpresiones comunes locales.
  */
 void fnLocalCSE( stBlock * B );
+
+/**
+ * @Param operand		Operando del cual se desea saber si es constante.
+ * @Return 1 si el operando es constante; y 0 en caso contrario.
+ */
+int fnIsConstant( char * operand );
+
+/**
+ * @Param operand		Operando del cual se desea saber su valor numérico.
+ * @Return valor numérico del operando.
+ */
+int fnGetValueOperand( char * operand );
+
+/**
+ * @Param operand1		Operando 1
+ * @Param op			Operador
+ * @Param operand2		Operando 2
+ * @Param result		Puntero a la cadena en la cual se guardará el resultado de realizar
+ *						la operación.
+ */
+void fnPerformBinryOperation( char * operand1, char * op, char * operand2, char * result );
+
+/**
+ * @Brief Constant-Expression Evaluation (Constant Folding)
+ * @Param I		Instrucción que se quiere evalaur.
+ */
+void fnConstEval( stInstr * I );
