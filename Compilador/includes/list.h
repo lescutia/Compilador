@@ -69,3 +69,30 @@ int fnGetAvailable( stList* L );
 int fnSearchFirstAvailable( int index, stList * L );
 
 #endif // LIST_H_INCLUDED
+
+
+#ifndef LIST_STRUCT
+#define LIST_STRUCT
+
+typedef struct  
+{
+	int value;
+	int block;
+	struct sListNode* next;
+} sListNode;
+
+typedef struct 
+{
+	int iSize;
+	sListNode* head;
+	sListNode* tail;
+} sList;
+
+void fnInitializeList( sList* inList );
+sListNode* fnInsertNewElem( sList* inList, int inValue, int block );
+void fnInsertNextToNode( sListNode* ActuaNode, int inValue, int block );
+void fnClearList( sList* inList );
+int fnInList( sList* inList, int inValue );
+sListNode* fnGetNode( sList* inList, int inValue );
+
+#endif
